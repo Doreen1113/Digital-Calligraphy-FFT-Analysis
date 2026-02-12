@@ -1,0 +1,12 @@
+*.txt
+!requirements.txt
+__pycache__
+
+images/
+images/*.svg
+video/
+
+
+__pycache__/
+*.pyc
+images/final_*.png
