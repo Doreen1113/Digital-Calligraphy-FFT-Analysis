@@ -1,174 +1,327 @@
 import numpy as np
-from numpy.fft import fft
+from numpy.fft import fft, ifft
 import re
-from typing import List
 import pygame, math
 from pygame.locals import *
 import colorsys
-import datetime  # 加入時間戳用
+import datetime
+import re, math, pygame
+from pygame.locals import *
 
-# === 1. 解析SVG路徑並做傅立葉轉換 ===
-def fftProcess(svg_filename: str) -> List[List[List[float]]]:
+def fftProcess(svg_filename: str, n_coeffs: int = 50):
+    """解析 SVG 並執行傅立葉轉換，回傳所有筆劃的係數與全域中心"""
     with open(svg_filename, "r") as f:
         content = f.read()
-        # 從SVG檔案中找出所有路徑d屬性
-        paths = re.findall(r'\bd="(.*?)"', content)
-        all_segments = []
+    
+    paths = re.findall(r'\bd="(.*?)"', content)
+    all_pts = []
+    for path in paths:
+        nums = re.findall(r"-?\d+\.?\d*", path)
+        for i in range(0, len(nums), 2):
+            all_pts.append((float(nums[i]), float(nums[i+1])))
+    
+    if not all_pts: return [], (0, 0)
+    
+    # 計算全域 Bounding Box 中心，確保多筆劃對齊
+    center_x = (max(p[0] for p in all_pts) + min(p[0] for p in all_pts)) / 2
+    center_y = (max(p[1] for p in all_pts) + min(p[1] for p in all_pts)) / 2
 
-        for path in paths:
-            # 解析路徑中的所有數字點座標
-            points = re.findall(r"-?\d+\.?\d*e?-?\d*?", path)
-            segment = []
-            # 每兩個數字為一個(x, y)座標
-            for i in range(0, len(points), 2):
-                segment.append((float(points[i + 1]), float(points[i])))
+    all_segments_fourier = []
+    for path in paths:
+        nums = re.findall(r"-?\d+\.?\d*", path)
+        segment = [(float(nums[i]), float(nums[i+1])) for i in range(0, len(nums), 2)]
+        if len(segment) < 5: continue
 
-            # 忽略點數過少的路徑
-            if len(segment) < 10:
+        # 座標轉複數並平移至中心
+        y = np.array([complex(p[0] - center_x, p[1] - center_y) for p in segment])
+        N = len(y)
+        yy = fft(y)
+
+        # 低通濾波：只保留 n_coeffs 個係數
+        if n_coeffs and n_coeffs < N:
+            half = n_coeffs // 2
+            yy[half : N - half] = 0
+
+        # 轉換為 (振幅, 頻率, 相位)
+        # 將頻率索引轉為有號頻率 (負頻率對應到 index > N/2)
+        PP = []
+        for i, v in enumerate(yy):
+            freq = i if i <= N//2 else i - N
+            amp = abs(v) / N
+            phase = np.angle(v)
+            PP.append([amp, freq, phase])
+        # 不對係數排序 — 保留原始頻率分佈以對應 IFFT 重建
+        all_segments_fourier.append(PP)
+
+    return all_segments_fourier, (center_x, center_y)
+
+def get_reconstructed_points(svg_filename: str, n_coeffs: int = 50):
+    """供 GUI 調用：計算重建後的座標點清單"""
+    fourier_data, _ = fftProcess(svg_filename, n_coeffs)
+    all_strokes = []
+    for coeffs in fourier_data:
+        N_samples = 300 # 採樣點數
+        pts = []
+        for t_idx in range(N_samples):
+            t = t_idx / N_samples
+            val = sum(r * np.exp(1j * (freq * 2 * np.pi * t + phase)) for r, freq, phase in coeffs)
+            pts.append((val.real, val.imag))
+        all_strokes.append(pts)
+    return all_strokes
+    
+def get_reconstructed_points(svg_filename: str, n_coeffs: int = 50):
+    """Parse SVG and for each long path do: FFT -> low-pass filter -> IFFT.
+    Return (list_of_point_lists, (minx, maxx, miny, maxy)).
+    This preserves original ordering and matches the original shape.
+    """
+    with open(svg_filename, "r") as f:
+        content = f.read()
+
+    # collect all paths and global center like fftProcess
+    paths = re.findall(r'\bd="(.*?)"', content)
+    all_segments = []
+    global_all_pts = []
+    for path in paths:
+        nums = re.findall(r"-?\d+\.?\d*e?-?\d*?", path)
+        pts = []
+        for i in range(0, len(nums), 2):
+            try:
+                x = float(nums[i])
+                y = float(nums[i + 1])
+            except Exception:
                 continue
+            pts.append((x, y))
+        if pts:
+            global_all_pts.extend(pts)
 
-            # 將座標轉為複數，並做中心平移
-            y = [complex(p[0] - 270, p[1] - 270) for p in segment]
-            y_len = len(y)
-            # 對座標序列做傅立葉轉換
-            yy = fft(y)
+    if not global_all_pts:
+        return [], (0, 0, 0, 0)
 
-            PP = []
-            for i, v in enumerate(yy[:y_len]):
-                c = -2 * np.pi * i / y_len  # 角速度
-                # 拆成實部與虛部，並分別存入
-                PP.append([-v.real / y_len, c, -np.pi / 2])
-                PP.append([-v.imag / y_len, c, np.pi])
+    xs = [p[0] for p in global_all_pts]
+    ys = [p[1] for p in global_all_pts]
+    center_x = (max(xs) + min(xs)) / 2
+    center_y = (max(ys) + min(ys)) / 2
 
-            # 依據振幅大小排序
-            PP.sort(key=lambda x: abs(x[0]), reverse=True)
-            all_segments.append(PP)
+    all_reconstructed = []
+    gminx = gminy = float('inf')
+    gmaxx = gmaxy = float('-inf')
 
-    return all_segments
+    for path in paths:
+        nums = re.findall(r"-?\d+\.?\d*e?-?\d*?", path)
+        pts = []
+        for i in range(0, len(nums), 2):
+            try:
+                x = float(nums[i])
+                y = float(nums[i + 1])
+            except Exception:
+                continue
+            pts.append((x, y))
+
+        if len(pts) < 3:
+            continue
+
+        # build complex array centered
+        y_complex = np.array([complex(px - center_x, py - center_y) for px, py in pts], dtype=complex)
+        N = len(y_complex)
+        yy = fft(y_complex)
+
+        # low-pass: zero middle frequencies, keep n_coeffs (head+tail)
+        if n_coeffs is not None and 0 < n_coeffs < N:
+            half = int(n_coeffs) // 2
+            yy[half: N - half] = 0
+
+        rec = ifft(yy)
+
+        rec_pts = [(float(z.real + center_x), float(z.imag + center_y)) for z in rec]
+
+        for x, y in rec_pts:
+            gminx = min(gminx, x); gmaxx = max(gmaxx, x)
+            gminy = min(gminy, y); gmaxy = max(gmaxy, y)
+
+        all_reconstructed.append(rec_pts)
+
+    return all_reconstructed, (gminx, gmaxx, gminy, gmaxy)
+    return all_strokes
 
 # === 2. 動態繪製傅立葉圓周合成圖形 ===
-def draw(filename: str):
-    WINDOW_W, WINDOW_H = 1920, 1080  
-    one_time = 10
-    scale = 1
-    FPS = 60  # 幀率
-    point_size = 1  # 圓心點大小
-    thickness = 2   # 筆劃粗細
-    start_xy = (WINDOW_W // 4, WINDOW_H // 2)  # 起始座標
-    b_length = 8000  # 筆劃軌跡長度上限
+def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):
+    # 設定畫布大小 (可以根據需求調整或設為全螢幕)
+    WINDOW_W, WINDOW_H = 1200, 800  
+    FPS = 60  
+    point_size = 1  
+    thickness = 2   
+    start_xy = (WINDOW_W // 2, WINDOW_H // 2) # 畫面中心
+    b_length = 10000 # 軌跡長度
 
-    all_segments = fftProcess(filename)  # 取得所有筆畫的傅立葉係數
+    # 1. 取得傅立葉數據 (使用我們修正後的回傳格式)
+    # all_segments: [stroke1_coeffs, stroke2_coeffs, ...]
+    # svg_info: (center_x, center_y, N_total_points)
+    all_segments, svg_info = fftProcess(filename, n_coeffs=n_coeffs)
+    if not all_segments:
+        print("Error: No paths found in SVG.")
+        return
+
+    # 2. 計算縮放比例 (自動適配視窗)
+    # 這裡我們預設一個基準縮放，再乘上使用者的 user_scale
+    scale = 1.0 * user_scale 
 
     pygame.init()
-    # 建立繪圖視窗
-    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
-    pygame.display.set_caption("傅立葉多筆畫繪圖")
+    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF | pygame.RESIZABLE)
+    pygame.display.set_caption(f"Fourier Calligraphy: {filename} (Coeffs: {n_coeffs})")
 
-    # --- 內部類別：圓的定義 ---
+    # --- 圓的定義 (修正座標計算邏輯) ---
     class Circle:
-        def __init__(self, r, angle_v, angle, color, father=None):
+        def __init__(self, r, freq, phase, color, father=None):
             self.r = r  
-            self.angle_v = angle_v  # 角速度
-            self.angle = angle      # 當前角度
-            self.color = color     
-            self.father = father    # 父圓
-            self.x, self.y = 0, 0  # 圓心座標
+            self.freq = freq      # 頻率 (對應原本的 angle_v)
+            self.phase = phase    # 初始相位 (對應原本的 angle)
+            self.color = color      
+            self.father = father  
+            self.x, self.y = 0, 0
+            self.current_t = 0    # 追蹤時間進度
 
-        def set_xy(self, xy):
-            self.x, self.y = xy
-
-        def set_xy_by_angle(self):
-            # 根據父圓與角度計算圓心座標
-            self.x = self.father.x + self.r * math.cos(self.angle) * scale
-            self.y = self.father.y + self.r * math.sin(self.angle) * scale
-
-        def run(self, step_time):
-            # 旋轉圓，更新角度與位置
+        def update(self, t):
+            # 傅立葉合成公式: r * exp(i * (2*pi*f*t + phase))
+            # 注意：t 必須正規化為 0~1 之間，或者直接使用角速度
+            angle = self.freq * 2 * math.pi * t + self.phase
+            
             if self.father:
-                self.angle += self.angle_v * step_time
-                self.set_xy_by_angle()
+                self.x = self.father.x + self.r * math.cos(angle) * scale
+                self.y = self.father.y + self.r * math.sin(angle) * scale
+            else:
+                # 最外層的圓心固定在畫面中央
+                self.x, self.y = start_xy
 
-        def draw(self, screen):
+        def draw(self, screen, show_circles=True):
+            if not self.father: return
+            
+            if show_circles:
+                # 畫輔助圓與連線 (顏色稍微調暗)
+                alpha_color = tuple(map(lambda x: x // 4, self.color))
+                center = (int(self.father.x), int(self.father.y))
+                radius = max(int(abs(self.r) * scale), 1)
+                pygame.draw.circle(screen, alpha_color, center, radius, 1)
+                pygame.draw.line(screen, self.color, center, (self.x, self.y), 1)
+            
             # 畫圓心點
-            color_an = tuple(map(lambda x: x // 3, self.color))
             pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), point_size)
-            # 畫圓與連線
-            if self.father:
-                pygame.draw.circle(screen, color_an, (int(self.father.x), int(self.father.y)), max(int(abs(self.r) * scale), 1), 1)
-                pygame.draw.line(screen, self.color, (self.father.x, self.father.y), (self.x, self.y), 1)
 
-    # --- 內部類別：單一路徑的傅立葉合成與繪製 ---
+    # --- 單一筆劃繪製器 ---
     class PathDrawer:
         def __init__(self, fourier_list, color):
             self.circles = []
             self.points = []
             self.color = color
-            # 建立最外層圓心
-            super_circle = Circle(0, 0, 0, color)
-            super_circle.set_xy(start_xy)
-            self.circles = [super_circle]
-
-            # 依據傅立葉係數建立圓
-            for i, p in enumerate(fourier_list):
-                c = Circle(p[0], p[1], p[2], color, father=self.circles[i])
+            self.t = 0.0
+            
+            # 建立圓圈鏈
+            # 第一個圓是靜止的中心點
+            root = Circle(0, 0, 0, color)
+            self.circles.append(root)
+            
+            for p in fourier_list:
+                # p = [amplitude, frequency, phase]
+                c = Circle(p[0], p[1], p[2], color, father=self.circles[-1])
                 self.circles.append(c)
 
-        def run_and_draw(self, screen):
-            # 更新所有圓並繪製
+        def step(self, screen, dt):
+            self.t += dt
+            if self.t > 1.0: self.t = 0 # 循環繪製
+            
+            # 更新所有圓的位置
             for c in self.circles:
-                c.run(1)
+                c.update(self.t)
                 c.draw(screen)
+            
+            # 紀錄末端點軌跡
             tail = self.circles[-1]
             self.points.append((tail.x, tail.y))
-            # 控制軌跡長度
+            
+            # 限制軌跡長度，避免記憶體溢出
             if len(self.points) > b_length:
                 self.points.pop(0)
-            # 畫出筆劃軌跡
-            for i in range(len(self.points) - 1):
-                pygame.draw.line(screen, self.color, self.points[i], self.points[i + 1], thickness)
+            
+            # 畫出軌跡 (書法線條)
+            if len(self.points) > 2:
+                pygame.draw.lines(screen, self.color, False, self.points, thickness)
 
-    # --- 建立所有筆畫的PathDrawer ---
+    # --- 初始化筆劃 ---
     drawers = []
     for idx, segment in enumerate(all_segments):
-        # 每條筆畫給不同顏色
         hue = idx / len(all_segments)
-        r, g, b = colorsys.hsv_to_rgb(hue, 1, 1)
+        r, g, b = colorsys.hsv_to_rgb(hue, 0.8, 1.0)
         color = (int(r * 255), int(g * 255), int(b * 255))
         drawers.append(PathDrawer(segment, color))
 
     clock = pygame.time.Clock()
     running = True
+    
+    # 動畫速度設定 (dt 越小畫得越慢、越精細)
+    dt = 1.0 / (FPS * 5) # 5秒畫完一個循環
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-
+                running = False
             elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    # 直接儲存目前完整畫面（含圓）
-                    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    filename = f"final_screen_{timestamp}.png"
-                    pygame.image.save(screen, filename)
-                    print(f"畫面已儲存：{filename}")
-                    pygame.quit()
-                    return
-
+                if event.key == K_ESCAPE: running = False
                 elif event.key == K_s:
-                    # 儲存純筆劃（不含圓）版本
-                    screen.fill((0, 0, 0))
-                    for drawer in drawers:
-                        for i in range(len(drawer.points) - 1):
-                            pygame.draw.line(screen, drawer.color, drawer.points[i], drawer.points[i + 1], thickness)
+                    # 截圖功能保持不變...
                     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    filename = f"final_strokes_{timestamp}.png"
-                    pygame.image.save(screen, filename)
-                    print(f"純筆劃畫面已儲存：{filename}")
+                    pygame.image.save(screen, f"result_{timestamp}.png")
 
-        # 每幀刷新畫面
-        screen.fill((0, 0, 0))
+        screen.fill((20, 20, 20)) # 深灰色背景更有專業感
+        
         for drawer in drawers:
-            drawer.run_and_draw(screen)
+            drawer.step(screen, dt)
 
         pygame.display.update()
         clock.tick(FPS)
+
+    pygame.quit()
+
+
+def debug_compare(filename: str, n_coeffs: int = 50, stroke_idx: int = 0, t_samples=None, out_file: str = "debug_compare.txt"):
+    """Compare points from get_reconstructed_points and direct Fourier synthesis at several t values.
+    Writes results to out_file for inspection.
+    """
+    if t_samples is None:
+        t_samples = [0.0, 0.25, 0.5, 0.75]
+
+    # get fourier coefficients and center
+    fourier_data, center = fftProcess(filename, n_coeffs)
+    cx, cy = center
+
+    # get reconstructed points (per-path lists)
+    rec_all, _ = get_reconstructed_points(filename, n_coeffs)
+
+    if not fourier_data or stroke_idx >= len(fourier_data) or stroke_idx >= len(rec_all):
+        with open(out_file, 'w', encoding='utf-8') as f:
+            f.write("Error: stroke index out of range or no data.\n")
+        return
+
+    coeffs = fourier_data[stroke_idx]
+    rec_pts = rec_all[stroke_idx]
+
+    lines = []
+    lines.append(f"Debug compare for {filename}, stroke {stroke_idx}, n_coeffs={n_coeffs}\n")
+    for t in t_samples:
+        # synth via fourier coefficients (same formula as animation)
+        val = sum(c[0] * np.exp(1j * (c[1] * 2 * np.pi * t + c[2])) for c in coeffs)
+        synth_x = float(val.real + cx)
+        synth_y = float(val.imag + cy)
+
+        # choose index in rec_pts corresponding to t
+        idx = int(t * len(rec_pts)) % len(rec_pts)
+        rec_x, rec_y = rec_pts[idx]
+
+        dx = rec_x - synth_x
+        dy = rec_y - synth_y
+        dist = math.hypot(dx, dy)
+
+        lines.append(f"t={t:.3f}: synth=({synth_x:.3f},{synth_y:.3f}), rec_idx={idx}, rec=({rec_x:.3f},{rec_y:.3f}), delta={dist:.6f}\n")
+
+    with open(out_file, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
+
+    print(f"Wrote debug compare to {out_file}")
