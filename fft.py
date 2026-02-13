@@ -155,18 +155,33 @@ def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):
 
     # 1. 取得傅立葉數據 (使用我們修正後的回傳格式)
     # all_segments: [stroke1_coeffs, stroke2_coeffs, ...]
-    # svg_info: (center_x, center_y, N_total_points)
+    # svg_info: (center_x, center_y)
     all_segments, svg_info = fftProcess(filename, n_coeffs=n_coeffs)
     if not all_segments:
         print("Error: No paths found in SVG.")
         return
 
-    # 2. 計算縮放比例 (自動適配視窗)
-    # 這裡我們預設一個基準縮放，再乘上使用者的 user_scale
-    scale = 1.0 * user_scale 
+    # obtain reconstructed bbox from get_reconstructed_points so we can match GUI preview mapping
+    try:
+        rec_all, bbox = get_reconstructed_points(filename, n_coeffs)
+        minx, maxx, miny, maxy = bbox
+    except Exception:
+        # fallback: derive bbox from original points in fftProcess if needed
+        minx = miny = -270
+        maxx = maxy = 270
 
+    # 2. 計算縮放比例 (自動適配視窗)
+    # 使用與 GUI 相同的映射：base_fit = min(WINDOW_W/svg_w, WINDOW_H/svg_h) * 0.8
+    svg_w = max(1.0, maxx - minx)
+    svg_h = max(1.0, maxy - miny)
+    base_fit = min(WINDOW_W / svg_w, WINDOW_H / svg_h) * 0.8
+    final_scale = base_fit * user_scale
+
+    # Center the window on screen and use a fixed-size, non-resizable window
+    import os
+    os.environ.setdefault('SDL_VIDEO_CENTERED', '1')
     pygame.init()
-    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF | pygame.RESIZABLE)
+    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF)
     pygame.display.set_caption(f"Fourier Calligraphy: {filename} (Coeffs: {n_coeffs})")
 
     # --- 圓的定義 (修正座標計算邏輯) ---
@@ -180,19 +195,20 @@ def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):
             self.x, self.y = 0, 0
             self.current_t = 0    # 追蹤時間進度
 
-        def update(self, t):
+        def update(self, t, anim_center):
             # 傅立葉合成公式: r * exp(i * (2*pi*f*t + phase))
             # 注意：t 必須正規化為 0~1 之間，或者直接使用角速度
             angle = self.freq * 2 * math.pi * t + self.phase
             
             if self.father:
-                self.x = self.father.x + self.r * math.cos(angle) * scale
-                self.y = self.father.y + self.r * math.sin(angle) * scale
+                self.x = self.father.x + self.r * math.cos(angle) * final_scale
+                self.y = self.father.y + self.r * math.sin(angle) * final_scale
             else:
                 # 最外層的圓心固定在畫面中央
-                self.x, self.y = start_xy
+                # anim_center is computed per-frame to account for window/fullscreen size
+                self.x, self.y = anim_center
 
-        def draw(self, screen, show_circles=True):
+        def draw(self, screen, show_circles=True, scale=1.0):
             if not self.father: return
             
             if show_circles:
@@ -224,14 +240,14 @@ def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):
                 c = Circle(p[0], p[1], p[2], color, father=self.circles[-1])
                 self.circles.append(c)
 
-        def step(self, screen, dt):
+        def step(self, screen, dt, anim_center, scale):
             self.t += dt
             if self.t > 1.0: self.t = 0 # 循環繪製
             
             # 更新所有圓的位置
             for c in self.circles:
-                c.update(self.t)
-                c.draw(screen)
+                c.update(self.t, anim_center)
+                c.draw(screen, True, scale)
             
             # 紀錄末端點軌跡
             tail = self.circles[-1]
@@ -271,9 +287,14 @@ def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):
                     pygame.image.save(screen, f"result_{timestamp}.png")
 
         screen.fill((20, 20, 20)) # 深灰色背景更有專業感
-        
+
+        # Fixed center based on the fixed window size so animation matches GUI preview
+        anim_cx = WINDOW_W / 2.0 + (svg_info[0] - (minx + maxx) / 2.0) * final_scale
+        anim_cy = WINDOW_H / 2.0 + (svg_info[1] - (miny + maxy) / 2.0) * final_scale
+        anim_center = (anim_cx, anim_cy)
+
         for drawer in drawers:
-            drawer.step(screen, dt)
+            drawer.step(screen, dt, anim_center, final_scale)
 
         pygame.display.update()
         clock.tick(FPS)

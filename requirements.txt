@@ -1,4 +1,8 @@
-opencv-python
-pyqt5
 numpy
+opencv-python
+matplotlib
+pandas
+PyQt5
 pygame
+torch
+torchvision

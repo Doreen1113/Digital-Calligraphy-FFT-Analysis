@@ -6,6 +6,7 @@ images/
 images/*.svg
 video/
 
+data/
 
 __pycache__/
 *.pyc
