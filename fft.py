@@ -1,12 +1,11 @@
 import numpy as np
 from numpy.fft import fft, ifft
 import re
-import pygame, math
+import math
+import pygame
 from pygame.locals import *
 import colorsys
 import datetime
-import re, math, pygame
-from pygame.locals import *
 
 def fftProcess(svg_filename: str, n_coeffs: int = 50):
     """解析 SVG 並執行傅立葉轉換，回傳所有筆劃的係數與全域中心"""
@@ -55,20 +54,6 @@ def fftProcess(svg_filename: str, n_coeffs: int = 50):
 
     return all_segments_fourier, (center_x, center_y)
 
-def get_reconstructed_points(svg_filename: str, n_coeffs: int = 50):
-    """供 GUI 調用：計算重建後的座標點清單"""
-    fourier_data, _ = fftProcess(svg_filename, n_coeffs)
-    all_strokes = []
-    for coeffs in fourier_data:
-        N_samples = 300 # 採樣點數
-        pts = []
-        for t_idx in range(N_samples):
-            t = t_idx / N_samples
-            val = sum(r * np.exp(1j * (freq * 2 * np.pi * t + phase)) for r, freq, phase in coeffs)
-            pts.append((val.real, val.imag))
-        all_strokes.append(pts)
-    return all_strokes
-    
 def get_reconstructed_points(svg_filename: str, n_coeffs: int = 50):
     """Parse SVG and for each long path do: FFT -> low-pass filter -> IFFT.
     Return (list_of_point_lists, (minx, maxx, miny, maxy)).
@@ -141,7 +126,6 @@ def get_reconstructed_points(svg_filename: str, n_coeffs: int = 50):
         all_reconstructed.append(rec_pts)
 
     return all_reconstructed, (gminx, gmaxx, gminy, gmaxy)
-    return all_strokes
 
 # === 2. 動態繪製傅立葉圓周合成圖形 ===
 def draw(filename: str, n_coeffs: int = 50, user_scale: float = 1.0):

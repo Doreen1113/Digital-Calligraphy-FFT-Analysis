@@ -253,7 +253,10 @@ def run_style_analysis(data_root="./data", output_dir="./output", max_samples=No
                 # 提取振幅並正規化
                 if fourier_data and len(fourier_data[0]) >= TARGET_LEN:
                     amplitudes = np.array([max(1e-6, c[0]) for c in fourier_data[0][:TARGET_LEN]])
-                    amplitudes = amplitudes / amplitudes[0]  # 正規化至 [0, 1]
+                    # 使用 L2-norm 正規化，避免 DC 分量過小時其他頻率被放大
+                    norm = np.linalg.norm(amplitudes)
+                    if norm > 1e-8:
+                        amplitudes = amplitudes / norm
                     all_vecs.append(amplitudes)
                     success_count += 1
                     

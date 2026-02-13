@@ -8,11 +8,8 @@ from SVG import bitmap_to_contour_svg
 import fft
 
 # 解決字體顯示問題
-try:
-    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'Arial', 'sans-serif']
-    plt.rcParams['axes.unicode_minus'] = False
-except:
-    pass
+plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'sans-serif']
+plt.rcParams['axes.unicode_minus'] = False
 
 def add_damage(image, damage_type="noise", intensity=0.3, severity="medium"):
     """施加人工損壞壓力測試
@@ -92,134 +89,122 @@ def add_damage(image, damage_type="noise", intensity=0.3, severity="medium"):
     return damaged
 
 def restore_with_magic(img_data, n_coeffs=40):
-    """【核心修正】正確對接 FFT 回傳值並實現實心修復"""
-    h, w = 64, 64
+    """使用 FFT 低通濾波重建書法字：處理所有輪廓而非僅最大輪廓"""
+    h, w = img_data.shape[:2]
     res_img = np.ones((h, w), dtype=np.uint8) * 255
     try:
-        # 1. 適度降噪（避免過度處理導致特徵丟失）
-        processed = cv2.medianBlur(img_data, 3)  # 降低濾波強度從5改為3
-        
-        # 使用自適應閾值處理，對噪聲和遮擋更魯棒
+        # 1. 降噪
+        processed = cv2.medianBlur(img_data, 3)
+
+        # 自適應閾值，對噪聲和遮擋更魯棒
         binary = cv2.adaptiveThreshold(
             processed, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
             cv2.THRESH_BINARY_INV, 11, 2
         )
-        
-        # 輕微的形態學閉運算連接斷裂筆畫
+
+        # 形態學閉運算連接斷裂筆畫
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
         binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel, iterations=1)
 
-        # 2. 提取最大輪廓，避免修復到背景雜訊
-        contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # 2. 提取所有有效輪廓（過濾雜訊用面積閾值）
+        contours, _ = cv2.findContours(binary, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
         if not contours:
-            print(f"⚠️ 未找到輪廓，返回原圖 (n_coeffs={n_coeffs})")
+            print(f"  ⚠️ 未找到輪廓 (n_coeffs={n_coeffs})")
             return img_data
-        
-        main_contour = max(contours, key=cv2.contourArea)
-        contour_area = cv2.contourArea(main_contour)
-        print(f"🔍 找到輪廓，面積={contour_area:.0f} (n_coeffs={n_coeffs})")
-        
+
+        # 過濾太小的雜訊輪廓（面積 < 圖片總面積的 0.5%）
+        min_area = h * w * 0.005
+        valid_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
+        if not valid_contours:
+            # 如果全被過濾掉，至少保留最大的
+            valid_contours = [max(contours, key=cv2.contourArea)]
+
+        total_pts = sum(len(c) for c in valid_contours)
+        print(f"  找到 {len(valid_contours)} 個有效輪廓，共 {total_pts} 點 (n_coeffs={n_coeffs})")
+
+        # 3. 把所有有效輪廓畫到遮罩上，再透過 SVG→FFT→重建
         temp_mask = np.ones((h, w), dtype=np.uint8) * 255
-        cv2.drawContours(temp_mask, [main_contour], -1, 0, -1)
-        
-        # 3. 轉向量並執行 FFT
-        cv2.imwrite("temp_restore_final.png", temp_mask)
-        bitmap_to_contour_svg("temp_restore_final.png", "temp_restore_final.svg")
-        
-        # ✨ 關鍵修正：使用 get_reconstructed_points 獲取重建座標
-        recon_strokes, bbox = fft.get_reconstructed_points("temp_restore_final.svg", n_coeffs=n_coeffs)
-        
-        if recon_strokes and len(recon_strokes) > 0:
-            # 取第一個筆劃（主要輪廓）
-            recon_points = recon_strokes[0] if len(recon_strokes) > 0 else []
-            
-            if len(recon_points) > 2:  # 至少需要3個點才能形成多邊形
-                print(f"✓ FFT重建 {len(recon_points)} 個點 (n_coeffs={n_coeffs})")
-                
-                # 轉換為 OpenCV 格式
-                pts = np.array(recon_points, dtype=np.float32)
-                
-                # 如果SVG座標系統和圖像不同，需要調整（通常SVG原點在左上）
-                # 座標已經在正確的範圍內，直接使用
-                pts = pts.reshape((-1, 1, 2)).astype(np.int32)
-            
-# 轉換為 OpenCV 格式
-                pts = np.array(recon_points, dtype=np.float32)
-                
-                # 如果SVG座標系統和圖像不同，需要調整（通常SVG原點在左上）
-                # 座標已經在正確的範圍內，直接使用
-                pts = pts.reshape((-1, 1, 2)).astype(np.int32)
-                
-                # 確保座標在合理範圍內
-                x_coords = pts[:, 0, 0]
-                y_coords = pts[:, 0, 1]
-                
-                # 裁剪到有效範圍
-                pts[:, 0, 0] = np.clip(x_coords, 0, w-1)
-                pts[:, 0, 1] = np.clip(y_coords, 0, h-1)
-                
-                # 填充重建的輪廓
-                cv2.fillPoly(res_img, [pts], 0)  # 0 代表黑色實心填充
-                return res_img
-            else:
-                print(f"⚠️ FFT重建點數不足 ({len(recon_points)} 點)，返回原圖")
-                return img_data
-            
-        return img_data
+        cv2.drawContours(temp_mask, valid_contours, -1, 0, -1)
+
+        temp_png = "./temp_restore_work.png"
+        temp_svg = "./temp_restore_work.svg"
+        cv2.imwrite(temp_png, temp_mask)
+        bitmap_to_contour_svg(temp_png, temp_svg)
+
+        # 4. FFT 重建所有筆畫
+        recon_strokes, bbox = fft.get_reconstructed_points(temp_svg, n_coeffs=n_coeffs)
+
+        if not recon_strokes:
+            print(f"  ⚠️ FFT 重建失敗")
+            return img_data
+
+        # 5. 將所有重建的筆畫畫回圖片
+        total_recon = 0
+        for stroke_pts in recon_strokes:
+            if len(stroke_pts) < 3:
+                continue
+            pts = np.array(stroke_pts, dtype=np.float32)
+            pts[:, 0] = np.clip(pts[:, 0], 0, w - 1)
+            pts[:, 1] = np.clip(pts[:, 1], 0, h - 1)
+            pts = pts.reshape((-1, 1, 2)).astype(np.int32)
+            cv2.fillPoly(res_img, [pts], 0)
+            total_recon += 1
+
+        print(f"  ✓ FFT 重建 {total_recon} 個筆畫 (n_coeffs={n_coeffs})")
+        return res_img
+
     except Exception as e:
-        print(f"修復中斷: {e}")
+        print(f"  修復中斷: {e}")
         return img_data
 
 def create_comparison_report(img_path, damage_type="noise", intensity=0.3, severity="medium"):
-    """產出 2x4 對照報告圖表
-    
-    Args:
-        img_path: 原始圖像路徑
-        damage_type: 破壞類型
-        intensity: 破壞強度
-        severity: 破壞等級 (light/medium/heavy)
-    """
+    """產出 2x4 對照報告圖表"""
+    IMG_SIZE = 128  # 提高解析度（原本 64 太小）
+
     original = cv2.imread(img_path, 0)
     if original is None: return
-    original = cv2.resize(original, (64, 64))
+    original = cv2.resize(original, (IMG_SIZE, IMG_SIZE))
     damaged = add_damage(original, damage_type, intensity, severity)
-    
-    # 測試係數級距 [50, 100]
+
+    # 測試兩種係數級距
     res_low = restore_with_magic(damaged, n_coeffs=50)
     res_high = restore_with_magic(damaged, n_coeffs=100)
-    
+
     fig, axes = plt.subplots(2, 4, figsize=(16, 9))
     imgs = [original, damaged, res_low, res_high]
-    
-    # 改进的标题，包含破坏类型和等级信息
+
     damage_names = {
-        "noise": "噪声 (noise)",
-        "erosion": "侵蚀 (erosion)", 
-        "occlusion": "遮挡 (occlusion)"
+        "noise": "Noise",
+        "erosion": "Erosion",
+        "occlusion": "Occlusion"
     }
     damage_display = damage_names.get(damage_type, damage_type)
-    
+
     titles = [
-        "Original", 
-        f"Damaged ({damage_display})", 
-        "Restored (N=50)", 
+        "Original",
+        f"Damaged ({damage_display})",
+        "Restored (N=50)",
         "Restored (N=100)"
     ]
-    
+
+    # 上排：完整圖片
     for i in range(4):
-        axes[0, i].imshow(imgs[i], cmap='gray')
+        axes[0, i].imshow(imgs[i], cmap='gray', vmin=0, vmax=255)
         axes[0, i].set_title(titles[i], fontsize=13, fontweight='bold', pad=8)
         axes[0, i].axis('off')
-        
+
+    # 下排：中央局部放大（取中間 60% 區域）
+    margin = IMG_SIZE // 5
     for i in range(4):
-        zoom = imgs[i][17:47, 17:47] # 局部放大
-        axes[1, i].imshow(zoom, cmap='gray')
+        zoom = imgs[i][margin:IMG_SIZE-margin, margin:IMG_SIZE-margin]
+        axes[1, i].imshow(zoom, cmap='gray', vmin=0, vmax=255)
         axes[1, i].set_title("Detail View", fontsize=10, pad=5)
         axes[1, i].axis('off')
 
-    plt.suptitle(f"Digital Restoration Analysis: {damage_type.upper()}", 
+    plt.suptitle(f"Digital Restoration Analysis: {damage_type.upper()}",
                  fontsize=18, fontweight='bold', y=0.98)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    plt.savefig(f"./output/restoration_{damage_type}_magic.png", dpi=300, bbox_inches='tight')
+    out_path = f"./output/restoration_{damage_type}_magic.png"
+    plt.savefig(out_path, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"✅ 報告已生成: ./output/restoration_{damage_type}_magic.png")
+    print(f"  ✅ 報告已生成: {out_path}")
