@@ -6,7 +6,10 @@ images/
 images/*.svg
 video/
 
-data/
+# 排除大部分 data 圖片，只保留每個書法家編號 0001-0100 的圖片（約100張）
+data/*/*.jpg
+!data/*/00[0-9][0-9].jpg
+!data/*/010[0-9].jpg
 
 __pycache__/
 *.pyc
