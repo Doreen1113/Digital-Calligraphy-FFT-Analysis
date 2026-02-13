@@ -30,61 +30,62 @@ def add_damage(image, damage_type="noise", intensity=0.3, severity="medium"):
     
     # 定义三级强度映射
     severity_params = {
-        'light': {'noise_ratio': 0.05, 'erosion_kernel': 2, 'occlusion_count': 2},
-        'medium': {'noise_ratio': 0.10, 'erosion_kernel': 3, 'occlusion_count': 3},
-        'heavy': {'noise_ratio': 0.20, 'erosion_kernel': 4, 'occlusion_count': 5}
+        'light': {'noise_ratio': 0.08, 'erosion_kernel': 3, 'occlusion_count': 2},
+        'medium': {'noise_ratio': 0.15, 'erosion_kernel': 4, 'occlusion_count': 3},
+        'heavy': {'noise_ratio': 0.25, 'erosion_kernel': 5, 'occlusion_count': 5}
     }
     params = severity_params.get(severity, severity_params['medium'])
-    
+
     if damage_type == "noise":
-        # 🎯 椒盐噪声：密密麻麻的黑白像素点
-        noise_ratio = params['noise_ratio'] * intensity
+        # 🎯 椒盐噪声：用灰色調而非純黑，避免與筆畫混淆
+        noise_ratio = params['noise_ratio']
         salt_pepper_mask = np.random.rand(h, w) < noise_ratio
-        salt_mask = np.random.rand(h, w) > 0.5  # 50% 白点, 50% 黑点
-        
-        damaged[salt_pepper_mask & salt_mask] = 255  # 盐噪声 (白点)
-        damaged[salt_pepper_mask & ~salt_mask] = 0   # 椒噪声 (黑点)
-        
-        # 混合轻微高斯噪声增加真实感
-        gaussian_noise = np.random.normal(0, intensity * 15, image.shape).astype(np.int16)
+        salt_mask = np.random.rand(h, w) > 0.5
+
+        # 白點保持 255，「暗點」用中灰色 (120~180) 而非純黑
+        damaged[salt_pepper_mask & salt_mask] = 255
+        damaged[salt_pepper_mask & ~salt_mask] = np.random.randint(100, 170)
+
+        # 高斯噪声加大
+        gaussian_noise = np.random.normal(0, intensity * 30, image.shape).astype(np.int16)
         damaged = np.clip(damaged.astype(np.int16) + gaussian_noise, 0, 255).astype(np.uint8)
-        
+
     elif damage_type == "erosion":
-        # 🎯 形态学侵蚀：笔画变细，转折处轻微断裂
+        # 🎯 形态学侵蚀：加大 kernel 使效果明顯可見
         kernel_size = params['erosion_kernel']
-        # 使用椭圆形kernel使效果更自然
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
-        # 对于黑色笔画(0)在白色背景(255)上，使用dilate使黑色区域变细
+        # 對黑色筆畫(0)在白色背景(255)上，dilate 使黑色區域縮小
         damaged = cv2.dilate(damaged, kernel, iterations=1)
-        
+
     elif damage_type == "occlusion":
-        # 🎯 多区域遮挡：模拟墨水污渍、印章、纸张破损
+        # 🎯 半透明遮擋：用淺色方塊混合原圖，不用黑色
         num_occlusions = params['occlusion_count']
-        
+
         for _ in range(num_occlusions):
-            # 隨機大小：10×10 到 25×25 像素（更明顯的遮擋）
-            box_w = np.random.randint(int(w * 0.15), int(w * 0.40))
-            box_h = np.random.randint(int(h * 0.15), int(h * 0.40))
-            
-            # 随机位置
+            box_w = np.random.randint(int(w * 0.15), int(w * 0.35))
+            box_h = np.random.randint(int(h * 0.15), int(h * 0.35))
+
             if h > box_h and w > box_w:
                 y = np.random.randint(0, h - box_h)
                 x = np.random.randint(0, w - box_w)
-                
-                # 随机遮挡类型：浅灰污渍 (70%) 或深色墨水 (30%)
-                if np.random.rand() > 0.3:
-                    occlusion_value = np.random.randint(180, 230)  # 浅灰污渍
-                else:
-                    occlusion_value = np.random.randint(0, 50)     # 深色墨水
-                
-                # 创建遮挡区域
-                damaged[y:y+box_h, x:x+box_w] = occlusion_value
-                
-                # 添加边缘渐变使遮挡更自然
-                roi = damaged[max(0,y-1):min(h,y+box_h+1), max(0,x-1):min(w,x+box_w+1)]
-                if roi.size > 0:
-                    blurred = cv2.GaussianBlur(roi, (3, 3), 0)
-                    damaged[max(0,y-1):min(h,y+box_h+1), max(0,x-1):min(w,x+box_w+1)] = blurred
+
+                # 遮擋顏色：淺灰到中灰 (150~220)，絕不用黑色
+                occlusion_value = np.random.randint(150, 220)
+
+                # 半透明混合 (alpha=0.5~0.7)，讓底下筆畫隱約可見
+                alpha = np.random.uniform(0.5, 0.7)
+                roi = damaged[y:y+box_h, x:x+box_w].astype(np.float32)
+                blended = roi * (1 - alpha) + occlusion_value * alpha
+                damaged[y:y+box_h, x:x+box_w] = blended.astype(np.uint8)
+
+                # 邊緣高斯模糊使過渡更自然
+                pad = 2
+                y0, y1 = max(0, y - pad), min(h, y + box_h + pad)
+                x0, x1 = max(0, x - pad), min(w, x + box_w + pad)
+                roi_blur = damaged[y0:y1, x0:x1]
+                if roi_blur.size > 0:
+                    blurred = cv2.GaussianBlur(roi_blur, (5, 5), 0)
+                    damaged[y0:y1, x0:x1] = blurred
     
     return damaged
 
