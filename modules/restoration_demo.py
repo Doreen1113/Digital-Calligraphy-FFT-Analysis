@@ -30,9 +30,9 @@ def add_damage(image, damage_type="noise", intensity=0.3, severity="medium"):
     
     # 定义三级强度映射
     severity_params = {
-        'light': {'noise_ratio': 0.08, 'erosion_kernel': 3, 'occlusion_count': 2},
-        'medium': {'noise_ratio': 0.15, 'erosion_kernel': 4, 'occlusion_count': 3},
-        'heavy': {'noise_ratio': 0.25, 'erosion_kernel': 5, 'occlusion_count': 5}
+        'light': {'noise_ratio': 0.08, 'erosion_kernel': 3, 'occlusion_count': 4},
+        'medium': {'noise_ratio': 0.15, 'erosion_kernel': 4, 'occlusion_count': 6},
+        'heavy': {'noise_ratio': 0.25, 'erosion_kernel': 5, 'occlusion_count': 9}
     }
     params = severity_params.get(severity, severity_params['medium'])
 
@@ -62,8 +62,8 @@ def add_damage(image, damage_type="noise", intensity=0.3, severity="medium"):
         num_occlusions = params['occlusion_count']
 
         for _ in range(num_occlusions):
-            box_w = np.random.randint(int(w * 0.15), int(w * 0.35))
-            box_h = np.random.randint(int(h * 0.15), int(h * 0.35))
+            box_w = np.random.randint(int(w * 0.20), int(w * 0.45))
+            box_h = np.random.randint(int(h * 0.20), int(h * 0.45))
 
             if h > box_h and w > box_w:
                 y = np.random.randint(0, h - box_h)
@@ -171,9 +171,9 @@ def create_comparison_report(img_path, damage_type="noise", intensity=0.3, sever
     original = cv2.resize(original, (IMG_SIZE, IMG_SIZE))
     damaged = add_damage(original, damage_type, intensity, severity)
 
-    # 測試兩種係數級距
-    res_low = restore_with_magic(damaged, n_coeffs=50)
-    res_high = restore_with_magic(damaged, n_coeffs=100)
+    # 測試兩種係數級距：N=20 平滑但丟細節，N=80 保留更多筆畫特徵
+    res_low = restore_with_magic(damaged, n_coeffs=20)
+    res_high = restore_with_magic(damaged, n_coeffs=80)
 
     fig, axes = plt.subplots(2, 4, figsize=(16, 9))
     imgs = [original, damaged, res_low, res_high]
@@ -188,8 +188,8 @@ def create_comparison_report(img_path, damage_type="noise", intensity=0.3, sever
     titles = [
         "Original",
         f"Damaged ({damage_display})",
-        "Restored (N=50)",
-        "Restored (N=100)"
+        "Restored (N=20)",
+        "Restored (N=80)"
     ]
 
     # 上排：完整圖片
