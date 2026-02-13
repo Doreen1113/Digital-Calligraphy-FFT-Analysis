@@ -387,7 +387,7 @@ if __name__ == "__main__":
     print("\n📊 實際生成的報告文件（請至 ./output/ 查看）：")
     print(f"   ./output/style_analysis_report.png        (風格對比圖)")
     print(f"   ./output/similarity_matrix.png             (相似度熱圖)")
-    print(f"   ./output/restoration_noise_solid.png       (抗噪實心測試)") # 修正這裡   
-    print(f"   ./output/restoration_erosion_solid.png     (抗侵蝕實心測試)") # 修正這裡
-    print(f"   ./output/restoration_occlusion_solid.png   (抗遮蔽實心測試)") # 修正這裡
+    print(f"   ./output/restoration_noise_magic.png       (噪聲破壞與修復)")
+    print(f"   ./output/restoration_erosion_magic.png     (侵蝕破壞與修復)")
+    print(f"   ./output/restoration_occlusion_magic.png   (遮擋破壞與修復)")
     print("="*70)
