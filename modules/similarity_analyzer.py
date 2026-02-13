@@ -38,40 +38,38 @@ def cosine_similarity(vec1, vec2):
 def compute_similarity_matrix(styles_results):
     """
     根據風格頻譜向量計算相似度矩陣
-    
-    輸入: styles_results = {
-            "Yan_Zhenqing": [0.5, 0.3, 0.2, ...],
-            "Liu_Gongquan": [0.4, 0.35, 0.22, ...],
-            ...
-         }
-    
-    輸出: 
-        - similarity_matrix (DataFrame): N×N 相似度矩陣
-        - similarity_scores (dict): 成對相似度分析
+
+    先對特徵做 z-score 標準化，再計算 cosine similarity，
+    避免被數值範圍大的特徵（如 low-freq energy）主導。
     """
     names = sorted(styles_results.keys())
     n = len(names)
-    
-    # 初始化相似度矩陣
+
+    # z-score 標準化：讓每個特徵維度對相似度有同等貢獻
+    raw = np.array([np.asarray(styles_results[name]) for name in names])
+    mean = raw.mean(axis=0)
+    std = raw.std(axis=0)
+    std[std < 1e-10] = 1  # 避免除以零
+    standardized = {name: (np.asarray(styles_results[name]) - mean) / std
+                    for name in names}
+
+    # 計算所有成對相似度（z-score 後 cosine = Pearson correlation，範圍 [-1,1]）
+    # 映射到 [0, 1]：(1 + r) / 2
     sim_matrix = np.zeros((n, n))
-    
-    # 計算所有成對相似度
     for i in range(n):
         for j in range(n):
-            vec_i = styles_results[names[i]]
-            vec_j = styles_results[names[j]]
-            sim_matrix[i, j] = cosine_similarity(vec_i, vec_j)
-    
-    # 轉換為 DataFrame（更好看）
+            raw_sim = cosine_similarity(standardized[names[i]],
+                                        standardized[names[j]])
+            sim_matrix[i, j] = (1 + raw_sim) / 2  # 映射到 [0, 1]
+
     df = pd.DataFrame(sim_matrix, index=names, columns=names)
-    
-    # 計算成對相似度分析
+
     similarity_scores = {}
     for i in range(n):
         for j in range(i + 1, n):
             pair = f"{names[i]} <-> {names[j]}"
             similarity_scores[pair] = sim_matrix[i, j]
-    
+
     return df, similarity_scores
 
 

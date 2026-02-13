@@ -138,18 +138,22 @@ def restore_with_magic(img_data, n_coeffs=40):
             print(f"  ⚠️ FFT 重建失敗")
             return img_data
 
-        # 5. 將所有重建的筆畫畫回圖片
+        # 5. 在 4x 高解析度畫布繪製再縮放回來（抗鋸齒）
+        scale = 4
+        hi_res = np.ones((h * scale, w * scale), dtype=np.uint8) * 255
         total_recon = 0
         for stroke_pts in recon_strokes:
             if len(stroke_pts) < 3:
                 continue
             pts = np.array(stroke_pts, dtype=np.float32)
-            pts[:, 0] = np.clip(pts[:, 0], 0, w - 1)
-            pts[:, 1] = np.clip(pts[:, 1], 0, h - 1)
+            pts[:, 0] = np.clip(pts[:, 0] * scale, 0, w * scale - 1)
+            pts[:, 1] = np.clip(pts[:, 1] * scale, 0, h * scale - 1)
             pts = pts.reshape((-1, 1, 2)).astype(np.int32)
-            cv2.fillPoly(res_img, [pts], 0)
+            cv2.fillPoly(hi_res, [pts], 0)
             total_recon += 1
 
+        # 縮放回原始尺寸 — INTER_AREA 自然產生抗鋸齒灰階
+        res_img = cv2.resize(hi_res, (w, h), interpolation=cv2.INTER_AREA)
         print(f"  ✓ FFT 重建 {total_recon} 個筆畫 (n_coeffs={n_coeffs})")
         return res_img
 
