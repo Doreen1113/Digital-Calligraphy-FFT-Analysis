@@ -240,6 +240,24 @@ def run_style_analysis(max_samples=None):
     except ImportError:
         print("   [Warning] similarity_analyzer module not found, skipping")
 
+    # 產生進階視覺化（雷達圖等）
+    try:
+        from src.analysis.visualization import (
+            create_comprehensive_report,
+            print_feature_insights
+        )
+
+        print("\n 產生進階視覺化圖表...")
+        viz_files = create_comprehensive_report(styles_results, output_dir)
+
+        print("\n 分析風格特徵洞察...")
+        print_feature_insights(styles_results)
+
+    except ImportError as e:
+        print(f"   [Warning] visualization module not found: {e}")
+    except Exception as e:
+        print(f"   [Warning] 進階視覺化產生失敗: {e}")
+
     # Print processing statistics
     print("\n 處理統計:")
     print("-" * 70)
@@ -251,8 +269,11 @@ def run_style_analysis(max_samples=None):
     print("-" * 70)
 
     print(f"\n 分析完成！")
-    print(f"   - 報告: {report_path}")
+    print(f"   - 基礎報告: {report_path}")
     print(f"   - 相似度熱力圖: {os.path.join(output_dir, 'similarity_matrix.png')}")
+    print(f"   - 風格雷達圖: {os.path.join(output_dir, 'style_radar_chart.png')}")
+    print(f"   - 特徵解釋面板: {os.path.join(output_dir, 'feature_explanation.png')}")
+    print(f"   - 特徵比較圖: {os.path.join(output_dir, 'feature_comparison_bars.png')}")
     print("="*70 + "\n")
 
 
