@@ -34,8 +34,9 @@ def print_menu():
     print("  2. 執行 FFT 風格分析")
     print("  3. 同字比對器（互動模式）")
     print("  4. 批次同字比對")
-    print("  5. 查看索引統計")
-    print("  6. 預處理工具選單")
+    print("  5. 字元搜尋與過濾")
+    print("  6. 查看索引統計")
+    print("  7. 預處理工具選單")
     print("  0. 離開")
     print("-"*70)
 
@@ -145,6 +146,13 @@ def view_index_statistics():
     input()
 
 
+def character_search():
+    """字元搜尋與過濾"""
+    print("\n[INFO] 啟動字元搜尋工具...")
+    from tools.analysis.character_search import interactive_search
+    interactive_search()
+
+
 def preprocessing_menu():
     """預處理工具選單"""
     while True:
@@ -182,7 +190,7 @@ def main():
 
     while True:
         print_menu()
-        choice = input("\n請選擇功能 (0-6): ").strip()
+        choice = input("\n請選擇功能 (0-7): ").strip()
 
         try:
             if choice == '0':
@@ -206,13 +214,16 @@ def main():
                 batch_character_comparison()
 
             elif choice == '5':
-                view_index_statistics()
+                character_search()
 
             elif choice == '6':
+                view_index_statistics()
+
+            elif choice == '7':
                 preprocessing_menu()
 
             else:
-                print("[Error] 無效選項，請輸入 0-6")
+                print("[Error] 無效選項，請輸入 0-7")
 
         except KeyboardInterrupt:
             print("\n\n程式中斷。再見！\n")

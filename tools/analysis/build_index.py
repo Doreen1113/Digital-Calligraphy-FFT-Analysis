@@ -8,8 +8,11 @@ from pathlib import Path
 # 設定 UTF-8 編碼（Windows）
 if sys.platform == 'win32':
     import codecs
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
-    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+    # 檢查 stdout 是否已經是 codecs writer（避免重複包裝）
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    if hasattr(sys.stderr, 'buffer'):
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 # 添加專案根目錄到 Python 路徑
 project_root = Path(__file__).parent.parent.parent
