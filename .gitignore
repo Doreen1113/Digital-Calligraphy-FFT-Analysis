@@ -54,3 +54,9 @@ Fonts/temp.py
 
 # 排除處理計劃檔案
 project_restructure_plan.md
+
+test*.py
+QUICK_COMMIT.sh
+*.md
+output/*.png
+output/comparison_*.png
