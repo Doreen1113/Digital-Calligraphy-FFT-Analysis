@@ -1,16 +1,45 @@
 *.txt
 !requirements.txt
+!Fonts/list.txt
+!Fonts/input.txt
 __pycache__
 
 images/
 images/*.svg
 video/
 
-# 排除大部分 data 圖片，只保留每個書法家編號 0001-0100 的圖片（約100張）
+# 排除大部分圖片（只保留少量範例）
 data/*/*.jpg
-!data/*/00[0-9][0-9].jpg
-!data/*/010[0-9].jpg
+data/*/*.png
+!data/*/char_000[1-5].png
+!data/*/char_000[1-5].jpg
+!data/*/font_*_000[1-5].png
 
+# 排除舊資料備份
+data/archived/
+
+# 排除 Fonts 目錄下的所有圖片
+Fonts/**/*.jpg
+Fonts/**/*.png
+!Fonts/sample_*.jpg
+
+# 排除臨時檔案與快取
 __pycache__/
 *.pyc
 images/final_*.png
+temp_restore_work.*
+output/temp/
+*.bak
+*.tmp
+
+# 排除虛擬環境
+.venv/
+venv/
+
+# 排除 IDE 設定（保留 .vscode）
+.idea/
+*.swp
+*.swo
+
+# 排除 Claude 工作目錄
+.claude/worktrees/
