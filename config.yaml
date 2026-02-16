@@ -1,0 +1,97 @@
+# 書法風格分析系統配置檔
+
+# === 專案資訊 ===
+project:
+  name: "書法風格學習與比對系統"
+  version: "2.0"
+  description: "使用傅立葉描述子分析書法風格，支援同字比對與風格查詢"
+
+# === 字庫配置 ===
+fonts:
+  base_dir: "./data/fonts"
+
+  # 4 位書法家字庫
+  calligraphers:
+    - id: "00"
+      name: "智永"
+      dynasty: "南北朝"
+      style: "楷書"
+      image_dir: "./data/fonts/00_智永/images"
+      labels_file: "./data/fonts/00_智永/labels.csv"
+      total_chars: 1000
+      description: "智永禪師，南朝陳至隋代書法家，王羲之七世孫"
+
+    - id: "01"
+      name: "沈尹默"
+      dynasty: "近代"
+      style: "楷書"
+      image_dir: "./data/fonts/01_沈尹默/images"
+      labels_file: "./data/fonts/01_沈尹默/labels.csv"
+      total_chars: 897
+      description: "沈尹默（1883-1971），近代著名書法家"
+
+    - id: "02"
+      name: "顏真卿"
+      dynasty: "唐代"
+      style: "楷書"
+      image_dir: "./data/fonts/02_顏真卿/images"
+      labels_file: "./data/fonts/02_顏真卿/labels.csv"
+      total_chars: 352
+      description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
+
+    - id: "03"
+      name: "歐陽詢"
+      dynasty: "唐代"
+      style: "楷書"
+      image_dir: "./data/fonts/03_歐陽詢/images"
+      labels_file: "./data/fonts/03_歐陽詢/labels.csv"
+      total_chars: 560
+      description: "歐陽詢（557-641），唐代書法家，楷書四大家之一"
+
+# === 索引配置 ===
+index:
+  fonts_index: "./data/index/fonts_index.json"
+  character_index: "./data/index/character_index.json"
+  style_features: "./data/index/style_features.json"
+  similarity_matrix: "./data/index/similarity_matrix.json"
+
+# === FFT 分析參數 ===
+fft:
+  n_coefficients: 50      # 傅立葉係數數量
+  target_length: 50       # 目標頻率長度
+  canvas_size: 512        # 畫布尺寸
+
+# === 風格分析參數 ===
+style_analysis:
+  features:
+    - "low_freq_energy"     # 低頻能量（整體結構）
+    - "mid_freq_energy"     # 中頻能量（筆畫特徵）
+    - "high_freq_energy"    # 高頻能量（細節）
+    - "spectral_centroid"   # 頻譜重心
+    - "dc_fund_ratio"       # DC/基頻比
+    - "spectral_slope"      # 頻譜斜率
+    - "hf_decay_rate"       # 高頻衰減率
+
+  max_samples: 30           # 每位書法家的最大樣本數（快速測試用）
+  full_samples: null        # null = 使用所有樣本
+
+# === 輸出配置 ===
+output:
+  base_dir: "./output"
+  reports: "./output/reports"
+  animations: "./output/animations"
+  temp: "./output/temp"
+
+# === GUI 配置 ===
+gui:
+  window_width: 1550
+  window_height: 880
+  animation_view_width: 1200
+  animation_view_height: 800
+  default_coefficients: 50
+
+# === 臨時檔案 ===
+temp:
+  clean_image: "./output/temp/temp_clean.png"
+  svg_file: "./output/temp/temp.svg"
+  binary_file: "./output/temp/temp_binary.png"
