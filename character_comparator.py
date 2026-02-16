@@ -12,8 +12,11 @@ import matplotlib.font_manager as fm
 # Set UTF-8 encoding for Windows console
 if sys.platform == 'win32':
     import codecs
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
-    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+    # 檢查 stdout 是否已經是 codecs writer（避免重複包裝）
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    if hasattr(sys.stderr, 'buffer'):
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 sys.path.insert(0, os.path.dirname(__file__))
 
