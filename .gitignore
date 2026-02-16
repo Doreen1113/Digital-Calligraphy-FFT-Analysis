@@ -42,4 +42,15 @@ venv/
 *.swo
 
 # 排除 Claude 工作目錄
-.claude/worktrees/
+.claude/
+
+# 排除字庫原始處理檔案
+Fonts/kaggle_dataset/
+Fonts/original/
+Fonts/source/
+Fonts/img_downloader.py
+Fonts/process.py
+Fonts/temp.py
+
+# 排除處理計劃檔案
+project_restructure_plan.md
