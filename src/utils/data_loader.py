@@ -13,14 +13,26 @@ class FontDataLoader:
         self.config = get_config()
         self.calligraphers = self.config.get_calligraphers()
 
-    def get_calligrapher_list(self) -> List[str]:
-        """取得所有書法家名稱列表"""
+    def get_calligrapher_list(self, use_display_name: bool = True) -> List[str]:
+        """取得所有書法家名稱列表
+
+        Args:
+            use_display_name: True 返回中文顯示名稱，False 返回英文路徑名稱
+        """
+        if use_display_name:
+            return [cal['display_name'] for cal in self.calligraphers]
         return [cal['name'] for cal in self.calligraphers]
 
-    def get_calligrapher_info(self, name: str) -> Optional[Dict]:
-        """根據名稱取得書法家資訊"""
+    def get_calligrapher_info(self, name: str, by_display_name: bool = False) -> Optional[Dict]:
+        """根據名稱取得書法家資訊
+
+        Args:
+            name: 書法家名稱（英文或中文）
+            by_display_name: True 表示 name 是中文顯示名稱，False 表示是英文路徑名稱
+        """
+        key = 'display_name' if by_display_name else 'name'
         for cal in self.calligraphers:
-            if cal['name'] == name:
+            if cal[key] == name:
                 return cal
         return None
 
@@ -134,5 +146,5 @@ class FontDataLoader:
                 stat = self.get_statistics(cal['name'])
                 stats.append(stat)
             except Exception as e:
-                print(f"⚠️  無法載入 {cal['name']} 的資料: {e}")
+                print(f"[Warning] 無法載入 {cal['display_name']} 的資料: {e}")
         return stats

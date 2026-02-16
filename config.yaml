@@ -10,41 +10,45 @@ project:
 fonts:
   base_dir: "./data/fonts"
 
-  # 4 位書法家字庫
+  # 4 位書法家（name用英文作為路徑/ID，display_name為顯示用中文）
   calligraphers:
     - id: "00"
-      name: "智永"
+      name: "zhiyong"
+      display_name: "智永"
       dynasty: "南北朝"
       style: "楷書"
-      image_dir: "./data/fonts/00_智永/images"
-      labels_file: "./data/fonts/00_智永/labels.csv"
+      image_dir: "./Fonts/my_fonts/00"
+      labels_file: "./Fonts/my_fonts/csv/00.csv"
       total_chars: 1000
       description: "智永禪師，南朝陳至隋代書法家，王羲之七世孫"
 
     - id: "01"
-      name: "沈尹默"
+      name: "shen_yinmo"
+      display_name: "沈尹默"
       dynasty: "近代"
       style: "楷書"
-      image_dir: "./data/fonts/01_沈尹默/images"
-      labels_file: "./data/fonts/01_沈尹默/labels.csv"
+      image_dir: "./Fonts/my_fonts/01"
+      labels_file: "./Fonts/my_fonts/csv/01.csv"
       total_chars: 897
       description: "沈尹默（1883-1971），近代著名書法家"
 
     - id: "02"
-      name: "顏真卿"
+      name: "yan_zhenqing"
+      display_name: "顏真卿"
       dynasty: "唐代"
       style: "楷書"
-      image_dir: "./data/fonts/02_顏真卿/images"
-      labels_file: "./data/fonts/02_顏真卿/labels.csv"
+      image_dir: "./Fonts/my_fonts/02"
+      labels_file: "./Fonts/my_fonts/csv/02.csv"
       total_chars: 352
       description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
 
     - id: "03"
-      name: "歐陽詢"
+      name: "ouyang_xun"
+      display_name: "歐陽詢"
       dynasty: "唐代"
       style: "楷書"
-      image_dir: "./data/fonts/03_歐陽詢/images"
-      labels_file: "./data/fonts/03_歐陽詢/labels.csv"
+      image_dir: "./Fonts/my_fonts/03"
+      labels_file: "./Fonts/my_fonts/csv/03.csv"
       total_chars: 560
       description: "歐陽詢（557-641），唐代書法家，楷書四大家之一"
 

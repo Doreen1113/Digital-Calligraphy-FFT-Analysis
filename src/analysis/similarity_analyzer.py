@@ -1,7 +1,7 @@
 """
-相似度量化模組
-計算不同書法家風格之間的相似度（Cosine Similarity）
-產出相似度矩陣與熱圖
+Similarity Quantification Module
+Calculate similarity between different calligraphy styles using Cosine Similarity
+Generate similarity matrix and heatmap
 """
 
 import numpy as np
@@ -10,57 +10,70 @@ import seaborn as sns
 from scipy.spatial.distance import cosine
 import pandas as pd
 
+# Configure matplotlib for Chinese characters
+import matplotlib.font_manager as fm
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'SimSun', 'sans-serif']
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['axes.unicode_minus'] = False
+
+# Force matplotlib to use Chinese fonts
+try:
+    import matplotlib
+    matplotlib.font_manager._rebuild()
+except:
+    pass
+
 
 def cosine_similarity(vec1, vec2):
     """
-    計算兩個向量的餘弦相似度
-    
-    範圍: [0, 1]
-    - 1.0 = 完全相同
-    - 0.5 = 中等相似
-    - 0.0 = 完全不同
+    Calculate cosine similarity between two vectors
+
+    Range: [0, 1]
+    - 1.0 = Identical
+    - 0.5 = Moderate similarity
+    - 0.0 = Completely different
     """
     if len(vec1) == 0 or len(vec2) == 0:
         return 0.0
-    
-    # 正規化向量長度
+
+    # Normalize vector length
     vec1 = np.asarray(vec1)
     vec2 = np.asarray(vec2)
-    
-    # 處理零向量
+
+    # Handle zero vectors
     if np.linalg.norm(vec1) == 0 or np.linalg.norm(vec2) == 0:
         return 0.0
-    
-    # 計算餘弦相似度
+
+    # Calculate cosine similarity
     return 1 - cosine(vec1, vec2)
 
 
 def compute_similarity_matrix(styles_results):
     """
-    根據風格頻譜向量計算相似度矩陣
+    Calculate similarity matrix based on style spectrum vectors
 
-    先對特徵做 z-score 標準化，再計算 cosine similarity，
-    避免被數值範圍大的特徵（如 low-freq energy）主導。
+    Apply z-score normalization first, then compute cosine similarity,
+    to avoid being dominated by features with large numeric ranges (e.g., low-freq energy).
     """
     names = sorted(styles_results.keys())
     n = len(names)
 
-    # z-score 標準化：讓每個特徵維度對相似度有同等貢獻
+    # z-score normalization: equal contribution from each feature dimension
     raw = np.array([np.asarray(styles_results[name]) for name in names])
     mean = raw.mean(axis=0)
     std = raw.std(axis=0)
-    std[std < 1e-10] = 1  # 避免除以零
+    std[std < 1e-10] = 1  # Avoid division by zero
     standardized = {name: (np.asarray(styles_results[name]) - mean) / std
                     for name in names}
 
-    # 計算所有成對相似度（z-score 後 cosine = Pearson correlation，範圍 [-1,1]）
-    # 映射到 [0, 1]：(1 + r) / 2
+    # Calculate pairwise similarities (z-score + cosine = Pearson correlation, range [-1,1])
+    # Map to [0, 1]: (1 + r) / 2
     sim_matrix = np.zeros((n, n))
     for i in range(n):
         for j in range(n):
             raw_sim = cosine_similarity(standardized[names[i]],
                                         standardized[names[j]])
-            sim_matrix[i, j] = (1 + raw_sim) / 2  # 映射到 [0, 1]
+            sim_matrix[i, j] = (1 + raw_sim) / 2  # Map to [0, 1]
 
     df = pd.DataFrame(sim_matrix, index=names, columns=names)
 
@@ -75,18 +88,18 @@ def compute_similarity_matrix(styles_results):
 
 def plot_similarity_heatmap(styles_results, output_path="./output/similarity_matrix.png"):
     """
-    繪製相似度熱圖
+    Generate similarity heatmap
     """
     sim_df, sim_scores = compute_similarity_matrix(styles_results)
-    
-    # 建立圖表
+
+    # Create figure
     fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # 熱圖
-    sns.heatmap(sim_df, 
-                annot=True, 
+
+    # Heatmap
+    sns.heatmap(sim_df,
+                annot=True,
                 fmt='.3f',
-                cmap='RdYlGn',  # 紅(低) -> 黃 -> 綠(高)
+                cmap='RdYlGn',  # Red (low) -> Yellow -> Green (high)
                 vmin=0, vmax=1,
                 cbar_kws={'label': 'Cosine Similarity'},
                 linewidths=2,
@@ -94,48 +107,65 @@ def plot_similarity_heatmap(styles_results, output_path="./output/similarity_mat
                 square=True,
                 ax=ax,
                 annot_kws={'size': 11, 'weight': 'bold'})
-    
-    ax.set_title('Calligraphy Style Similarity Matrix\n(Fourier Descriptor Analysis)', 
+
+    ax.set_title('Calligraphy Style Similarity Matrix\n(Fourier Descriptor Analysis)',
                  fontsize=14, fontweight='bold', pad=20)
-    
-    # 旋轉標籤
+
+    # Rotate labels
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
     ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
-    
+
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    
-    print(f"✅ 相似度熱圖已生成: {output_path}")
-    
+
+    print(f"[OK] Similarity heatmap generated: {output_path}")
+
     return sim_df, sim_scores
 
 
 def print_similarity_report(sim_df, sim_scores):
     """
-    列印相似度分析報告
+    Print similarity analysis report
     """
     print("\n" + "="*70)
-    print("📊 書法風格相似度分析報告 (Cosine Similarity)")
+    print(" Calligraphy Style Similarity Analysis (Cosine Similarity)")
     print("="*70)
-    
-    print("\n🔹 相似度矩陣 (完整):")
-    print(sim_df.to_string())
-    
-    print("\n\n🔹 成對相似度排名:")
+
+    print("\n Similarity Matrix (Complete):")
+    # Calculate column widths for alignment
+    names = list(sim_df.index)
+    max_name_len = max(len(str(name)) for name in names)
+
+    # Print header
+    header = " " * (max_name_len + 2)
+    for name in names:
+        header += f"{name:>12s} "
+    print(header)
+
+    # Print matrix rows
+    for i, name in enumerate(names):
+        row = f"  {name:<{max_name_len}s} "
+        for j in range(len(names)):
+            row += f"{sim_df.iloc[i, j]:11.6f} "
+        print(row)
+
+    print("\n Pairwise Similarity Ranking:")
     sorted_scores = sorted(sim_scores.items(), key=lambda x: x[1], reverse=True)
+    max_pair_len = max(len(pair) for pair, _ in sorted_scores) if sorted_scores else 40
+
     for i, (pair, score) in enumerate(sorted_scores, 1):
-        bar = "█" * int(score * 20)
-        print(f"  {i}. {pair:40s} {score:.4f} {bar}")
-    
-    print("\n🔹 解釋指南:")
-    print("  • 相似度 > 0.8: 風格極其相近（可能同時期）")
-    print("  • 相似度 0.5~0.8: 風格顯著差異但有共同特徵")
-    print("  • 相似度 < 0.5: 風格差異顯著（不同派別）")
+        bar = "#" * int(score * 20)
+        print(f"  {i}. {pair:<{max_pair_len}s} {score:.4f} {bar}")
+
+    print("\n Interpretation Guide:")
+    print("  * Similarity > 0.8: Extremely similar style (possibly same period)")
+    print("  * Similarity 0.5~0.8: Significant differences but common features")
+    print("  * Similarity < 0.5: Distinct style differences (different schools)")
     print("="*70 + "\n")
 
 
 if __name__ == "__main__":
-    # 示例：若要測試，需先匯入 main.py 的 styles_results
-    # 這裡暫時跳過，會在 main.py 中呼叫
+    # Example: To test, need to import styles_results from main.py
+    # Skip for now, will be called from main.py
     pass
