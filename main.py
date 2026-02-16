@@ -84,16 +84,9 @@ def character_comparator():
 
 def batch_character_comparison():
     """批次同字比對"""
-    print("\n" + "="*70)
-    print(" 批次同字比對")
-    print("="*70)
-    print("\n[Warning] 此功能尚未實作")
-    print("計劃功能：")
-    print("  - 輸入多個字元（如：天地人和）")
-    print("  - 自動產生所有比對圖")
-    print("  - 匯出為 PDF 報告")
-    print("\n按 Enter 返回主選單...")
-    input()
+    print("\n[INFO] 啟動批次同字比對工具...")
+    from tools.analysis.batch_comparator import interactive_mode
+    interactive_mode()
 
 
 def view_index_statistics():

@@ -59,7 +59,7 @@ run_simple_line_erase_split(
 
 ---
 
-### 4. `full_pipeline.py` ⭐ 推薦
+### 4. `full_pipeline.py`  推薦
 **用途**: 完整的一鍵處理流程
 **功能**:
 - 自動裁切紅框
