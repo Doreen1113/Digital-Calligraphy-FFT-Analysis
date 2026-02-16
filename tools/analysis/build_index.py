@@ -20,7 +20,7 @@ from src.utils import get_config, FontDataLoader
 def build_fonts_index():
     """建立字庫總索引"""
     print("\n" + "="*70)
-    print("📊 建立字庫總索引")
+    print(" 建立字庫總索引")
     print("="*70)
 
     loader = FontDataLoader()
@@ -34,7 +34,8 @@ def build_fonts_index():
 
     for cal in loader.calligraphers:
         name = cal['name']
-        print(f"\n分析: {name}")
+        display_name = cal['display_name']
+        print(f"\n分析: {display_name}")
 
         try:
             stats = loader.get_statistics(name)
@@ -42,6 +43,7 @@ def build_fonts_index():
 
             fonts_index["calligraphers"][name] = {
                 "id": cal['id'],
+                "display_name": cal['display_name'],
                 "dynasty": cal['dynasty'],
                 "style": cal['style'],
                 "description": cal['description'],
@@ -53,11 +55,11 @@ def build_fonts_index():
                 "character_list": df['character'].tolist()
             }
 
-            print(f"  ✅ 總圖片: {stats['total_images']}")
-            print(f"  ✅ 獨特字: {stats['unique_characters']}")
+            print(f"  [OK] 總圖片: {stats['total_images']}")
+            print(f"  [OK] 獨特字: {stats['unique_characters']}")
 
         except Exception as e:
-            print(f"  ❌ 錯誤: {e}")
+            print(f"  [Error] 錯誤: {e}")
 
     # 儲存索引
     index_path = config.get_index_path('fonts_index')
@@ -66,14 +68,14 @@ def build_fonts_index():
     with open(index_path, 'w', encoding='utf-8') as f:
         json.dump(fonts_index, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ 字庫索引已儲存: {index_path}")
+    print(f"\n[OK] 字庫索引已儲存: {index_path}")
     return fonts_index
 
 
 def build_character_index():
     """建立同字索引（找出所有書法家共有的字）"""
     print("\n" + "="*70)
-    print("🔍 建立同字索引")
+    print(" 建立同字索引")
     print("="*70)
 
     loader = FontDataLoader()
@@ -84,7 +86,8 @@ def build_character_index():
 
     for cal in loader.calligraphers:
         name = cal['name']
-        print(f"\n掃描: {name}")
+        display_name = cal['display_name']
+        print(f"\n掃描: {display_name}")
 
         try:
             df = loader.load_labels(name)
@@ -106,10 +109,10 @@ def build_character_index():
                     "confidence": row.get('confidence', 1.0)
                 })
 
-            print(f"  ✅ 已掃描 {len(df)} 個字")
+            print(f"  [OK] 已掃描 {len(df)} 個字")
 
         except Exception as e:
-            print(f"  ❌ 錯誤: {e}")
+            print(f"  [Error] 錯誤: {e}")
 
     # 統計結果
     print("\n" + "-"*70)
@@ -129,9 +132,11 @@ def build_character_index():
     print(f"所有書法家共有的字: {len(common_chars)}")
 
     # 統計每個書法家有多少字
-    for name in calligrapher_names:
+    for cal in loader.calligraphers:
+        name = cal['name']
+        display_name = cal['display_name']
         count = sum(1 for char_cals in character_map.values() if name in char_cals)
-        print(f"  {name}: {count} 個字")
+        print(f"  {display_name}: {count} 個字")
 
     # 建立索引結構
     character_index = {
@@ -154,8 +159,8 @@ def build_character_index():
     with open(index_path, 'w', encoding='utf-8') as f:
         json.dump(character_index, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ 同字索引已儲存: {index_path}")
-    print(f"📊 索引包含 {len(character_index['character_map'])} 個可比對的字")
+    print(f"\n[OK] 同字索引已儲存: {index_path}")
+    print(f" 索引包含 {len(character_index['character_map'])} 個可比對的字")
 
     return character_index
 
@@ -163,18 +168,18 @@ def build_character_index():
 def print_summary(fonts_index, character_index):
     """列印摘要報告"""
     print("\n" + "="*70)
-    print("📋 索引建立完成！摘要報告")
+    print(" 索引建立完成！摘要報告")
     print("="*70)
 
-    print(f"\n📚 字庫總覽:")
+    print(f"\n 字庫總覽:")
     print(f"  - 書法家數量: {fonts_index['total_calligraphers']}")
 
     for name, info in fonts_index['calligraphers'].items():
-        print(f"\n  【{name}】({info['dynasty']})")
+        print(f"\n  【{info['display_name']}】({info['dynasty']})")
         print(f"    圖片數: {info['total_images']}")
         print(f"    獨特字: {info['unique_characters']}")
 
-    print(f"\n🔍 同字索引:")
+    print(f"\n 同字索引:")
     print(f"  - 總獨特字數: {character_index['total_unique_characters']}")
     print(f"  - 所有書法家共有: {character_index['total_common_characters']} 個字")
     print(f"  - 可比對字數: {len(character_index['character_map'])} 個")
@@ -187,7 +192,7 @@ def print_summary(fonts_index, character_index):
 
 
 if __name__ == "__main__":
-    print("\n🚀 開始建立索引...")
+    print("\n[INFO] Starting index build...")
 
     # 建立字庫索引
     fonts_idx = build_fonts_index()
@@ -198,5 +203,5 @@ if __name__ == "__main__":
     # 列印摘要
     print_summary(fonts_idx, char_idx)
 
-    print("\n✅ 所有索引建立完成！")
+    print("\n[OK] 所有索引建立完成！")
     print("="*70 + "\n")

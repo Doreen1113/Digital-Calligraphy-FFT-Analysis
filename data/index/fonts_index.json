@@ -2,16 +2,17 @@
   "version": "2.0",
   "total_calligraphers": 4,
   "calligraphers": {
-    "智永": {
+    "zhiyong": {
       "id": "00",
+      "display_name": "智永",
       "dynasty": "南北朝",
       "style": "楷書",
       "description": "智永禪師，南朝陳至隋代書法家，王羲之七世孫",
       "total_images": 1000,
       "unique_characters": 1000,
       "avg_confidence": 1.0,
-      "image_dir": "./data/fonts/00_智永/images",
-      "labels_file": "./data/fonts/00_智永/labels.csv",
+      "image_dir": "./Fonts/my_fonts/00",
+      "labels_file": "./Fonts/my_fonts/csv/00.csv",
       "character_list": [
         "天",
         "地",
@@ -1015,16 +1016,17 @@
         "也"
       ]
     },
-    "沈尹默": {
+    "shen_yinmo": {
       "id": "01",
+      "display_name": "沈尹默",
       "dynasty": "近代",
       "style": "楷書",
       "description": "沈尹默（1883-1971），近代著名書法家",
       "total_images": 897,
       "unique_characters": 494,
       "avg_confidence": 1.0,
-      "image_dir": "./data/fonts/01_沈尹默/images",
-      "labels_file": "./data/fonts/01_沈尹默/labels.csv",
+      "image_dir": "./Fonts/my_fonts/01",
+      "labels_file": "./Fonts/my_fonts/csv/01.csv",
       "character_list": [
         "相",
         "親",
@@ -1925,16 +1927,17 @@
         "告"
       ]
     },
-    "顏真卿": {
+    "yan_zhenqing": {
       "id": "02",
+      "display_name": "顏真卿",
       "dynasty": "唐代",
       "style": "楷書",
       "description": "顏真卿（709-785），唐代書法家，楷書四大家之一",
       "total_images": 352,
       "unique_characters": 213,
       "avg_confidence": 1.0,
-      "image_dir": "./data/fonts/02_顏真卿/images",
-      "labels_file": "./data/fonts/02_顏真卿/labels.csv",
+      "image_dir": "./Fonts/my_fonts/02",
+      "labels_file": "./Fonts/my_fonts/csv/02.csv",
       "character_list": [
         "唐",
         "故",
@@ -2290,16 +2293,17 @@
         "尉"
       ]
     },
-    "歐陽詢": {
+    "ouyang_xun": {
       "id": "03",
+      "display_name": "歐陽詢",
       "dynasty": "唐代",
       "style": "楷書",
       "description": "歐陽詢（557-641），唐代書法家，楷書四大家之一",
       "total_images": 560,
       "unique_characters": 380,
       "avg_confidence": 1.0,
-      "image_dir": "./data/fonts/03_歐陽詢/images",
-      "labels_file": "./data/fonts/03_歐陽詢/labels.csv",
+      "image_dir": "./Fonts/my_fonts/03",
+      "labels_file": "./Fonts/my_fonts/csv/03.csv",
       "character_list": [
         "九",
         "成",
