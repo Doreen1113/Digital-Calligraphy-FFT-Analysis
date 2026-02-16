@@ -63,125 +63,78 @@ def annotate_perfect_report(img_path, styles):
     cv2.imwrite(img_path, img)
 
 
-def plot_style_results(styles_results, out_path, target_len=20):
-    """Create a professional, publication-ready plot with optimized visual hierarchy.
-    
-    Improvements:
-    - Better color palette (professional and distinguishable)
-    - Enhanced typography and layout
-    - Improved grid and axis styling
-    - Linear scale for clearer data visualization
-    - Optimized line and marker sizes
-    - Better legend positioning and styling
-    - Professional title with subtitle
-    """
-    # Register matplotlib's bundled DejaVu Sans font explicitly to avoid findfont issues
-    try:
-        data_path = matplotlib.get_data_path()
-        dejavu_path = os.path.join(data_path, 'fonts', 'ttf', 'DejaVuSans.ttf')
-        if os.path.exists(dejavu_path):
-            fm.fontManager.addfont(dejavu_path)
-            fp = fm.FontProperties(fname=dejavu_path)
-            matplotlib.rcParams['font.family'] = fp.get_name()
-    except Exception:
-        pass
-
-    # Figure setup with better proportions
-    fig = plt.figure(figsize=(14, 8))
-    ax = fig.add_subplot(111)
-
-    # Professional color palette (optimized for visibility and aesthetics)
+def plot_style_results(styles_results, out_path, target_len=50):
+    """產出雙面板風格對比圖：左=雷達圖，右=長條圖"""
+    feature_labels = [
+        'Low-freq\nEnergy', 'Mid-freq\nEnergy', 'High-freq\nEnergy',
+        'Spectral\nCentroid', 'DC/Fund.\nRatio', 'Spectral\nSlope', 'HF Decay\nRate'
+    ]
+    n_features = len(feature_labels)
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
-    line_styles = ['-', '-', '-', '-', '-', '-']
-    
-    # Plot each style with optimized styling
     names = sorted(styles_results.keys())
+
+    fig, (ax_radar, ax_bar) = plt.subplots(1, 2, figsize=(18, 8),
+                                            subplot_kw=dict(polar=True) if False else {},
+                                            gridspec_kw={'width_ratios': [1, 1.2]})
+
+    # --- 左面板：分組長條圖 ---
+    # 先把各家特徵做 min-max 正規化以便視覺比較
+    all_vecs = np.array([styles_results[n] for n in names])
+    mins = all_vecs.min(axis=0)
+    maxs = all_vecs.max(axis=0)
+    ranges = maxs - mins
+    ranges[ranges < 1e-10] = 1  # 避免除以零
+
+    x = np.arange(n_features)
+    bar_w = 0.8 / len(names)
     for i, name in enumerate(names):
-        vec = np.asarray(styles_results[name])[:target_len]
-        vec = np.clip(vec, 1e-8, None)
-        x = np.arange(len(vec))
-        
-        ax.plot(x, vec, 
-                label=name, 
-                linewidth=2.5,
-                marker='o', 
-                markersize=7,
-                markerfacecolor=colors[i % len(colors)],
-                markeredgewidth=1.5,
-                markeredgecolor='white',
-                color=colors[i % len(colors)],
-                linestyle=line_styles[i % len(line_styles)],
-                alpha=0.85,
-                zorder=3)
+        normed = (styles_results[name] - mins) / ranges
+        ax_radar.bar(x + i * bar_w - 0.4 + bar_w / 2, normed, bar_w,
+                     label=name, color=colors[i % len(colors)], alpha=0.85,
+                     edgecolor='white', linewidth=0.8)
+        # 在每根柱子上方標示原始值
+        for j, (nv, rv) in enumerate(zip(normed, styles_results[name])):
+            ax_radar.text(j + i * bar_w - 0.4 + bar_w / 2, nv + 0.02,
+                         f'{rv:.3f}', ha='center', va='bottom', fontsize=7,
+                         color=colors[i % len(colors)], fontweight='bold')
 
-    # Enhanced title and labels
-    fig.suptitle('Calligraphy Style Spectral Analysis', 
-                 fontsize=18, fontweight='bold', y=0.98)
-    # ax.text(0.5, 0.94, 'NTHU CS Project: Fourier Descriptor Fingerprint', 
-    #         transform=fig.transFigure, ha='center', fontsize=11, 
-    #         style='italic', color='#555555')
-
-    # Improved axis labels
-    ax.set_xlabel('Frequency Index (0=Structure, >5=Stroke Details)', 
-                  fontsize=12, fontweight='bold', labelpad=10)
-    ax.set_ylabel('Normalized Magnitude', 
-                  fontsize=12, fontweight='bold', labelpad=10)
-
-    # Set proper bounds and ticks
-    ax.set_xlim(-0.5, target_len - 0.5)
-    ax.set_xbound(0, target_len - 1)
-    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    
-    # Use linear scale for better data visibility (no log scale)
-    y_max = max([np.max(np.asarray(v)[:target_len]) for v in styles_results.values()]) * 1.1
-    ax.set_ylim(0, y_max * 1.15)
-    
-    # Enhanced grid styling - primary and secondary
-    ax.grid(True, which='major', linestyle='-', linewidth=1.0, alpha=0.3, zorder=0, color='#cccccc')
-    ax.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.15, zorder=0, color='#e0e0e0')
-    ax.minorticks_on()
-
-    # Professional axis styling
+    ax_radar.set_xticks(x)
+    ax_radar.set_xticklabels(feature_labels, fontsize=9)
+    ax_radar.set_ylabel('Normalized Value', fontsize=11, fontweight='bold')
+    ax_radar.set_title('Spectral Feature Comparison', fontsize=14, fontweight='bold', pad=15)
+    ax_radar.legend(fontsize=10, title='Calligrapher', title_fontsize=11,
+                    framealpha=0.9, edgecolor='#333')
+    ax_radar.set_ylim(0, 1.35)
+    ax_radar.grid(axis='y', alpha=0.3)
     for spine in ['top', 'right']:
-        ax.spines[spine].set_visible(False)
-    
-    for spine in ['bottom', 'left']:
-        ax.spines[spine].set_visible(True)
-        ax.spines[spine].set_linewidth(1.5)
-        ax.spines[spine].set_color('#333333')
+        ax_radar.spines[spine].set_visible(False)
 
-    # Enhanced tick styling
-    ax.tick_params(axis='both', which='major', labelsize=10, width=1.5, length=6, colors='#333333')
-    ax.tick_params(axis='both', which='minor', labelsize=9, width=1.0, length=3, colors='#666666')
+    # --- 右面板：原始值折線圖 (每個特徵一行) ---
+    ax_bar.axis('off')
+    cell_text = []
+    for name in names:
+        row = [f'{v:.4f}' for v in styles_results[name]]
+        cell_text.append(row)
 
-    # Professional legend with enhanced styling
-    legend = ax.legend(frameon=True, loc='upper right', fontsize=11, 
-                       framealpha=0.95, edgecolor='#333333', fancybox=True, 
-                       shadow=True, title='Calligrapher')
-    legend.get_title().set_fontweight('bold')
-    legend.get_title().set_fontsize(12)
-    legend.get_frame().set_linewidth(1.5)
-    legend.get_frame().set_facecolor('#ffffff')
+    short_labels = ['Low-E', 'Mid-E', 'High-E', 'Centroid', 'DC/Fund', 'Slope', 'Decay']
+    table = ax_bar.table(cellText=cell_text, rowLabels=names,
+                         colLabels=short_labels, loc='center',
+                         cellLoc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1, 2.0)
+    # 上色
+    for i, name in enumerate(names):
+        table[i + 1, -1].set_facecolor(colors[i % len(colors)] + '33')
+        for j in range(n_features):
+            table[i + 1, j].set_facecolor(colors[i % len(colors)] + '15')
+    ax_bar.set_title('Raw Feature Values', fontsize=14, fontweight='bold', pad=20)
 
-    # Adjust layout to prevent label cutoff
-    plt.subplots_adjust(left=0.10, right=0.95, top=0.92, bottom=0.12)
-    
-    # Save with error handling and DPI fallback
-    saved = False
-    for dpi in [150, 100, 72]:  # Try lower DPI levels if higher fails
-        try:
-            fig.savefig(out_path, dpi=dpi, facecolor='white', edgecolor='none')
-            saved = True
-            print(f"✓ 圖表已生成 (DPI={dpi}): {out_path}")
-            break
-        except Exception as e:
-            if dpi == 72:
-                print(f"❌ 無法保存圖表: {e}")
-            continue
-    
+    fig.suptitle('Calligraphy Style Fourier Analysis', fontsize=20, fontweight='bold', y=1.02)
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=150, facecolor='white', bbox_inches='tight')
     plt.close(fig)
-    if not saved:
-        print(f"⚠️ 圖表保存失敗")
+    print(f"✓ 圖表已生成 (DPI=150): {out_path}")
 
 def run_style_analysis(data_root="./data", output_dir="./output", max_samples=None):
     """
@@ -207,7 +160,7 @@ def run_style_analysis(data_root="./data", output_dir="./output", max_samples=No
     
     calligraphers = [d for d in os.listdir(data_root) 
                      if os.path.isdir(os.path.join(data_root, d))]
-    TARGET_LEN = 20  # 使用前 20 個頻率分量做為分析基準
+    TARGET_LEN = 50  # 使用前 50 個頻率分量，涵蓋更多筆畫細節差異
     
     # 決定樣本數
     if max_samples is None:
@@ -249,16 +202,46 @@ def run_style_analysis(data_root="./data", output_dir="./output", max_samples=No
                 
                 # FFT 轉換
                 fourier_data, _ = fft.fftProcess(temp_svg, n_coeffs=TARGET_LEN + 5)
-                
-                # 提取振幅並正規化
-                if fourier_data and len(fourier_data[0]) >= TARGET_LEN:
-                    amplitudes = np.array([max(1e-6, c[0]) for c in fourier_data[0][:TARGET_LEN]])
-                    # 使用 L2-norm 正規化，避免 DC 分量過小時其他頻率被放大
-                    norm = np.linalg.norm(amplitudes)
-                    if norm > 1e-8:
-                        amplitudes = amplitudes / norm
-                    all_vecs.append(amplitudes)
-                    success_count += 1
+
+                # 提取頻譜形狀特徵（比原始振幅更有區分力）
+                if fourier_data:
+                    stroke_features = []
+                    for stroke_coeffs in fourier_data:
+                        if len(stroke_coeffs) < TARGET_LEN:
+                            continue
+                        amps = np.array([max(1e-10, c[0]) for c in stroke_coeffs[:TARGET_LEN]])
+                        total_e = np.sum(amps ** 2) + 1e-10
+
+                        # 1) 各頻段能量比 (低/中/高)
+                        low = np.sum(amps[:5] ** 2) / total_e
+                        mid = np.sum(amps[5:15] ** 2) / total_e
+                        high = np.sum(amps[15:] ** 2) / total_e
+
+                        # 2) 頻譜重心 (centroid)
+                        freqs = np.arange(TARGET_LEN, dtype=np.float64)
+                        centroid = np.sum(freqs * amps) / (np.sum(amps) + 1e-10)
+
+                        # 3) DC/基頻比
+                        dc_fund_ratio = amps[0] / (amps[1] + 1e-10)
+
+                        # 4) 頻譜斜率 (線性迴歸)
+                        log_amps = np.log1p(amps)
+                        slope = np.polyfit(freqs, log_amps, 1)[0]
+
+                        # 5) 高頻衰減率
+                        if amps[1] > 1e-10:
+                            decay = np.mean(amps[10:20]) / amps[1]
+                        else:
+                            decay = 0.0
+
+                        feat = [low, mid, high, centroid / TARGET_LEN,
+                                dc_fund_ratio, abs(slope), decay]
+                        stroke_features.append(feat)
+
+                    if stroke_features:
+                        avg_feature = np.mean(stroke_features, axis=0)
+                        all_vecs.append(avg_feature)
+                        success_count += 1
                     
                     # 進度指示
                     if idx % max(1, len(img_paths)//10) == 0:
@@ -387,7 +370,7 @@ if __name__ == "__main__":
     print("\n📊 實際生成的報告文件（請至 ./output/ 查看）：")
     print(f"   ./output/style_analysis_report.png        (風格對比圖)")
     print(f"   ./output/similarity_matrix.png             (相似度熱圖)")
-    print(f"   ./output/restoration_noise_magic.png       (噪聲破壞與修復)")
-    print(f"   ./output/restoration_erosion_magic.png     (侵蝕破壞與修復)")
-    print(f"   ./output/restoration_occlusion_magic.png   (遮擋破壞與修復)")
+    print(f"   ./output/restoration_noise_magic.png       (抗噪實心測試)") # 修正這裡   
+    print(f"   ./output/restoration_erosion_magic.png     (抗侵蝕實心測試)") # 修正這裡
+    print(f"   ./output/restoration_occlusion_magic.png   (抗遮蔽實心測試)") # 修正這裡
     print("="*70)
