@@ -1,0 +1,115 @@
+/* === 書法家介紹頁樣式 === */
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.cal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.cal-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.cal-card-header {
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 1.25rem 1.5rem;
+}
+
+.cal-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.cal-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cal-card-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.cal-description {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.cal-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.cal-stat {
+    text-align: center;
+}
+
+.cal-stat-num {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.cal-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* 範例圖片 */
+.cal-samples-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+}
+
+.cal-samples {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.4rem;
+}
+
+.cal-sample-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-light);
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cal-sample-img:hover {
+    border-color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* --- 響應式 --- */
+@media (max-width: 768px) {
+    .cal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cal-samples {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

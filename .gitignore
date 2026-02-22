@@ -60,3 +60,12 @@ QUICK_COMMIT.sh
 *.md
 output/*.png
 output/comparison_*.png
+
+# 排除 Web 生成的比對圖片快取
+output/comparison/
+
+# 排除 GUI 相關檔案（如有舊版本）
+gui/
+
+# 排除臨時字體快取
+Fonts/temp/

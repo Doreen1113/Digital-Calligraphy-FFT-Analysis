@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/calligraphers.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">認識書法家</h1>
+    <p class="page-subtitle">收錄四位不同時代的楷書大師，透過 FFT 分析探索他們的風格特色</p>
+</section>
+
+<section class="cal-grid" id="calGrid">
+    <div class="loading" style="min-height:300px"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/calligraphers.js"></script>
+{% endblock %}

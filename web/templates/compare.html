@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/compare.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">批次比對</h1>
+    <p class="page-subtitle">一次輸入多個字元，批次產生比對圖片</p>
+</section>
+
+<section class="compare-form">
+    <div class="card">
+        <div class="form-row">
+            <!-- 字元輸入 -->
+            <div class="form-col">
+                <div class="input-group">
+                    <label for="batchInput">輸入字元（最多 20 字）</label>
+                    <input type="text"
+                           id="batchInput"
+                           class="form-input batch-input"
+                           placeholder="例如：天地人和"
+                           maxlength="20"
+                           autocomplete="off">
+                </div>
+                <div class="char-count">
+                    已輸入 <span id="charCount">0</span> / 20 字
+                </div>
+            </div>
+
+            <!-- 書法家選擇 -->
+            <div class="form-col">
+                <div class="input-group">
+                    <label>選擇書法家</label>
+                    <div class="checkbox-group" id="batchCalCheckboxes">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="智永" checked> 智永
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="沈尹默" checked> 沈尹默
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="顏真卿" checked> 顏真卿
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="歐陽詢" checked> 歐陽詢
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary btn-lg" onclick="doBatchCompare()">
+                產生比對圖
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- 結果區 -->
+<section id="batchResultSection" style="display:none">
+    <div class="card">
+        <h3 class="card-title">
+            比對結果
+            <span class="badge badge-count" id="batchResultCount"></span>
+        </h3>
+        <div class="batch-progress" id="batchProgress" style="display:none">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="progressText">處理中...</span>
+        </div>
+        <div class="batch-results" id="batchResults"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/compare.js"></script>
+{% endblock %}

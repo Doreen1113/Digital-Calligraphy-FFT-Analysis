@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/analysis.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">書法風格 DNA</h1>
+    <p class="page-subtitle">透過傅立葉描述子（FFT）分析，將書法風格量化為 7 維特徵向量</p>
+</section>
+
+<!-- 分析狀態 -->
+<div id="analysisStatus"></div>
+
+<!-- 雷達圖 + 相似度 -->
+<section class="analysis-charts grid-2" id="chartsSection">
+    <div class="card">
+        <h3 class="card-title">風格雷達圖</h3>
+        <div class="img-container" id="radarContainer">
+            <div class="loading" style="min-height:300px"></div>
+        </div>
+    </div>
+    <div class="card">
+        <h3 class="card-title">相似度矩陣</h3>
+        <div class="img-container" id="similarityContainer">
+            <div class="loading" style="min-height:300px"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 特徵長條圖 -->
+<section class="analysis-bars" id="barsSection">
+    <div class="card">
+        <h3 class="card-title">特徵對比</h3>
+        <div class="img-container" id="barsContainer">
+            <div class="loading" style="min-height:200px"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 特徵說明 -->
+<section class="feature-section">
+    <div class="card">
+        <h3 class="card-title">7 維特徵說明</h3>
+        <p class="feature-intro">每個特徵反映書法風格的不同面向，從整體結構到筆觸細節</p>
+        <div class="feature-grid" id="featureGrid">
+            <div class="loading" style="min-height:200px"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/analysis.js"></script>
+{% endblock %}

@@ -1,8 +1,20 @@
+# === 核心依賴 ===
 numpy
 opencv-python
 matplotlib
 pandas
-PyQt5
+scipy
+seaborn
+pyyaml
+
+# === Web 伺服器（python run_web.py）===
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+
+# === GUI（python run_gui.py）===
+# PyQt5  # 目前未使用，可選安裝
+
+# === 其他 ===
 pygame
-torch
-torchvision
