@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/index.css">
+{% endblock %}
+
+{% block content %}
+<!-- 主視覺區 -->
+<section class="hero">
+    <h1 class="hero-title">輸入一個字，看大師怎麼寫</h1>
+    <p class="hero-subtitle">比較智永、沈尹默、顏真卿、歐陽詢四位書法大師的同一個字</p>
+</section>
+
+<!-- 操作區 -->
+<section class="compare-section">
+    <div class="card">
+        <div class="compare-controls">
+            <!-- 左側：輸入區 -->
+            <div class="input-area">
+                <div class="char-input-wrapper">
+                    <input type="text"
+                           id="charInput"
+                           class="char-input"
+                           maxlength="1"
+                           placeholder="字"
+                           autocomplete="off">
+                    <button id="compareBtn" class="btn btn-primary btn-lg" onclick="doCompare()">
+                        比對
+                    </button>
+                </div>
+                <p class="input-hint">輸入一個中文字，點擊「比對」或按 Enter</p>
+            </div>
+
+            <!-- 右側：書法家選擇 -->
+            <div class="cal-select">
+                <label class="select-label">選擇書法家</label>
+                <div class="checkbox-group" id="calCheckboxes">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="智永" checked>
+                        <span>智永 <small>南北朝</small></span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="沈尹默" checked>
+                        <span>沈尹默 <small>近代</small></span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="顏真卿" checked>
+                        <span>顏真卿 <small>唐代</small></span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="歐陽詢" checked>
+                        <span>歐陽詢 <small>唐代</small></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 快速選字區 -->
+<section class="quick-select">
+    <div class="card">
+        <h3 class="card-title">快速選字 <span class="badge badge-count" id="commonCount"></span></h3>
+        <p class="quick-hint">以下是四位書法家都有的字，點擊即可比對</p>
+        <div class="char-pills" id="commonChars">
+            <div class="loading" style="min-height:60px"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 結果區 -->
+<section class="result-section" id="resultSection" style="display:none">
+    <div class="card">
+        <h3 class="card-title">比對結果</h3>
+        <div id="resultArea"></div>
+        <div id="resultInfo" class="result-info"></div>
+    </div>
+</section>
+
+<!-- 圖片放大模態 -->
+<div id="imageModal" class="modal" onclick="closeImageModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeImageModal()">&times;</button>
+        <img id="modalImage" src="" alt="放大檢視">
+        <p id="modalCaption" class="modal-caption"></p>
+    </div>
+</div>
+
+<!-- 統計區 -->
+<section class="stats-section">
+    <div class="grid-4 stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="statTotal">-</div>
+            <div class="stat-label">可比對字元</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statCommon">-</div>
+            <div class="stat-label">四家共有字</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div class="stat-label">書法大師</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">2809</div>
+            <div class="stat-label">書法圖片</div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/index.js"></script>
+{% endblock %}

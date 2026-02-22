@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/explorer.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">字元探索</h1>
+    <p class="page-subtitle">瀏覽所有可比對的字元，依書法家數量篩選</p>
+</section>
+
+<!-- 篩選與搜尋 -->
+<section class="explorer-controls">
+    <div class="card">
+        <div class="controls-row">
+            <!-- 篩選 -->
+            <div class="filter-group">
+                <label>書法家數量篩選</label>
+                <div class="filter-btns" id="filterBtns">
+                    <button class="filter-btn active" data-min="1" data-max="4" onclick="setFilter(this, 1, 4)">全部</button>
+                    <button class="filter-btn" data-min="4" data-max="4" onclick="setFilter(this, 4, 4)">4 位 (共有字)</button>
+                    <button class="filter-btn" data-min="3" data-max="4" onclick="setFilter(this, 3, 4)">3+ 位</button>
+                    <button class="filter-btn" data-min="2" data-max="4" onclick="setFilter(this, 2, 4)">2+ 位</button>
+                    <button class="filter-btn" data-min="1" data-max="1" onclick="setFilter(this, 1, 1)">僅 1 位</button>
+                </div>
+            </div>
+
+            <!-- 搜尋 -->
+            <div class="search-group">
+                <label for="searchInput">搜尋字元</label>
+                <div class="search-wrapper">
+                    <input type="text"
+                           id="searchInput"
+                           class="form-input"
+                           placeholder="輸入要搜尋的字..."
+                           autocomplete="off">
+                    <button class="btn btn-primary btn-sm" onclick="doSearch()">搜尋</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計 -->
+        <div class="stats-bar" id="statsBar">
+            <span id="filterInfo">載入中...</span>
+        </div>
+    </div>
+</section>
+
+<!-- 字元網格 -->
+<section class="explorer-grid-section">
+    <div class="card">
+        <div class="char-grid" id="charGrid">
+            <div class="loading" style="min-height:200px"></div>
+        </div>
+
+        <!-- 分頁 -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/explorer.js"></script>
+{% endblock %}

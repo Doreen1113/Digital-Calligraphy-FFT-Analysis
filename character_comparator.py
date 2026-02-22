@@ -68,13 +68,14 @@ def get_common_characters():
     return char_index.get('common_characters', [])
 
 
-def compare_character(character, output_path=None):
+def compare_character(character, output_path=None, selected_calligraphers=None):
     """
     Compare how different calligraphers write the same character
 
     Args:
         character: Chinese character to compare
         output_path: Optional path to save comparison image
+        selected_calligraphers: List of calligrapher display names to include (optional, if None shows all)
     """
     char_index = load_character_index()
     if not char_index:
@@ -97,12 +98,19 @@ def compare_character(character, output_path=None):
     print(f"\n{'='*70}")
     print(f" 比對字元: {character}")
     print(f"{'='*70}")
+    if selected_calligraphers:
+        print(f" 選中的書法家: {', '.join(selected_calligraphers)}")
     print(f" 找到 {num_cals} 位書法家:")
 
     # Load images
     images = {}
     for cal_name, instances in calligraphers.items():
         display_name = name_to_display.get(cal_name, cal_name)
+
+        # If selected_calligraphers is specified, skip non-selected ones
+        if selected_calligraphers and display_name not in selected_calligraphers:
+            continue
+
         # Use the first instance
         if instances:
             img_path = instances[0]['image_path']

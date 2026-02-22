@@ -54,7 +54,7 @@ def load_character_index() -> Optional[Dict]:
 
 
 def compare_single_character(character: str, char_map: Dict, loader: FontDataLoader,
-                            name_to_display: Dict) -> Optional[np.ndarray]:
+                            name_to_display: Dict, selected_calligraphers: Optional[List[str]] = None) -> Optional[np.ndarray]:
     """
     比對單一字元，返回合成圖片的 numpy array
 
@@ -63,6 +63,7 @@ def compare_single_character(character: str, char_map: Dict, loader: FontDataLoa
         char_map: 字元索引對應表
         loader: 資料載入器
         name_to_display: 英文名稱到中文顯示名稱的對應
+        selected_calligraphers: 要包含的書法家顯示名稱列表（可選，若為 None 則包含全部）
 
     Returns:
         合成後的圖片 array，失敗返回 None
@@ -82,6 +83,10 @@ def compare_single_character(character: str, char_map: Dict, loader: FontDataLoa
     images = {}
     for cal_name, instances in calligraphers.items():
         display_name = name_to_display.get(cal_name, cal_name)
+
+        # 若指定了選中的書法家，跳過未選中的
+        if selected_calligraphers and display_name not in selected_calligraphers:
+            continue
 
         if instances:
             img_path = instances[0]['image_path']
@@ -131,13 +136,14 @@ def compare_single_character(character: str, char_map: Dict, loader: FontDataLoa
     return img_array
 
 
-def batch_compare_to_images(characters: str, output_dir: str = "./output/batch") -> List[str]:
+def batch_compare_to_images(characters: str, output_dir: str = "./output/batch", selected_calligraphers: Optional[List[str]] = None) -> List[str]:
     """
     批次比對多個字元，輸出獨立 PNG 檔案
 
     Args:
         characters: 要比對的字元字串（如："天地人和"）
         output_dir: 輸出目錄
+        selected_calligraphers: 要包含的書法家顯示名稱列表（可選，若為 None 則包含全部）
 
     Returns:
         成功產生的檔案路徑列表
@@ -174,7 +180,7 @@ def batch_compare_to_images(characters: str, output_dir: str = "./output/batch")
     for idx, char in enumerate(valid_char_list, 1):
         print(f"[{idx}/{total}] 處理「{char}」...", end=" ")
 
-        img_array = compare_single_character(char, char_map, loader, name_to_display)
+        img_array = compare_single_character(char, char_map, loader, name_to_display, selected_calligraphers)
 
         if img_array is not None:
             # 儲存圖片
@@ -194,13 +200,14 @@ def batch_compare_to_images(characters: str, output_dir: str = "./output/batch")
     return success_files
 
 
-def batch_compare_to_pdf(characters: str, output_path: str = "./output/batch_comparison_report.pdf"):
+def batch_compare_to_pdf(characters: str, output_path: str = "./output/batch_comparison_report.pdf", selected_calligraphers: Optional[List[str]] = None):
     """
     批次比對多個字元，輸出單一 PDF 報告
 
     Args:
         characters: 要比對的字元字串（如："天地人和"）
         output_path: PDF 輸出路徑
+        selected_calligraphers: 要包含的書法家顯示名稱列表（可選，若為 None 則包含全部）
     """
     try:
         from matplotlib.backends.backend_pdf import PdfPages
@@ -257,6 +264,10 @@ def batch_compare_to_pdf(characters: str, output_path: str = "./output/batch_com
             images = {}
             for cal_name, instances in calligraphers.items():
                 display_name = name_to_display.get(cal_name, cal_name)
+
+                # 若指定了選中的書法家，跳過未選中的
+                if selected_calligraphers and display_name not in selected_calligraphers:
+                    continue
 
                 if instances:
                     img_path = instances[0]['image_path']
