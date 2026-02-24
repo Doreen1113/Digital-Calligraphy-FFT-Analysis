@@ -3,6 +3,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadBatchCalligraphers();
+
     const input = document.getElementById('batchInput');
     input.addEventListener('input', () => {
         document.getElementById('charCount').textContent = input.value.length;
@@ -11,6 +13,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') doBatchCompare();
     });
 });
+
+
+/**
+ * 動態加載批次頁面的書法家列表
+ */
+async function loadBatchCalligraphers() {
+    try {
+        const data = await api('/api/calligrapher/list');
+        const calligraphers = data.calligraphers || [];
+
+        const container = document.getElementById('batchCalCheckboxes');
+        if (!container) return;
+
+        container.innerHTML = calligraphers.map(cal =>
+            `<label class="checkbox-item">
+                <input type="checkbox" value="${escapeHtml(cal.display_name)}" checked> ${escapeHtml(cal.display_name)}
+            </label>`
+        ).join('');
+    } catch (err) {
+        console.error('無法加載書法家列表:', err);
+    }
+}
 
 
 /**

@@ -152,7 +152,8 @@ def compare_character(character, output_path=None, selected_calligraphers=None):
     for idx in range(num_images, len(axes)):
         axes[idx].axis('off')
 
-    plt.suptitle(f'字形比對: "{character}"', fontsize=18, fontweight='bold')
+    # 移除標題，使圖片更清潔
+    # plt.suptitle(f'字形比對: "{character}"', fontsize=18, fontweight='bold')
     plt.tight_layout()
 
     if output_path:

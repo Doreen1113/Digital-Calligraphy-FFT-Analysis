@@ -3,6 +3,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadCalligraphers();  // 動態加載書法家
     loadCommonCharacters();
     loadStats();
 
@@ -84,9 +85,9 @@ async function doCompare() {
         `;
 
         // 顯示資訊
-        let infoHtml = `<span class="found-list">找到 ${data.calligraphers_found.length} 位書法家：${data.calligraphers_found.join('、')}</span>`;
+        let infoHtml = `<span class="found-list">✓ 找到 ${data.calligraphers_found.length} 位書法家：${data.calligraphers_found.join('、')}</span>`;
         if (data.calligraphers_missing && data.calligraphers_missing.length > 0) {
-            infoHtml += `<br><span class="missing-list">未收錄：${data.calligraphers_missing.join('、')}</span>`;
+            infoHtml += `<br><span class="missing-list">✗ 字庫中無此字：${data.calligraphers_missing.join('、')}</span>`;
         }
         resultInfo.innerHTML = infoHtml;
 
@@ -99,6 +100,41 @@ async function doCompare() {
 
     // 滾動到結果區
     resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+
+/**
+ * 動態加載書法家列表
+ */
+async function loadCalligraphers() {
+    try {
+        const data = await api('/api/calligrapher/list');
+        const calligraphers = data.calligraphers || [];
+
+        const container = document.getElementById('calCheckboxes');
+        if (!container) return;
+
+        container.innerHTML = calligraphers.map(cal =>
+            `<label class="checkbox-item">
+                <input type="checkbox" value="${escapeHtml(cal.display_name)}" checked>
+                <span>${escapeHtml(cal.display_name)} <small>${escapeHtml(cal.dynasty)}</small></span>
+            </label>`
+        ).join('');
+
+        // 更新統計中的書法家數量和總圖片數
+        const statCalligraphers = document.getElementById('statCalligraphers');
+        if (statCalligraphers) {
+            statCalligraphers.textContent = calligraphers.length;
+        }
+
+        const totalImages = calligraphers.reduce((sum, cal) => sum + (cal.total_images || 0), 0);
+        const statImages = document.getElementById('statImages');
+        if (statImages) {
+            statImages.textContent = totalImages;
+        }
+    } catch (err) {
+        console.error('無法加載書法家列表:', err);
+    }
 }
 
 

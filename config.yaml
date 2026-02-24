@@ -52,6 +52,16 @@ fonts:
       total_chars: 560
       description: "歐陽詢（557-641），唐代書法家，楷書四大家之一"
 
+    - id: "04"
+      name: "zhao_mengfu"
+      display_name: "趙孟頫"
+      dynasty: "元代"
+      style: "楷書/行書"
+      image_dir: "./Fonts/my_fonts/04"
+      labels_file: "./Fonts/my_fonts/csv/04.csv"
+      total_chars: 497
+      description: "趙孟頫（1254-1322），元代著名書法家、畫家，精通各種書體"
+
 # === 索引配置 ===
 index:
   fonts_index: "./data/index/fonts_index.json"

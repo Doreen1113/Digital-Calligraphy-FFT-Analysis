@@ -18,7 +18,7 @@ def _get_char_map() -> dict:
     return char_index.get('character_map', {})
 
 
-def get_filtered_characters(min_count: int = 1, max_count: int = 4) -> List[str]:
+def get_filtered_characters(min_count: int = 1, max_count: int = 99) -> List[str]:
     """依書法家數量篩選字元"""
     char_map = _get_char_map()
     result = []
@@ -51,12 +51,11 @@ def get_stats() -> Dict:
     char_map = _get_char_map()
     total = len(char_map)
 
-    # 依書法家數量分類
-    by_count = {1: 0, 2: 0, 3: 0, 4: 0}
+    # 依書法家數量分類（動態計算，不硬編碼上限）
+    by_count = {}
     for char, cals in char_map.items():
         count = len(cals)
-        if count in by_count:
-            by_count[count] += 1
+        by_count[count] = by_count.get(count, 0) + 1
 
     # 取得共有字
     from web.dependencies import get_character_index
