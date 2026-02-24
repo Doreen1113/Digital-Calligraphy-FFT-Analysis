@@ -8,7 +8,7 @@
 <!-- 主視覺區 -->
 <section class="hero">
     <h1 class="hero-title">輸入一個字，看大師怎麼寫</h1>
-    <p class="hero-subtitle">比較智永、沈尹默、顏真卿、歐陽詢四位書法大師的同一個字</p>
+    <p class="hero-subtitle">比較多位書法大師的同一個字</p>
 </section>
 
 <!-- 操作區 -->
@@ -35,22 +35,7 @@
             <div class="cal-select">
                 <label class="select-label">選擇書法家</label>
                 <div class="checkbox-group" id="calCheckboxes">
-                    <label class="checkbox-item">
-                        <input type="checkbox" value="智永" checked>
-                        <span>智永 <small>南北朝</small></span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" value="沈尹默" checked>
-                        <span>沈尹默 <small>近代</small></span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" value="顏真卿" checked>
-                        <span>顏真卿 <small>唐代</small></span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" value="歐陽詢" checked>
-                        <span>歐陽詢 <small>唐代</small></span>
-                    </label>
+                    <div class="loading" style="min-height:120px"></div>
                 </div>
             </div>
         </div>
@@ -61,7 +46,7 @@
 <section class="quick-select">
     <div class="card">
         <h3 class="card-title">快速選字 <span class="badge badge-count" id="commonCount"></span></h3>
-        <p class="quick-hint">以下是四位書法家都有的字，點擊即可比對</p>
+        <p class="quick-hint">以下是所有書法家都有的字，點擊即可比對</p>
         <div class="char-pills" id="commonChars">
             <div class="loading" style="min-height:60px"></div>
         </div>
@@ -95,14 +80,14 @@
         </div>
         <div class="stat-card">
             <div class="stat-number" id="statCommon">-</div>
-            <div class="stat-label">四家共有字</div>
+            <div class="stat-label">全部共有字</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">4</div>
+            <div class="stat-number" id="statCalligraphers">-</div>
             <div class="stat-label">書法大師</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">2809</div>
+            <div class="stat-number" id="statImages">-</div>
             <div class="stat-label">書法圖片</div>
         </div>
     </div>

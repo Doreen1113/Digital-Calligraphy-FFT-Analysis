@@ -14,17 +14,19 @@
 <div id="analysisStatus"></div>
 
 <!-- 雷達圖 + 相似度 -->
-<section class="analysis-charts grid-2" id="chartsSection">
+<section class="analysis-charts" id="chartsSection">
     <div class="card">
-        <h3 class="card-title">風格雷達圖</h3>
+        <h3 class="card-title">風格雷達圖 <span class="badge">7 維特徵</span></h3>
+        <p class="feature-intro">展示各書法家在 7 個風格特徵上的分布。點擊圖片可放大檢視。</p>
         <div class="img-container" id="radarContainer">
-            <div class="loading" style="min-height:300px"></div>
+            <div class="loading" style="min-height:400px"></div>
         </div>
     </div>
     <div class="card">
-        <h3 class="card-title">相似度矩陣</h3>
+        <h3 class="card-title">相似度矩陣 <span class="badge">書法家間相似度</span></h3>
+        <p class="feature-intro">越接近藍色表示風格越相似。數值範圍 0-1。點擊圖片可放大檢視。</p>
         <div class="img-container" id="similarityContainer">
-            <div class="loading" style="min-height:300px"></div>
+            <div class="loading" style="min-height:400px"></div>
         </div>
     </div>
 </section>

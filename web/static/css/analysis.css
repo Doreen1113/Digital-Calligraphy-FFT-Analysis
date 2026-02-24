@@ -2,16 +2,38 @@
 
 .analysis-charts {
     margin-bottom: 1.5rem;
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 }
 
 .analysis-bars {
     margin-bottom: 1.5rem;
 }
 
+.analysis-charts .img-container,
+.analysis-bars .img-container {
+    overflow: auto;
+    border-radius: var(--radius);
+}
+
 .analysis-charts .img-container img,
 .analysis-bars .img-container img {
-    max-height: 450px;
-    width: auto;
+    max-height: 600px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 相似度矩陣專用樣式 - 更加緊湊 */
+#similarityContainer {
+    max-height: 700px;
+    overflow-y: auto;
+}
+
+#similarityContainer img {
+    width: 100%;
+    height: auto;
 }
 
 /* --- 特徵說明 --- */
@@ -101,6 +123,18 @@
     font-size: 0.9rem;
 }
 
+/* Badge 樣式（用於卡片標題） */
+.card-title .badge {
+    display: inline-block;
+    background-color: var(--accent-light);
+    color: var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
 @media (max-width: 768px) {
     .analysis-charts {
         grid-template-columns: 1fr;
@@ -108,5 +142,10 @@
 
     .feature-grid {
         grid-template-columns: 1fr;
+    }
+
+    .analysis-charts .img-container img,
+    .analysis-bars .img-container img {
+        max-height: 400px;
     }
 }

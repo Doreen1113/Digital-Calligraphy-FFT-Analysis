@@ -3,11 +3,12 @@
  */
 
 let currentMinCount = 1;
-let currentMaxCount = 4;
+let currentMaxCount = 5;  // 預設設為 5（適應新的書法家數量），會被動態更新
 let currentPage = 1;
 const perPage = 200;
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadFilterButtons();  // 動態加載篩選按鈕
     loadCharacters();
     loadStatsBar();
 
@@ -16,6 +17,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') doSearch();
     });
 });
+
+
+/**
+ * 動態加載篩選按鈕（根據實際的書法家數量）
+ */
+async function loadFilterButtons() {
+    try {
+        const data = await api('/api/calligrapher/list');
+        const calligraphers = data.calligraphers || [];
+        const maxCalligraphers = calligraphers.length;
+
+        // 更新全域最大值
+        currentMaxCount = maxCalligraphers;
+
+        const container = document.getElementById('filterBtns');
+        if (!container) return;
+
+        // 生成篩選按鈕
+        const buttons = [
+            { label: '全部', min: 1, max: maxCalligraphers },
+            { label: `${maxCalligraphers} 位 (共有字)`, min: maxCalligraphers, max: maxCalligraphers },
+        ];
+
+        // 添加 N+ 位的按鈕（如果有多於 2 位書法家）
+        if (maxCalligraphers >= 3) {
+            buttons.push({ label: '3+ 位', min: 3, max: maxCalligraphers });
+        }
+        if (maxCalligraphers >= 2) {
+            buttons.push({ label: '2+ 位', min: 2, max: maxCalligraphers });
+        }
+        buttons.push({ label: '僅 1 位', min: 1, max: 1 });
+
+        container.innerHTML = buttons.map((btn, idx) =>
+            `<button class="filter-btn ${idx === 0 ? 'active' : ''}" onclick="setFilter(this, ${btn.min}, ${btn.max})">${btn.label}</button>`
+        ).join('');
+
+    } catch (err) {
+        console.error('無法加載篩選按鈕:', err);
+    }
+}
 
 
 /**
