@@ -36,7 +36,7 @@
     <footer class="site-footer">
         <div class="footer-container">
             <p>書法風格分析系統 v2.0 | 使用傅立葉描述子（FFT）分析書法風格</p>
-            <p class="footer-sub">收錄 4 位書法大師 | 2809 張書法圖片 | 1411 個字元</p>
+            <p class="footer-sub" id="footerStats">載入中…</p>
         </div>
     </footer>
 
@@ -51,5 +51,28 @@
 
     <script src="/static/js/common.js"></script>
     {% block scripts %}{% endblock %}
+
+    <!-- 頁尾動態統計 -->
+    <script>
+    (async function loadFooterStats() {
+        try {
+            const [calData, statsData, searchData] = await Promise.all([
+                fetch('/api/calligrapher/list').then(r => r.json()),
+                fetch('/api/stats/overview').then(r => r.json()),
+                fetch('/api/search/stats').then(r => r.json()),
+            ]);
+            const cals   = (calData.calligraphers || []).length;
+            const images = (calData.calligraphers || []).reduce((s, c) => s + (c.total_images || 0), 0);
+            const chars  = searchData.total_characters || 0;
+            const views  = statsData.total_views || 0;
+            const el = document.getElementById('footerStats');
+            if (el) el.textContent =
+                `收錄 ${cals} 位書法大師 | ${images} 張書法圖片 | ${chars} 個字元 | 累計瀏覽 ${views} 次`;
+        } catch(e) {
+            const el = document.getElementById('footerStats');
+            if (el) el.textContent = '書法風格分析系統';
+        }
+    })();
+    </script>
 </body>
 </html>

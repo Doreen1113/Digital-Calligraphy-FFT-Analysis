@@ -2,10 +2,17 @@
  * 首頁 - 同字比對邏輯
  */
 
+// === 常數 ===
+const HISTORY_KEY = 'calligraphy_history';
+const MAX_HISTORY = 20;
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    loadCalligraphers();  // 動態加載書法家
-    loadCommonCharacters();
-    loadStats();
+    loadCalligraphers();       // 動態加載書法家
+    loadCommonCharacters();    // 全部共有字
+    loadStats();               // 字元統計
+    loadSiteStats();           // 網站瀏覽統計
+    renderHistory();           // 歷史紀錄
 
     // Enter 鍵觸發比對
     const charInput = document.getElementById('charInput');
@@ -17,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     charInput.addEventListener('input', () => {
         const val = charInput.value.trim();
         if (val.length === 1 && isChinese(val)) {
-            // 短暫延遲後自動比對
             clearTimeout(charInput._timer);
             charInput._timer = setTimeout(() => doCompare(), 300);
         }
@@ -60,7 +66,7 @@ async function doCompare() {
     // 建構查詢參數
     const params = new URLSearchParams();
     params.set('char', char);
-    if (selected.length < 4) {
+    if (selected.length < 99) {
         selected.forEach(s => params.append('calligraphers', s));
     }
 
@@ -90,6 +96,9 @@ async function doCompare() {
             infoHtml += `<br><span class="missing-list">✗ 字庫中無此字：${data.calligraphers_missing.join('、')}</span>`;
         }
         resultInfo.innerHTML = infoHtml;
+
+        // 加入歷史紀錄
+        addToHistory(char);
 
         // 標記快速選字按鈕
         highlightActivePill(char);
@@ -123,15 +132,11 @@ async function loadCalligraphers() {
 
         // 更新統計中的書法家數量和總圖片數
         const statCalligraphers = document.getElementById('statCalligraphers');
-        if (statCalligraphers) {
-            statCalligraphers.textContent = calligraphers.length;
-        }
+        if (statCalligraphers) statCalligraphers.textContent = calligraphers.length;
 
         const totalImages = calligraphers.reduce((sum, cal) => sum + (cal.total_images || 0), 0);
         const statImages = document.getElementById('statImages');
-        if (statImages) {
-            statImages.textContent = totalImages;
-        }
+        if (statImages) statImages.textContent = totalImages;
     } catch (err) {
         console.error('無法加載書法家列表:', err);
     }
@@ -170,13 +175,29 @@ async function loadCommonCharacters() {
 
 
 /**
- * 載入統計數據
+ * 載入字元統計數據
  */
 async function loadStats() {
     try {
         const data = await api('/api/search/stats');
         document.getElementById('statTotal').textContent = data.total_characters || '-';
         document.getElementById('statCommon').textContent = data.common_characters_count || '-';
+    } catch (err) {
+        // 靜默失敗
+    }
+}
+
+
+/**
+ * 載入網站訪客統計
+ */
+async function loadSiteStats() {
+    try {
+        const data = await api('/api/stats/overview');
+        const statViews    = document.getElementById('statViews');
+        const statVisitors = document.getElementById('statVisitors');
+        if (statViews)    statViews.textContent    = data.total_views    || 0;
+        if (statVisitors) statVisitors.textContent = data.unique_visitors || 0;
     } catch (err) {
         // 靜默失敗
     }
@@ -209,4 +230,65 @@ function highlightActivePill(char) {
 function isChinese(char) {
     const code = char.charCodeAt(0);
     return code >= 0x4E00 && code <= 0x9FFF;
+}
+
+
+// ============================
+// === 歷史紀錄（localStorage）===
+// ============================
+
+/**
+ * 加入歷史紀錄
+ */
+function addToHistory(char) {
+    if (!char || !isChinese(char)) return;
+    let history = getHistory();
+    // 移到最前（避免重複）
+    history = history.filter(c => c !== char);
+    history.unshift(char);
+    if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+}
+
+
+/**
+ * 讀取歷史紀錄
+ */
+function getHistory() {
+    try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    } catch {
+        return [];
+    }
+}
+
+
+/**
+ * 清除歷史紀錄
+ */
+function clearHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+}
+
+
+/**
+ * 渲染歷史紀錄區塊
+ */
+function renderHistory() {
+    const section   = document.getElementById('historySection');
+    const container = document.getElementById('historyChars');
+    if (!section || !container) return;
+
+    const history = getHistory();
+    if (history.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = history.map(char =>
+        `<button class="char-pill" onclick="quickCompare('${escapeHtml(char)}')" title="${escapeHtml(char)}">${escapeHtml(char)}</button>`
+    ).join('');
 }

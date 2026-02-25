@@ -5,6 +5,7 @@
 """
 import os
 import sys
+import uuid
 from pathlib import Path
 
 # 確保專案根目錄在 sys.path
@@ -15,7 +16,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import matplotlib
 matplotlib.use('Agg')
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -52,14 +53,45 @@ fonts_dir = PROJECT_ROOT / "Fonts" / "my_fonts"
 if fonts_dir.exists():
     app.mount("/fonts", StaticFiles(directory=str(fonts_dir)), name="fonts")
 
+# === 訪客統計中介軟體 ===
+_SKIP_PREFIXES = ('/api', '/static', '/fonts', '/output', '/docs', '/redoc', '/openapi', '/favicon')
+
+@app.middleware("http")
+async def stats_middleware(request: Request, call_next):
+    """自動記錄 HTML 頁面瀏覽次數與唯一訪客"""
+    response = await call_next(request)
+    path = request.url.path
+    # 只統計 HTML 頁面請求
+    if not any(path.startswith(p) for p in _SKIP_PREFIXES):
+        try:
+            from web.services.stats_service import record_page_view, record_visitor
+            record_page_view(path)
+            visitor_id = request.cookies.get("visitor_id")
+            if not visitor_id:
+                visitor_id = str(uuid.uuid4())
+                response.set_cookie(
+                    "visitor_id", visitor_id,
+                    max_age=365 * 24 * 3600,
+                    httponly=True,
+                    samesite="lax",
+                )
+                record_visitor(visitor_id)
+            else:
+                record_visitor(visitor_id)
+        except Exception:
+            pass
+    return response
+
+
 # === 註冊路由 ===
-from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher
+from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher, api_stats
 
 app.include_router(pages.router)
 app.include_router(api_character.router, prefix="/api/character", tags=["character"])
 app.include_router(api_analysis.router, prefix="/api/analysis", tags=["analysis"])
 app.include_router(api_search.router, prefix="/api/search", tags=["search"])
 app.include_router(api_calligrapher.router, prefix="/api/calligrapher", tags=["calligrapher"])
+app.include_router(api_stats.router, prefix="/api/stats", tags=["stats"])
 
 
 # === 啟動事件 ===

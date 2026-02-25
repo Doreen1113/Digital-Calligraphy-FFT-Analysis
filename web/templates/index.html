@@ -53,6 +53,17 @@
     </div>
 </section>
 
+<!-- 歷史紀錄區 -->
+<section class="history-section" id="historySection" style="display:none">
+    <div class="card">
+        <div class="history-header">
+            <h3 class="card-title">最近查詢</h3>
+            <button class="btn-text-sm" onclick="clearHistory()">清除紀錄</button>
+        </div>
+        <div class="char-pills" id="historyChars"></div>
+    </div>
+</section>
+
 <!-- 結果區 -->
 <section class="result-section" id="resultSection" style="display:none">
     <div class="card">
@@ -62,18 +73,9 @@
     </div>
 </section>
 
-<!-- 圖片放大模態 -->
-<div id="imageModal" class="modal" onclick="closeImageModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeImageModal()">&times;</button>
-        <img id="modalImage" src="" alt="放大檢視">
-        <p id="modalCaption" class="modal-caption"></p>
-    </div>
-</div>
-
 <!-- 統計區 -->
 <section class="stats-section">
-    <div class="grid-4 stats-grid">
+    <div class="grid-3-wide stats-grid">
         <div class="stat-card">
             <div class="stat-number" id="statTotal">-</div>
             <div class="stat-label">可比對字元</div>
@@ -89,6 +91,14 @@
         <div class="stat-card">
             <div class="stat-number" id="statImages">-</div>
             <div class="stat-label">書法圖片</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statViews">-</div>
+            <div class="stat-label">總瀏覽次數</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statVisitors">-</div>
+            <div class="stat-label">累計訪客</div>
         </div>
     </div>
 </section>

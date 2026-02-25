@@ -101,6 +101,38 @@
     margin-left: 0.3rem;
 }
 
+/* --- 歷史紀錄 --- */
+.history-section {
+    margin-bottom: 1.5rem;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.history-header .card-title {
+    margin-bottom: 0;
+}
+
+.btn-text-sm {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.btn-text-sm:hover {
+    color: var(--accent);
+    background: var(--bg-dark);
+}
+
 /* --- 快速選字 --- */
 .quick-select {
     margin-bottom: 1.5rem;
@@ -192,6 +224,13 @@
     margin-bottom: 2rem;
 }
 
+/* 六格統計網格 */
+.grid-3-wide {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
 .stats-grid {
     gap: 1rem;
 }
@@ -237,6 +276,10 @@
     .cal-select .checkbox-group {
         flex-direction: row;
         flex-wrap: wrap;
+    }
+
+    .grid-3-wide {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .stats-grid {
