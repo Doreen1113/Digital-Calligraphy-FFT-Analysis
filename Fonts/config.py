@@ -14,28 +14,34 @@ MY_FONTS = {
     'base_dir': './fonts/my_fonts',
     'fonts': {
         '00': {
-            'name': '千字文楷書',
+            'name': '智永',
             'chars_dir': './fonts/my_fonts/00_qianziwen/chars',
             'labels_file': './fonts/my_fonts/00_qianziwen/labels.csv',
             'text_source': './fonts/00.txt'  # 已知文字順序
         },
         '01': {
-            'name': '待識別字庫',
+            'name': '沈尹默',
             'chars_dir': './fonts/my_fonts/01_unknown/chars',
             'labels_file': './fonts/my_fonts/01_unknown/labels.csv',
             'needs_ocr': True
         },
         '02': {
-            'name': '九成宮格線',
+            'name': '歐陽詢',
             'chars_dir': './fonts/my_fonts/02_grid_style/chars',
             'labels_file': './fonts/my_fonts/02_grid_style/labels.csv',
             'needs_ocr': True
         },
         '03': {
-            'name': '混合風格',
+            'name': '柳公權',
             'chars_dir': './fonts/my_fonts/03_mixed_style/chars',
             'labels_file': './fonts/my_fonts/03_mixed_style/labels.csv',
             'needs_ocr': True
+        },
+        '04': {
+            'name': '趙孟頫',
+            'chars_dir': './fonts/my_fonts/04_mixed_style/chars',
+            'labels_file': './fonts/my_fonts/04_mixed_style/labels.csv',
+            'needs_ocr': './fonts/04.txt'
         }
     }
 }

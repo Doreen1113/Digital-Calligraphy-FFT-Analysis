@@ -7,22 +7,22 @@
 {% block content %}
 <section class="page-header">
     <h1 class="page-title">字元探索</h1>
-    <p class="page-subtitle">瀏覽所有可比對的字元，依書法家數量篩選</p>
+    <p class="page-subtitle">瀏覽所有可比對的字元，支援多種篩選與排序方式</p>
 </section>
 
-<!-- 篩選與搜尋 -->
+<!-- 篩選、排序與搜尋 -->
 <section class="explorer-controls">
     <div class="card">
+
+        <!-- 第一行：書法家數量篩選 + 搜尋 -->
         <div class="controls-row">
-            <!-- 篩選 -->
             <div class="filter-group">
                 <label>書法家數量篩選</label>
                 <div class="filter-btns" id="filterBtns">
-                    <!-- 動態加載篩選按鈕 -->
+                    <!-- 動態加載 -->
                 </div>
             </div>
 
-            <!-- 搜尋 -->
             <div class="search-group">
                 <label for="searchInput">搜尋字元</label>
                 <div class="search-wrapper">
@@ -32,6 +32,27 @@
                            placeholder="輸入要搜尋的字..."
                            autocomplete="off">
                     <button class="btn btn-primary btn-sm" onclick="doSearch()">搜尋</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二行：依書法家篩選（同個書法家） -->
+        <div class="controls-row controls-row-secondary">
+            <div class="filter-group">
+                <label>依書法家篩選</label>
+                <div class="filter-btns cal-filter-btns" id="calFilterBtns">
+                    <!-- 動態加載 -->
+                </div>
+            </div>
+
+            <!-- 第三行：排序 -->
+            <div class="filter-group">
+                <label>排序方式</label>
+                <div class="filter-btns sort-btns" id="sortBtns">
+                    <button class="filter-btn active" onclick="setSortOrder(this, 'default')">預設</button>
+                    <button class="filter-btn" onclick="setSortOrder(this, 'freq')">字頻序 ↓</button>
+                    <button class="filter-btn" onclick="setSortOrder(this, 'strokes_asc')">筆畫少→多</button>
+                    <button class="filter-btn" onclick="setSortOrder(this, 'strokes_desc')">筆畫多→少</button>
                 </div>
             </div>
         </div>

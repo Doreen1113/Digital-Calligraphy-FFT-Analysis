@@ -76,6 +76,31 @@
     color: var(--text-light);
 }
 
+/* --- 第二行控制列 --- */
+.controls-row-secondary {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-light);
+}
+
+/* 書法家篩選：帶有彩色 active 背景 */
+.cal-filter-btns .filter-btn.active {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* 排序按鈕：使用 accent 色 */
+.sort-btns .filter-btn.active {
+    background: var(--accent-dark, #8B1A1A);
+    border-color: var(--accent-dark, #8B1A1A);
+    color: #fff;
+}
+
+.sort-btns .filter-btn:hover {
+    border-color: var(--accent, #C62828);
+    color: var(--accent, #C62828);
+}
+
 /* --- 字元網格 --- */
 .explorer-grid-section {
     margin-bottom: 2rem;
