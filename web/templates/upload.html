@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/upload.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">上傳你的字，與大師比一比</h1>
+    <p class="page-subtitle">拍下你練習的書法，即時與五位書法大師並排比對</p>
+</section>
+
+<!-- 上傳表單 -->
+<section class="upload-section">
+    <div class="card">
+        <div class="upload-layout">
+
+            <!-- 左側：設定 -->
+            <div class="upload-settings">
+                <div class="form-group">
+                    <label class="form-label" for="uploadChar">你寫的字</label>
+                    <input type="text"
+                           id="uploadChar"
+                           class="char-input upload-char-input"
+                           maxlength="1"
+                           placeholder="字"
+                           autocomplete="off">
+                    <p class="input-hint">輸入你在圖片中寫的那個字</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">選擇書法家</label>
+                    <div class="checkbox-group" id="uploadCalCheckboxes">
+                        <div class="loading" style="min-height:80px"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-lg btn-full" id="uploadBtn" onclick="doUploadCompare()" disabled>
+                    比對
+                </button>
+                <p class="upload-note">支援 JPG / PNG / WebP / BMP，最大 5 MB</p>
+            </div>
+
+            <!-- 右側：拖放區 -->
+            <div class="upload-drop-area" id="dropArea">
+                <div class="drop-inner" id="dropInner">
+                    <div class="drop-icon">📷</div>
+                    <p class="drop-text">拖放圖片到這裡</p>
+                    <p class="drop-hint">或點擊選擇檔案</p>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none"
+                           onchange="handleFileSelect(this.files[0])">
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('fileInput').click()">
+                        選擇圖片
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 結果區 -->
+<section class="upload-result" id="uploadResult" style="display:none">
+    <div class="card">
+        <h3 class="card-title">比對結果</h3>
+        <div id="uploadResultArea"></div>
+        <div id="uploadResultInfo" class="result-info"></div>
+        <div class="result-actions">
+            <button class="btn btn-secondary btn-sm" onclick="resetUpload()">重新上傳</button>
+        </div>
+    </div>
+</section>
+
+<!-- 使用說明 -->
+<section class="upload-tips">
+    <div class="card">
+        <h3 class="card-title">拍攝小技巧</h3>
+        <div class="tips-grid">
+            <div class="tip-item">
+                <span class="tip-icon">☀️</span>
+                <div>
+                    <strong>充足光線</strong>
+                    <p>在自然光或明亮的室內拍攝，避免陰影</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">📐</span>
+                <div>
+                    <strong>正面取景</strong>
+                    <p>讓相機正對紙張，避免傾斜造成變形</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">⬛</span>
+                <div>
+                    <strong>高對比度</strong>
+                    <p>用深色筆（墨筆/原子筆）寫在白紙上效果最佳</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🔲</span>
+                <div>
+                    <strong>單字裁切</strong>
+                    <p>盡量讓圖片只包含你要比對的那個字</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/upload.js"></script>
+{% endblock %}

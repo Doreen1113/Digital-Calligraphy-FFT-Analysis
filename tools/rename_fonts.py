@@ -7,11 +7,11 @@
 1. 掃描字帖資料夾中的所有圖片
 2. 如果有 XX.txt 檔案，按照檔案中的字元順序對應圖片
 3. 如果沒有 XX.txt，按照原始檔名中的數字排序
-4. 重新命名為 char_0001.png ~ char_XXXX.png
+4. 重新命名為 char_XXXX.png (可自訂起始編號)
 
 使用方法：
-    python rename_fonts.py <font_num>
-    例如: python rename_fonts.py 04
+    python rename_fonts.py <font_num> [--start <number>]
+    例如: python rename_fonts.py 04 --start 100
 
 說明：
 - 會在原資料夾中創建 backup/ 子目錄來備份原始檔案
@@ -32,14 +32,16 @@ if sys.platform == 'win32':
 
 
 class FontRenamer:
-    def __init__(self, font_num):
+    def __init__(self, font_num, start_idx=1):
         """
         初始化字帖編號工具
 
         Args:
             font_num: 字帖編號（如 '00', '01', '02', '03', '04'）
+            start_idx: 重新命名的起始編號，預設為 1
         """
         self.font_num = str(font_num).zfill(2)
+        self.start_idx = start_idx
         self.project_root = Path(__file__).parent.parent
         self.font_dir = self.project_root / "Fonts" / "my_fonts" / self.font_num
         self.txt_file = self.project_root / "Fonts" / f"{self.font_num}.txt"
@@ -51,6 +53,7 @@ class FontRenamer:
 
         print(f"✓ 字帖資料夾: {self.font_dir}")
         print(f"✓ 字元順序檔: {self.txt_file}")
+        print(f"✓ 起始編號設定為: {self.start_idx:04d}")
         print()
 
     def load_char_order(self):
@@ -184,7 +187,8 @@ class FontRenamer:
         renamed_count = 0
         errors = []
 
-        for idx, old_path in enumerate(images, 1):
+        # 重點修改處：使用 self.start_idx 替代原來的 1
+        for idx, old_path in enumerate(images, self.start_idx):
             # 生成新的檔案名
             new_name = f"char_{idx:04d}.png"
             new_path = self.font_dir / new_name
@@ -199,8 +203,8 @@ class FontRenamer:
                 renamed_count += 1
 
                 # 每 50 個檔案顯示一次進度
-                if idx % 50 == 0:
-                    print(f"  進度: {idx}/{len(images)}")
+                if renamed_count % 50 == 0:
+                    print(f"  進度: {renamed_count}/{len(images)}")
 
             except Exception as e:
                 errors.append(f"  ✗ {old_path.name} → {new_name}: {e}")
@@ -282,17 +286,30 @@ def main():
     """主函數"""
     if len(sys.argv) < 2:
         print("使用方法:")
-        print("  python rename_fonts.py <font_num> [--yes]")
+        print("  python rename_fonts.py <font_num> [--yes] [--start <number>]")
         print("\n範例:")
-        print("  python rename_fonts.py 00         # 智永（需要互動確認）")
-        print("  python rename_fonts.py 04 --yes   # 趙孟頫（自動確認）")
+        print("  python rename_fonts.py 00                # 從 0001 開始（需要互動確認）")
+        print("  python rename_fonts.py 04 --yes          # 從 0001 開始（自動確認）")
+        print("  python rename_fonts.py 01 --start 500    # 從 char_0500.png 開始")
+        print("  python rename_fonts.py 02 -y --start 150 # 結合多個參數使用")
         sys.exit(1)
 
     font_num = sys.argv[1]
     auto_confirm = '--yes' in sys.argv or '-y' in sys.argv
+    
+    # 解析自訂的起始編號
+    start_idx = 1
+    if '--start' in sys.argv:
+        try:
+            start_index_pos = sys.argv.index('--start')
+            start_idx = int(sys.argv[start_index_pos + 1])
+        except (ValueError, IndexError):
+            print("\n✗ 錯誤：--start 後面必須接有效的數字 (例如: --start 100)")
+            sys.exit(1)
 
     try:
-        renamer = FontRenamer(font_num)
+        # 將 start_idx 傳入初始化
+        renamer = FontRenamer(font_num, start_idx=start_idx)
         renamer.auto_confirm = auto_confirm
         success = renamer.run()
         sys.exit(0 if success else 1)

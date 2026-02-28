@@ -29,14 +29,14 @@
                     <input type="text"
                            id="searchInput"
                            class="form-input"
-                           placeholder="輸入要搜尋的字..."
+                           placeholder="漢字或拼音（如 tian）"
                            autocomplete="off">
                     <button class="btn btn-primary btn-sm" onclick="doSearch()">搜尋</button>
                 </div>
             </div>
         </div>
 
-        <!-- 第二行：依書法家篩選（同個書法家） -->
+        <!-- 第二行：依書法家篩選 + 排序 -->
         <div class="controls-row controls-row-secondary">
             <div class="filter-group">
                 <label>依書法家篩選</label>
@@ -45,7 +45,6 @@
                 </div>
             </div>
 
-            <!-- 第三行：排序 -->
             <div class="filter-group">
                 <label>排序方式</label>
                 <div class="filter-btns sort-btns" id="sortBtns">
@@ -53,6 +52,16 @@
                     <button class="filter-btn" onclick="setSortOrder(this, 'freq')">字頻序 ↓</button>
                     <button class="filter-btn" onclick="setSortOrder(this, 'strokes_asc')">筆畫少→多</button>
                     <button class="filter-btn" onclick="setSortOrder(this, 'strokes_desc')">筆畫多→少</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三行：依部首篩選 -->
+        <div class="controls-row controls-row-secondary">
+            <div class="filter-group radical-filter-group">
+                <label>依部首篩選 <span class="radical-count-badge" id="radicalCountBadge"></span></label>
+                <div class="filter-btns radical-filter-btns" id="radicalFilterBtns">
+                    <!-- 動態加載 -->
                 </div>
             </div>
         </div>
@@ -75,6 +84,19 @@
         <div class="pagination" id="pagination"></div>
     </div>
 </section>
+
+<!-- 字元詳情 Popup -->
+<div id="charDetailModal" class="modal" onclick="closeCharDetail()">
+    <div class="modal-content char-detail-modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeCharDetail()">&times;</button>
+        <h3 class="modal-title" id="charDetailTitle"></h3>
+        <div id="charDetailBody"></div>
+        <div class="detail-actions">
+            <button class="btn btn-primary" id="charDetailCompareBtn">✎ 立即比對</button>
+            <button class="btn btn-secondary" onclick="closeCharDetail()">關閉</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

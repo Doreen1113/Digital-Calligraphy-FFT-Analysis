@@ -18,6 +18,87 @@ from web.services.cache_service import get_comparison_cache_path, is_cached, get
 _matplotlib_lock = threading.Lock()
 
 
+def get_character_images(character: str, selected_calligraphers: Optional[List[str]] = None) -> Dict:
+    """
+    取得單一字元的所有書法家圖片 URL（不生成合併圖）
+
+    Args:
+        character: 中文字元
+        selected_calligraphers: 選中的書法家顯示名稱（可選）
+
+    Returns:
+        dict: {character, images: [{calligrapher, image_url}], calligraphers_found, calligraphers_missing}
+        或 {error: "錯誤訊息"}
+    """
+    from web.dependencies import get_character_index, get_name_font_label_dict
+    char_index = get_character_index()
+    char_map = char_index.get('character_map', {})
+
+    if character not in char_map:
+        return {"error": f"字元 '{character}' 不在索引中"}
+
+    # font_label = "書法家·字帖"，例如 "顏真卿·多寶塔碑"
+    label_map = get_name_font_label_dict()
+    images = []
+    available_cals = []
+
+    fonts_root = PROJECT_ROOT / "Fonts" / "my_fonts"
+
+    for cal_name, instances in char_map[character].items():
+        font_label = label_map.get(cal_name, cal_name)
+        display_name = font_label.split('·')[0] if '·' in font_label else font_label
+        available_cals.append(font_label)
+
+        # 若有指定書法家，以 display_name 比對（不含碑帖名稱）
+        if selected_calligraphers and display_name not in selected_calligraphers:
+            continue
+
+        if not instances:
+            continue
+
+        # 取第一張圖片，處理絕對路徑與相對路徑
+        img_path = instances[0].get('image_path', '')
+        try:
+            from pathlib import Path as _Path
+            rel = _Path(img_path).relative_to(fonts_root).as_posix()
+        except (ValueError, TypeError):
+            # 相對路徑 fallback
+            rel = img_path.replace("\\", "/")
+            if "Fonts/my_fonts/" in rel:
+                rel = rel.split("Fonts/my_fonts/")[1]
+
+        images.append({
+            "calligrapher": font_label,           # "顏真卿·多寶塔碑"
+            "artist":    display_name,
+            "book":      instances[0].get('book', font_label.split('·')[1] if '·' in font_label else ''),
+            "font_id":   instances[0].get('font_id', ''),
+            "image_url": f"/fonts/{rel}",
+            "filename":  instances[0].get('filename', ''),
+        })
+
+    if not images:
+        return {"error": f"字元 '{character}' 在選中的書法家中沒有找到"}
+
+    # 計算找到與缺少的書法家（以 display_name 比對）
+    found = [img["calligrapher"] for img in images]
+    if selected_calligraphers:
+        avail_display_set = {
+            fl.split('·')[0] if '·' in fl else fl
+            for fl in available_cals
+        }
+        missing = [c for c in selected_calligraphers if c not in avail_display_set]
+    else:
+        missing = []
+
+    return {
+        "character": character,
+        "images": images,
+        "calligraphers_found": found,
+        "calligraphers_missing": missing,
+        "total_available": len(available_cals),
+    }
+
+
 def compare_single(character: str, selected_calligraphers: Optional[List[str]] = None) -> Dict:
     """
     比對單一字元，回傳圖片 URL 和元資料
@@ -31,23 +112,31 @@ def compare_single(character: str, selected_calligraphers: Optional[List[str]] =
         或 {error: "錯誤訊息"}
     """
     # 檢查字元是否在索引中
-    from web.dependencies import get_character_index, get_name_display_dict
+    from web.dependencies import get_character_index, get_name_font_label_dict
     char_index = get_character_index()
     char_map = char_index.get('character_map', {})
 
     if character not in char_map:
         return {"error": f"字元 '{character}' 不在索引中，共有 {len(char_map)} 個可比對字元"}
 
-    # 取得書法家資訊
-    name_map = get_name_display_dict()
-    available_cals = [name_map.get(k, k) for k in char_map[character].keys()]
+    # 取得書法家·字帖標籤，並萃取 display_name（供 checkbox 過濾用）
+    label_map = get_name_font_label_dict()
+    seen_display = []
+    available_display = []   # 去重後的 display_name 列表
+    for k in char_map[character].keys():
+        fl = label_map.get(k, k)
+        d = fl.split('·')[0] if '·' in fl else fl
+        if d not in seen_display:
+            seen_display.append(d)
+            available_display.append(d)
 
-    # 計算找到與缺少的書法家
+    # 計算找到與缺少的書法家（以 display_name 比對）
     if selected_calligraphers:
-        found = [c for c in selected_calligraphers if c in available_cals]
-        missing = [c for c in selected_calligraphers if c not in available_cals]
+        avail_set = set(available_display)
+        found = [c for c in selected_calligraphers if c in avail_set]
+        missing = [c for c in selected_calligraphers if c not in avail_set]
     else:
-        found = available_cals
+        found = available_display
         missing = []
 
     if not found:
@@ -92,5 +181,5 @@ def compare_single(character: str, selected_calligraphers: Optional[List[str]] =
         "image_url": get_cache_url(cache_path),
         "calligraphers_found": found,
         "calligraphers_missing": missing,
-        "total_available": len(available_cals),
+        "total_available": len(available_display),
     }

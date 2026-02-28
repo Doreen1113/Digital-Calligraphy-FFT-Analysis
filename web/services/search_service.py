@@ -15,6 +15,21 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 _CHAR_DATA_FILE = PROJECT_ROOT / "data" / "index" / "char_data.json"
 
+# 中文顯示名 → 字元索引英文 key 的對應表
+_CALLIGRAPHER_NAME_MAP: dict = {
+    "智永": "zhiyong",
+    "沈尹默": "shen_yinmo",
+    "顏真卿": "yan_zhenqing",
+    "歐陽詢": "ouyang_xun",
+    "趙孟頫": "zhao_mengfu",
+    # 也接受英文 key（向後相容）
+    "zhiyong": "zhiyong",
+    "shen_yinmo": "shen_yinmo",
+    "yan_zhenqing": "yan_zhenqing",
+    "ouyang_xun": "ouyang_xun",
+    "zhao_mengfu": "zhao_mengfu",
+}
+
 
 def _get_char_map() -> dict:
     """取得字元對應表"""
@@ -58,36 +73,95 @@ def get_filtered_characters(
     max_count: int = 99,
     sort_by: str = 'default',
     calligrapher: Optional[str] = None,
+    radical: Optional[str] = None,
 ) -> List[str]:
-    """依書法家數量（與可選的書法家名稱）篩選字元"""
+    """依書法家數量（與可選的書法家名稱、部首）篩選字元"""
     char_map = _get_char_map()
+    char_data = _load_char_data() if radical else {}
     result = []
     for char, cals in char_map.items():
         count = len(cals)
         if not (min_count <= count <= max_count):
             continue
         # 若有指定書法家，只保留該書法家擁有的字
-        if calligrapher and calligrapher not in cals:
+        cal_key = _CALLIGRAPHER_NAME_MAP.get(calligrapher, calligrapher) if calligrapher else None
+        if cal_key and cal_key not in cals:
+            continue
+        # 若有指定部首，只保留該部首的字
+        if radical and char_data.get(char, {}).get('radical', '') != radical:
             continue
         result.append(char)
     return _sort_chars(result, sort_by)
 
 
-def search(query: str) -> List[str]:
-    """搜尋字元"""
+@lru_cache(maxsize=1)
+def _build_pinyin_index() -> dict:
+    """建立拼音 → 字元列表的反查索引（啟動後只建立一次）"""
+    try:
+        from pypinyin import lazy_pinyin
+    except ImportError:
+        return {}
+
     char_map = _get_char_map()
-    results = []
-    for char in query:
-        if char in char_map:
-            results.append(char)
-    # 如果沒找到完全匹配，嘗試模糊搜尋
-    if not results:
+    index: dict = {}   # "tian" → ["天", ...]
+    for char in char_map:
         try:
-            from tools.analysis.character_search import search_characters
-            results = search_characters(char_map, query)
-        except ImportError:
+            py = lazy_pinyin(char)[0].lower()   # 無聲調拼音
+            if py not in index:
+                index[py] = []
+            index[py].append(char)
+        except Exception:
             pass
-    return results
+    return index
+
+
+def search(query: str) -> List[str]:
+    """搜尋字元
+
+    支援：
+    - 直接輸入漢字（精確）
+    - 拼音搜尋（如 "tian" 找「天」）
+    """
+    query = query.strip()
+    char_map = _get_char_map()
+
+    # 1. 直接匹配漢字
+    results = [c for c in query if c in char_map]
+    if results:
+        return results
+
+    # 2. 拼音搜尋（只含 a-z 的輸入視為拼音）
+    if query.isascii() and query.isalpha():
+        pinyin_index = _build_pinyin_index()
+        q_lower = query.lower()
+        # 精確拼音
+        if q_lower in pinyin_index:
+            return pinyin_index[q_lower]
+        # 前綴拼音（e.g. "tia" 找 "tian"）
+        prefix_matches = []
+        for py, chars in pinyin_index.items():
+            if py.startswith(q_lower):
+                prefix_matches.extend(chars)
+        if prefix_matches:
+            return list(dict.fromkeys(prefix_matches))  # 去重保序
+
+    return []
+
+
+def get_available_radicals() -> List[Dict]:
+    """取得所有可用的部首及其字數（只返回在資料集中實際出現的部首）"""
+    char_map = _get_char_map()
+    char_data = _load_char_data()
+    radical_count: Dict[str, int] = {}
+    for char in char_map:
+        rad = char_data.get(char, {}).get('radical', '')
+        if rad:
+            radical_count[rad] = radical_count.get(rad, 0) + 1
+    # 按字數排序（多 → 少），方便前端顯示
+    return [
+        {"radical": r, "count": c}
+        for r, c in sorted(radical_count.items(), key=lambda x: -x[1])
+    ]
 
 
 def get_stats() -> Dict:

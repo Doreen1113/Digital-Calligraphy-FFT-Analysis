@@ -4,14 +4,15 @@
 生成 data/index/char_data.json，包含：
   - freq_rank : 字頻排名（1 = 最常用，數字越大越罕用）
   - strokes   : 繁體字筆畫數
+  - radical   : 部首（康熙字典 214 部首）
 
 使用方式：
     python tools/analysis/build_char_data.py
 
 資料來源：
   - 字頻：内嵌現代漢語常用字頻率表（3500 字）
-  - 筆畫：優先使用 cjklib，不存在時下載 Unihan 資料，
-          再不行以內建常用字表為備用
+  - 筆畫：優先使用 Unihan 資料（kTotalStrokes），備用內建表
+  - 部首：Unihan 資料（kRSUnicode）→ 康熙 214 部首
 """
 
 import json
@@ -109,6 +110,35 @@ _STROKE_FALLBACK = {
 _STROKE_FALLBACK["此"] = 6  # 修正轉義問題
 
 
+# ── 康熙 214 部首表 ────────────────────────────────────────────────────────────
+# 部首編號 → 部首字元
+# 來源：Unicode CJK Radicals，編號 1-214 對應《康熙字典》
+_KANGXI_RADICALS = {
+    1:"一",2:"丨",3:"丶",4:"丿",5:"乙",6:"亅",7:"二",8:"亠",9:"人",10:"儿",
+    11:"入",12:"八",13:"冂",14:"冖",15:"冫",16:"几",17:"凵",18:"刀",19:"力",20:"勹",
+    21:"匕",22:"匚",23:"匸",24:"十",25:"卜",26:"卩",27:"厂",28:"厶",29:"又",30:"口",
+    31:"囗",32:"土",33:"士",34:"夂",35:"夊",36:"夕",37:"大",38:"女",39:"子",40:"宀",
+    41:"寸",42:"小",43:"尢",44:"尸",45:"屮",46:"山",47:"巛",48:"工",49:"己",50:"巾",
+    51:"干",52:"幺",53:"广",54:"廴",55:"廾",56:"弋",57:"弓",58:"彐",59:"彡",60:"彳",
+    61:"心",62:"戈",63:"戶",64:"手",65:"支",66:"攴",67:"文",68:"斗",69:"斤",70:"方",
+    71:"无",72:"日",73:"曰",74:"月",75:"木",76:"欠",77:"止",78:"歹",79:"殳",80:"毋",
+    81:"比",82:"毛",83:"氏",84:"气",85:"水",86:"火",87:"爪",88:"父",89:"爻",90:"爿",
+    91:"片",92:"牙",93:"牛",94:"犬",95:"玄",96:"玉",97:"瓜",98:"瓦",99:"甘",100:"生",
+    101:"用",102:"田",103:"疋",104:"疒",105:"癶",106:"白",107:"皮",108:"皿",109:"目",110:"矛",
+    111:"矢",112:"石",113:"示",114:"禸",115:"禾",116:"穴",117:"立",118:"竹",119:"米",120:"糸",
+    121:"缶",122:"网",123:"羊",124:"羽",125:"老",126:"而",127:"耒",128:"耳",129:"聿",130:"肉",
+    131:"臣",132:"自",133:"至",134:"臼",135:"舌",136:"舛",137:"舟",138:"艮",139:"色",140:"艸",
+    141:"虍",142:"虫",143:"血",144:"行",145:"衣",146:"襾",147:"見",148:"角",149:"言",150:"谷",
+    151:"豆",152:"豕",153:"豸",154:"貝",155:"赤",156:"走",157:"足",158:"身",159:"車",160:"辛",
+    161:"辰",162:"辵",163:"邑",164:"酉",165:"釆",166:"里",167:"金",168:"長",169:"門",170:"阜",
+    171:"隶",172:"隹",173:"雨",174:"青",175:"非",176:"面",177:"革",178:"韋",179:"韭",180:"音",
+    181:"頁",182:"風",183:"飛",184:"食",185:"首",186:"香",187:"馬",188:"骨",189:"高",190:"髟",
+    191:"鬥",192:"鬯",193:"鬲",194:"鬼",195:"魚",196:"鳥",197:"鹵",198:"鹿",199:"麥",200:"麻",
+    201:"黃",202:"黍",203:"黑",204:"黹",205:"黽",206:"鼎",207:"鼓",208:"鼠",209:"鼻",210:"齊",
+    211:"齒",212:"龍",213:"龜",214:"龠",
+}
+
+
 def get_char_list():
     """讀取字元索引，取得所有需要處理的字元"""
     if not CHAR_INDEX.exists():
@@ -122,10 +152,14 @@ def get_char_list():
     return chars
 
 
-def get_strokes_from_unihan(chars):
-    """從 Unicode Unihan 資料庫下載筆畫數（kTotalStrokes）
+def get_unihan_data(chars):
+    """從 Unicode Unihan 資料庫下載筆畫數與部首資料
 
-    注意：kTotalStrokes 在 Unihan_IRGSources.txt（非 DictionaryLikeData）
+    提取：
+    - kTotalStrokes（筆畫數）→ Unihan_IRGSources.txt
+    - kRSUnicode（部首-剩餘筆畫）→ Unihan_RadicalStrokeCounts.txt
+
+    回傳：(stroke_map, radical_map)
     """
     char_set = set(chars)
     url = "https://unicode.org/Public/UCD/latest/ucd/Unihan.zip"
@@ -133,58 +167,86 @@ def get_strokes_from_unihan(chars):
     try:
         with urllib.request.urlopen(url, timeout=60) as resp:
             raw = resp.read()
+
+        stroke_map = {}
+        radical_map = {}
+
         with zipfile.ZipFile(io.BytesIO(raw)) as z:
-            # kTotalStrokes 在 Unihan_IRGSources.txt
+            # kTotalStrokes 和 kRSUnicode 都在 Unihan_IRGSources.txt
             with z.open("Unihan_IRGSources.txt") as f:
                 content = f.read().decode('utf-8')
 
-        result = {}
-        for line in content.splitlines():
-            if not line or line.startswith('#'):
-                continue
-            parts = line.split('\t')
-            if len(parts) < 3 or parts[1] != 'kTotalStrokes':
-                continue
-            try:
-                cp  = int(parts[0].lstrip('U+'), 16)
-                ch  = chr(cp)
-                val = parts[2].strip().split()[0]   # 格式為 "N" 或 "N N"
-                if ch in char_set:
-                    result[ch] = int(val)
-            except (ValueError, IndexError):
-                pass
+            for line in content.splitlines():
+                if not line or line.startswith('#'):
+                    continue
+                parts = line.split('\t')
+                if len(parts) < 3:
+                    continue
 
-        print(f"[Unihan] 取得 {len(result)}/{len(chars)} 個字元的筆畫數")
-        return result
+                field = parts[1]
+                if field not in ('kTotalStrokes', 'kRSUnicode'):
+                    continue
+
+                try:
+                    cp  = int(parts[0].lstrip('U+'), 16)
+                    ch  = chr(cp)
+                    if ch not in char_set:
+                        continue
+
+                    if field == 'kTotalStrokes':
+                        val = parts[2].strip().split()[0]
+                        stroke_map[ch] = int(val)
+                    elif field == 'kRSUnicode':
+                        # 格式："85.7" 或 "85'.7"（' 表示簡化部首變體）
+                        # 取第一個值（可能有多組，如 "85.7 109.2"）
+                        rs_val = parts[2].strip().split()[0]
+                        radical_num = int(rs_val.split('.')[0].rstrip("'"))
+                        if 1 <= radical_num <= 214:
+                            radical_char = _KANGXI_RADICALS.get(radical_num, "")
+                            if radical_char:
+                                radical_map[ch] = radical_char
+                except (ValueError, IndexError):
+                    pass
+
+        print(f"[Unihan] 筆畫：{len(stroke_map)}/{len(chars)} 個字元")
+        print(f"[Unihan] 部首：{len(radical_map)}/{len(chars)} 個字元")
+        return stroke_map, radical_map
     except Exception as e:
         print(f"[Unihan] 下載失敗：{e}")
-        return {}
+        return {}, {}
 
 
 def build_char_data():
     """主流程：建立 char_data.json"""
     chars = get_char_list()
 
-    # 1. 取得筆畫數
-    stroke_map = get_strokes_from_unihan(chars)
+    # 1. 從 Unihan 取得筆畫數 + 部首
+    stroke_map, radical_map = get_unihan_data(chars)
 
-    # 補充內建備用表
+    # 補充內建備用筆畫表
     missing_before = sum(1 for c in chars if c not in stroke_map)
     for c in chars:
         if c not in stroke_map and c in _STROKE_FALLBACK:
             stroke_map[c] = _STROKE_FALLBACK[c]
     missing_after = sum(1 for c in chars if c not in stroke_map)
-    print(f"[備用表] 補充 {missing_before - missing_after} 個字元")
+    print(f"[備用表] 補充 {missing_before - missing_after} 個字元筆畫")
     if missing_after > 0:
         print(f"[警告] 仍有 {missing_after} 個字元缺少筆畫數（以 0 填充）")
+
+    radical_missing = sum(1 for c in chars if c not in radical_map)
+    if radical_missing > 0:
+        print(f"[警告] 有 {radical_missing} 個字元缺少部首資料")
 
     # 2. 組合結果
     char_data = {}
     for c in chars:
-        char_data[c] = {
+        entry = {
             "freq_rank": _freq_dict.get(c, 9999),
             "strokes":   stroke_map.get(c, 0),
         }
+        if c in radical_map:
+            entry["radical"] = radical_map[c]
+        char_data[c] = entry
 
     # 3. 儲存
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -193,9 +255,11 @@ def build_char_data():
 
     freq_ok    = sum(1 for v in char_data.values() if v['freq_rank'] < 9999)
     stroke_ok  = sum(1 for v in char_data.values() if v['strokes'] > 0)
+    radical_ok = sum(1 for v in char_data.values() if 'radical' in v)
     print(f"\n[完成] 已儲存至 {OUT_FILE}")
     print(f"  字頻已知: {freq_ok}/{len(chars)}")
     print(f"  筆畫已知: {stroke_ok}/{len(chars)}")
+    print(f"  部首已知: {radical_ok}/{len(chars)}")
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 
 使用方式：
     python run_web.py
-    然後在瀏覽器開啟 http://localhost:8000
+    然後在瀏覽器開啟 http://localhost:8002
 """
 import os
 import sys
@@ -46,7 +46,7 @@ def main():
     print("=" * 60)
     print()
     print("  啟動伺服器中...")
-    print("  開啟瀏覽器訪問: http://localhost:8000")
+    print("  開啟瀏覽器訪問: http://localhost:8002")
     print("  按 Ctrl+C 停止伺服器")
     print()
     print("=" * 60)

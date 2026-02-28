@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/compare.css">
+<link rel="stylesheet" href="/static/css/compare.css?v=2">
 {% endblock %}
 
 {% block content %}
@@ -40,6 +40,25 @@
             </div>
         </div>
 
+        <!-- 排序與顯示選項 -->
+        <div class="sort-options">
+            <div class="input-group">
+                <label>排序方式</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="sortMode" value="character" checked>
+                        <span>依字元排序</span>
+                        <small>（同一個字的所有書法家排在一起）</small>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sortMode" value="calligrapher">
+                        <span>依書法家排序</span>
+                        <small>（同一個書法家的所有字排在一起）</small>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button class="btn btn-primary btn-lg" onclick="doBatchCompare()">
                 產生比對圖
@@ -67,5 +86,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/compare.js"></script>
+<script src="/static/js/compare.js?v=3"></script>
 {% endblock %}

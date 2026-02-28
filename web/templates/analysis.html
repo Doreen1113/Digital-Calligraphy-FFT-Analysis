@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/analysis.css">
+<link rel="stylesheet" href="/static/css/analysis.css?v=4">
+<!-- Chart.js for interactive charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -13,40 +15,77 @@
 <!-- 分析狀態 -->
 <div id="analysisStatus"></div>
 
-<!-- 雷達圖 + 相似度 -->
-<section class="analysis-charts" id="chartsSection">
-    <div class="card">
-        <h3 class="card-title">風格雷達圖 <span class="badge">7 維特徵</span></h3>
-        <p class="feature-intro">展示各書法家在 7 個風格特徵上的分布。點擊圖片可放大檢視。</p>
-        <div class="img-container" id="radarContainer">
-            <div class="loading" style="min-height:400px"></div>
-        </div>
+<!-- 書法家選擇器 -->
+<section class="calligrapher-selector card">
+    <h3 class="card-title">選擇書法家 <span class="badge" id="selectedCount">0/0</span></h3>
+    <div class="cal-toggle-group" id="calToggles">
+        <div class="loading" style="min-height:50px"></div>
     </div>
+</section>
+
+<!-- 互動式雷達圖 -->
+<section class="analysis-section">
     <div class="card">
-        <h3 class="card-title">相似度矩陣 <span class="badge">書法家間相似度</span></h3>
-        <p class="feature-intro">越接近藍色表示風格越相似。數值範圍 0-1。點擊圖片可放大檢視。</p>
-        <div class="img-container" id="similarityContainer">
+        <h3 class="card-title">
+            風格特徵雷達圖
+            <button class="btn btn-sm btn-secondary" onclick="toggleRadarView()">
+                <span id="radarViewToggle">切換為圖片</span>
+            </button>
+        </h3>
+        <p class="section-desc">滑鼠懸停查看詳細數值，點擊特徵名稱查看說明</p>
+        <div class="radar-container" id="radarContainer">
+            <canvas id="radarChart" width="500" height="500"></canvas>
+        </div>
+        <div class="radar-image-container" id="radarImageContainer" style="display:none">
             <div class="loading" style="min-height:400px"></div>
         </div>
     </div>
 </section>
 
-<!-- 特徵長條圖 -->
-<section class="analysis-bars" id="barsSection">
+<!-- 互動式相似度面板 -->
+<section class="analysis-section">
     <div class="card">
-        <h3 class="card-title">特徵對比</h3>
-        <div class="img-container" id="barsContainer">
+        <h3 class="card-title">
+            風格相似度分析
+            <button class="btn btn-sm btn-secondary" onclick="toggleSimilarityView()">
+                <span id="simViewToggle">切換為圖片</span>
+            </button>
+        </h3>
+        <p class="section-desc">點擊任意兩位書法家，查看詳細相似度分析</p>
+        <div class="similarity-panel" id="similarityPanel">
+            <div class="similarity-grid" id="similarityGrid">
+                <div class="loading" style="min-height:300px"></div>
+            </div>
+            <div class="similarity-detail" id="similarityDetail">
+                <div class="detail-placeholder">
+                    <span class="placeholder-icon">👆</span>
+                    <p>點擊上方格子查看詳細比較</p>
+                </div>
+            </div>
+        </div>
+        <div class="similarity-image-container" id="similarityImageContainer" style="display:none">
+            <div class="loading" style="min-height:400px"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 7 維特徵說明（互動式手風琴） -->
+<section class="analysis-section">
+    <div class="card">
+        <h3 class="card-title">7 維特徵解讀</h3>
+        <p class="section-desc">點擊展開查看每個特徵的詳細說明與書法意義</p>
+        <div class="feature-accordion" id="featureAccordion">
             <div class="loading" style="min-height:200px"></div>
         </div>
     </div>
 </section>
 
-<!-- 特徵說明 -->
-<section class="feature-section">
+<!-- 書法家風格總覽 -->
+<section class="analysis-section">
     <div class="card">
-        <h3 class="card-title">7 維特徵說明</h3>
-        <p class="feature-intro">每個特徵反映書法風格的不同面向，從整體結構到筆觸細節</p>
-        <div class="feature-grid" id="featureGrid">
+        <h3 class="card-title">書法家風格總覽</h3>
+        <p class="section-desc">基於 FFT 分析的風格特點摘要</p>
+        <div class="style-overview" id="styleOverview">
             <div class="loading" style="min-height:200px"></div>
         </div>
     </div>
@@ -54,5 +93,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/analysis.js"></script>
+<script src="/static/js/analysis.js?v=4"></script>
 {% endblock %}

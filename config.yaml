@@ -10,11 +10,13 @@ project:
 fonts:
   base_dir: "./data/fonts"
 
-  # 4 位書法家（name用英文作為路徑/ID，display_name為顯示用中文）
+  # 每個字帖獨立一個 id（資料夾編號），name 為唯一英文識別碼
+  # book 欄位：字帖名稱，同一書法家可有多本字帖（各有獨立 id）
   calligraphers:
     - id: "00"
-      name: "zhiyong"
+      name: "zhiyong_00"
       display_name: "智永"
+      book: "真草千字文"
       dynasty: "南北朝"
       style: "楷書"
       image_dir: "./Fonts/my_fonts/00"
@@ -23,8 +25,9 @@ fonts:
       description: "智永禪師，南朝陳至隋代書法家，王羲之七世孫"
 
     - id: "01"
-      name: "shen_yinmo"
+      name: "shen_yinmo_01"
       display_name: "沈尹默"
+      book: "孫蕉軒九十大壽冊頁"
       dynasty: "近代"
       style: "楷書"
       image_dir: "./Fonts/my_fonts/01"
@@ -33,34 +36,59 @@ fonts:
       description: "沈尹默（1883-1971），近代著名書法家"
 
     - id: "02"
-      name: "yan_zhenqing"
+      name: "yan_zhenqing_02"
       display_name: "顏真卿"
+      book: "玄秘塔碑"
       dynasty: "唐代"
       style: "楷書"
       image_dir: "./Fonts/my_fonts/02"
       labels_file: "./Fonts/my_fonts/csv/02.csv"
-      total_chars: 352
+      total_chars: 1636
       description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
 
     - id: "03"
-      name: "ouyang_xun"
+      name: "ouyang_xun_03"
       display_name: "歐陽詢"
+      book: "九成宮禮泉銘"
       dynasty: "唐代"
       style: "楷書"
       image_dir: "./Fonts/my_fonts/03"
       labels_file: "./Fonts/my_fonts/csv/03.csv"
-      total_chars: 560
+      total_chars: 1100
       description: "歐陽詢（557-641），唐代書法家，楷書四大家之一"
 
     - id: "04"
-      name: "zhao_mengfu"
+      name: "zhao_mengfu_04"
       display_name: "趙孟頫"
+      book: "玄妙觀重修三門記"
       dynasty: "元代"
       style: "楷書/行書"
       image_dir: "./Fonts/my_fonts/04"
       labels_file: "./Fonts/my_fonts/csv/04.csv"
       total_chars: 497
       description: "趙孟頫（1254-1322），元代著名書法家、畫家，精通各種書體"
+
+    - id: "06"
+      name: "yu_shinan_06"
+      display_name: "虞世南"
+      book: "演連珠"
+      dynasty: "唐代"
+      style: "楷書"
+      image_dir: "./Fonts/my_fonts/06"
+      labels_file: "./Fonts/my_fonts/csv/06.csv"
+      total_chars: 346
+      description: "虞世南（558-638），唐代著名書法家，唐太宗重臣，楷書四大家之一。師承智永，書法外柔內剛，秀潤典雅，代表作有《孔子廟堂碑》。"
+
+    - id: "07"
+      name: "yan_zhenqing_07"
+      display_name: "顏真卿"
+      book: "多寶塔碑"
+      dynasty: "唐代"
+      style: "楷書"
+      image_dir: "./Fonts/my_fonts/07"
+      labels_file: "./Fonts/my_fonts/csv/07.csv"
+      total_chars: 2011
+      description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
 
 # === 索引配置 ===
 index:

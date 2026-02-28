@@ -93,7 +93,7 @@ class SameCharComparatorFinal:
         char_images = self.get_char_images(target_char)
         
         if len(char_images) < 2:
-            print(f"❌ '{target_char}' 的書法家版本太少，無法比較")
+            print(f"'{target_char}' 的書法家版本太少，無法比較")
             return None
         
         # 固定排列順序，確保一致性
@@ -189,12 +189,12 @@ class SameCharComparatorFinal:
                     success_count += 1
                     plt.close(fig)
             except Exception as e:
-                print(f"❌ 生成 '{char}' 時出錯: {e}")
+                print(f"生成 '{char}' 時出錯: {e}")
                 import traceback
                 traceback.print_exc()
         
-        print(f"✅ 完成！成功生成 {success_count}/{len(self.target_chars)} 張小圖比較圖")
-        print(f"📁 輸出位置: {output_path.absolute()}")
+        print(f"完成！成功生成 {success_count}/{len(self.target_chars)} 張小圖比較圖")
+        print(f"輸出位置: {output_path.absolute()}")
     
     def interactive_demo(self):
         """互動式展示"""
@@ -208,12 +208,12 @@ class SameCharComparatorFinal:
             char = input("請輸入要比較的字符 (輸入 'q' 退出): ").strip()
             
             if char.lower() == 'q':
-                print("👋 再見！")
+                print("再見！")
                 break
             
             if char not in self.target_chars:
-                print(f"❌ '{char}' 不在可比較的字符列表中")
-                print(f"💡 請選擇: {' '.join(self.target_chars)}")
+                print(f" '{char}' 不在可比較的字符列表中")
+                print(f" 請選擇: {' '.join(self.target_chars)}")
                 continue
             
             print(f"\n🔍 正在分析「{char}」...")
@@ -221,11 +221,11 @@ class SameCharComparatorFinal:
             # 顯示比較圖
             self.create_comparison_grid(char)
             
-            print(f"✅ 「{char}」分析完成！")
+            print(f"「{char}」分析完成！")
 
 def main():
     """主程序"""
-    print("🎨 小圖書法同字異寫比較器")
+    print(" 小圖書法同字異寫比較器")
     print("="*50)
     
     try:
@@ -248,12 +248,12 @@ def main():
             if test_char in comparator.target_chars:
                 comparator.create_comparison_grid(test_char)
             else:
-                print(f"❌ '{test_char}' 不在可用列表中")
+                print(f"'{test_char}' 不在可用列表中")
         else:
-            print("❌ 無效選項")
+            print("無效選項")
             
     except Exception as e:
-        print(f"❌ 程序錯誤: {e}")
+        print(f"程序錯誤: {e}")
         import traceback
         traceback.print_exc()
 

@@ -123,16 +123,24 @@ async function loadCalligraphers() {
         const container = document.getElementById('calCheckboxes');
         if (!container) return;
 
-        container.innerHTML = calligraphers.map(cal =>
+        // 依 display_name 去重（同一書法家多本字帖只顯示一次）
+        const seenCal = new Set();
+        const uniqueCals = calligraphers.filter(cal => {
+            if (seenCal.has(cal.display_name)) return false;
+            seenCal.add(cal.display_name);
+            return true;
+        });
+
+        container.innerHTML = uniqueCals.map(cal =>
             `<label class="checkbox-item">
                 <input type="checkbox" value="${escapeHtml(cal.display_name)}" checked>
                 <span>${escapeHtml(cal.display_name)} <small>${escapeHtml(cal.dynasty)}</small></span>
             </label>`
         ).join('');
 
-        // 更新統計中的書法家數量和總圖片數
+        // 更新統計中的書法家數量（以不重複的書法家為準）和總圖片數
         const statCalligraphers = document.getElementById('statCalligraphers');
-        if (statCalligraphers) statCalligraphers.textContent = calligraphers.length;
+        if (statCalligraphers) statCalligraphers.textContent = uniqueCals.length;
 
         const totalImages = calligraphers.reduce((sum, cal) => sum + (cal.total_images || 0), 0);
         const statImages = document.getElementById('statImages');

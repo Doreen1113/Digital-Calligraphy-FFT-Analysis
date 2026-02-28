@@ -1,2342 +1,2927 @@
 {
   "天": {
     "freq_rank": 47,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "大"
   },
   "地": {
     "freq_rank": 19,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "土"
   },
   "玄": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "玄"
   },
   "黃": {
     "freq_rank": 292,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "黃"
   },
   "宇": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "宀"
   },
   "洪": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "水"
   },
   "日": {
     "freq_rank": 95,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "日"
   },
   "月": {
     "freq_rank": 241,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "月"
   },
   "盈": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "皿"
   },
   "辰": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "辰"
   },
   "列": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "刀"
   },
   "張": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "弓"
   },
   "來": {
     "freq_rank": 15,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "人"
   },
   "暑": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "日"
   },
   "往": {
     "freq_rank": 380,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "彳"
   },
   "秋": {
     "freq_rank": 273,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "禾"
   },
   "餘": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "食"
   },
   "成": {
     "freq_rank": 66,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "戈"
   },
   "歲": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "止"
   },
   "陽": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "阜"
   },
   "雲": {
     "freq_rank": 233,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "雨"
   },
   "致": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "至"
   },
   "雨": {
     "freq_rank": 234,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "雨"
   },
   "露": {
     "freq_rank": 238,
-    "strokes": 21
+    "strokes": 21,
+    "radical": "雨"
   },
   "金": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "金"
   },
   "生": {
     "freq_rank": 25,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "生"
   },
   "麗": {
     "freq_rank": 9999,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "鹿"
   },
   "水": {
     "freq_rank": 201,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "水"
   },
   "玉": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "玉"
   },
   "出": {
     "freq_rank": 34,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "凵"
   },
   "巨": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "工"
   },
   "闕": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "門"
   },
   "珠": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "玉"
   },
   "稱": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "禾"
   },
   "夜": {
     "freq_rank": 170,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "夕"
   },
   "珍": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "玉"
   },
   "重": {
     "freq_rank": 171,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "里"
   },
   "海": {
     "freq_rank": 231,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "水"
   },
   "潛": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "水"
   },
   "羽": {
     "freq_rank": 220,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "羽"
   },
   "帝": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "巾"
   },
   "人": {
     "freq_rank": 7,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "人"
   },
   "皇": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "白"
   },
   "始": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "女"
   },
   "制": {
     "freq_rank": 401,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "刀"
   },
   "文": {
     "freq_rank": 265,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "文"
   },
   "字": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "子"
   },
   "乃": {
     "freq_rank": 9999,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "丿"
   },
   "服": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "月"
   },
   "推": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "手"
   },
   "位": {
     "freq_rank": 109,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "人"
   },
   "國": {
     "freq_rank": 26,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "囗"
   },
   "有": {
     "freq_rank": 10,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "月"
   },
   "虞": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "虍"
   },
   "唐": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "口"
   },
   "民": {
     "freq_rank": 263,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "氏"
   },
   "周": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "口"
   },
   "發": {
     "freq_rank": 63,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "癶"
   },
   "殷": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "殳"
   },
   "朝": {
     "freq_rank": 277,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "月"
   },
   "問": {
     "freq_rank": 143,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "口"
   },
   "道": {
     "freq_rank": 75,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "辵"
   },
   "垂": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "土"
   },
   "平": {
     "freq_rank": 189,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "干"
   },
   "章": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "音"
   },
   "愛": {
     "freq_rank": 111,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "心"
   },
   "育": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "肉"
   },
   "首": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "首"
   },
   "臣": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "臣"
   },
   "伏": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "人"
   },
   "邇": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "辵"
   },
   "壹": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "士"
   },
   "體": {
     "freq_rank": 175,
-    "strokes": 22
+    "strokes": 22,
+    "radical": "骨"
   },
   "率": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "玄"
   },
   "賓": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "貝"
   },
   "歸": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "止"
   },
   "王": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "玉"
   },
   "鳴": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "鳥"
   },
   "在": {
     "freq_rank": 8,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "土"
   },
   "樹": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "木"
   },
   "食": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "食"
   },
   "化": {
     "freq_rank": 198,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "匕"
   },
   "木": {
     "freq_rank": 243,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "木"
   },
   "及": {
     "freq_rank": 191,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "又"
   },
   "萬": {
     "freq_rank": 336,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "禸"
   },
   "方": {
     "freq_rank": 101,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "方"
   },
   "蓋": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "艸"
   },
   "此": {
     "freq_rank": 134,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "止"
   },
   "身": {
     "freq_rank": 126,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "身"
   },
   "四": {
     "freq_rank": 327,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "囗"
   },
   "大": {
     "freq_rank": 18,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "大"
   },
   "五": {
     "freq_rank": 328,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "二"
   },
   "常": {
     "freq_rank": 136,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "巾"
   },
   "惟": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "心"
   },
   "鞠": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "革"
   },
   "養": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "食"
   },
   "敢": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "攴"
   },
   "毀": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "殳"
   },
   "女": {
     "freq_rank": 88,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "女"
   },
   "貞": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "貝"
   },
   "男": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "田"
   },
   "效": {
     "freq_rank": 414,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "攴"
   },
   "良": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "艮"
   },
   "知": {
     "freq_rank": 120,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "矢"
   },
   "必": {
     "freq_rank": 400,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "心"
   },
   "改": {
     "freq_rank": 405,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "攴"
   },
   "得": {
     "freq_rank": 36,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "彳"
   },
   "能": {
     "freq_rank": 49,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "肉"
   },
   "莫": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "艸"
   },
   "忘": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "心"
   },
   "罔": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "网"
   },
   "彼": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "彳"
   },
   "恃": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "心"
   },
   "己": {
     "freq_rank": 85,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "己"
   },
   "長": {
     "freq_rank": 106,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "長"
   },
   "信": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "人"
   },
   "可": {
     "freq_rank": 43,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "口"
   },
   "欲": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "欠"
   },
   "難": {
     "freq_rank": 381,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "隹"
   },
   "量": {
     "freq_rank": 393,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "里"
   },
   "悲": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "心"
   },
   "詩": {
     "freq_rank": 267,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "言"
   },
   "景": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "日"
   },
   "行": {
     "freq_rank": 98,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "行"
   },
   "維": {
     "freq_rank": 382,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "糸"
   },
   "賢": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "貝"
   },
   "念": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "心"
   },
   "作": {
     "freq_rank": 77,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "人"
   },
   "聖": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "耳"
   },
   "德": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "彳"
   },
   "建": {
     "freq_rank": 342,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "廴"
   },
   "名": {
     "freq_rank": 116,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "口"
   },
   "立": {
     "freq_rank": 181,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "立"
   },
   "端": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "立"
   },
   "正": {
     "freq_rank": 139,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "止"
   },
   "谷": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "谷"
   },
   "傳": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "人"
   },
   "聲": {
     "freq_rank": 433,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "耳"
   },
   "虛": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "虍"
   },
   "堂": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "土"
   },
   "因": {
     "freq_rank": 113,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "囗"
   },
   "積": {
     "freq_rank": 389,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "禾"
   },
   "善": {
     "freq_rank": 308,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "口"
   },
   "慶": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "心"
   },
   "璧": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "玉"
   },
   "非": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "非"
   },
   "陰": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "阜"
   },
   "是": {
     "freq_rank": 3,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "日"
   },
   "資": {
     "freq_rank": 365,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "貝"
   },
   "父": {
     "freq_rank": 251,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "父"
   },
   "事": {
     "freq_rank": 69,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "亅"
   },
   "君": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "口"
   },
   "曰": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "曰"
   },
   "嚴": {
     "freq_rank": 9999,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "口"
   },
   "與": {
     "freq_rank": 137,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "臼"
   },
   "敬": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "攴"
   },
   "當": {
     "freq_rank": 64,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "田"
   },
   "竭": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "立"
   },
   "力": {
     "freq_rank": 144,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "力"
   },
   "忠": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "心"
   },
   "則": {
     "freq_rank": 404,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "刀"
   },
   "臨": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "臣"
   },
   "深": {
     "freq_rank": 298,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "水"
   },
   "薄": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "艸"
   },
   "夙": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "夕"
   },
   "興": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "臼"
   },
   "溫": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "水"
   },
   "似": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "人"
   },
   "如": {
     "freq_rank": 68,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "女"
   },
   "之": {
     "freq_rank": 58,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "丿"
   },
   "盛": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "皿"
   },
   "流": {
     "freq_rank": 366,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "水"
   },
   "不": {
     "freq_rank": 6,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "一"
   },
   "淵": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "水"
   },
   "取": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "又"
   },
   "容": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "宀"
   },
   "若": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "艸"
   },
   "思": {
     "freq_rank": 412,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "心"
   },
   "言": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "言"
   },
   "安": {
     "freq_rank": 410,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "宀"
   },
   "定": {
     "freq_rank": 194,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "宀"
   },
   "初": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "刀"
   },
   "誠": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "言"
   },
   "慎": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "心"
   },
   "終": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "糸"
   },
   "業": {
     "freq_rank": 437,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "木"
   },
   "所": {
     "freq_rank": 93,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "戶"
   },
   "籍": {
     "freq_rank": 9999,
-    "strokes": 20
+    "strokes": 20,
+    "radical": "竹"
   },
   "甚": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "甘"
   },
   "無": {
     "freq_rank": 83,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "火"
   },
   "學": {
     "freq_rank": 56,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "子"
   },
   "優": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "人"
   },
   "仕": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "人"
   },
   "從": {
     "freq_rank": 82,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "彳"
   },
   "以": {
     "freq_rank": 40,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "人"
   },
   "甘": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "甘"
   },
   "去": {
     "freq_rank": 48,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "厶"
   },
   "而": {
     "freq_rank": 45,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "而"
   },
   "益": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "皿"
   },
   "樂": {
     "freq_rank": 269,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "木"
   },
   "殊": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "歹"
   },
   "貴": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "貝"
   },
   "禮": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "示"
   },
   "卑": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "十"
   },
   "上": {
     "freq_rank": 13,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "一"
   },
   "和": {
     "freq_rank": 31,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "口"
   },
   "下": {
     "freq_rank": 44,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "一"
   },
   "夫": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "大"
   },
   "唱": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "口"
   },
   "婦": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "女"
   },
   "隨": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "阜"
   },
   "外": {
     "freq_rank": 184,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "夕"
   },
   "受": {
     "freq_rank": 164,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "又"
   },
   "訓": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "言"
   },
   "入": {
     "freq_rank": 356,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "入"
   },
   "奉": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "大"
   },
   "母": {
     "freq_rank": 252,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "毋"
   },
   "儀": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "人"
   },
   "諸": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "言"
   },
   "猶": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "犬"
   },
   "子": {
     "freq_rank": 21,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "子"
   },
   "比": {
     "freq_rank": 160,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "比"
   },
   "兒": {
     "freq_rank": 107,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "儿"
   },
   "懷": {
     "freq_rank": 9999,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "心"
   },
   "兄": {
     "freq_rank": 253,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "儿"
   },
   "弟": {
     "freq_rank": 254,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "弓"
   },
   "同": {
     "freq_rank": 94,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "口"
   },
   "氣": {
     "freq_rank": 178,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "气"
   },
   "枝": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "木"
   },
   "交": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "亠"
   },
   "友": {
     "freq_rank": 260,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "又"
   },
   "分": {
     "freq_rank": 110,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "刀"
   },
   "切": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "刀"
   },
   "仁": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "人"
   },
   "隱": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "阜"
   },
   "造": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "辵"
   },
   "次": {
     "freq_rank": 124,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "欠"
   },
   "弗": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "弓"
   },
   "離": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "隹"
   },
   "節": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "竹"
   },
   "義": {
     "freq_rank": 388,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "羊"
   },
   "匪": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "匚"
   },
   "虧": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "虍"
   },
   "性": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "心"
   },
   "心": {
     "freq_rank": 55,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "心"
   },
   "動": {
     "freq_rank": 100,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "力"
   },
   "神": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "示"
   },
   "守": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "宀"
   },
   "志": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "心"
   },
   "滿": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "水"
   },
   "物": {
     "freq_rank": 419,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "牛"
   },
   "移": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "禾"
   },
   "雅": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "隹"
   },
   "操": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "手"
   },
   "好": {
     "freq_rank": 60,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "女"
   },
   "自": {
     "freq_rank": 39,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "自"
   },
   "都": {
     "freq_rank": 59,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "邑"
   },
   "邑": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "邑"
   },
   "華": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "艸"
   },
   "夏": {
     "freq_rank": 272,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "夊"
   },
   "東": {
     "freq_rank": 192,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "木"
   },
   "西": {
     "freq_rank": 315,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "襾"
   },
   "二": {
     "freq_rank": 325,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "二"
   },
   "京": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "亠"
   },
   "面": {
     "freq_rank": 86,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "面"
   },
   "宮": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "宀"
   },
   "殿": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "殳"
   },
   "鬱": {
     "freq_rank": 9999,
-    "strokes": 29
+    "strokes": 29,
+    "radical": "鬯"
   },
   "觀": {
     "freq_rank": 9999,
-    "strokes": 24
+    "strokes": 24,
+    "radical": "見"
   },
   "飛": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "飛"
   },
   "圖": {
     "freq_rank": 368,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "囗"
   },
   "獸": {
     "freq_rank": 9999,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "犬"
   },
   "靈": {
     "freq_rank": 9999,
-    "strokes": 24
+    "strokes": 24,
+    "radical": "雨"
   },
   "丙": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "一"
   },
   "舍": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "舌"
   },
   "啟": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "攴"
   },
   "甲": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "田"
   },
   "楹": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "木"
   },
   "設": {
     "freq_rank": 359,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "言"
   },
   "階": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "阜"
   },
   "納": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "糸"
   },
   "星": {
     "freq_rank": 240,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "日"
   },
   "右": {
     "freq_rank": 313,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "口"
   },
   "通": {
     "freq_rank": 346,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "辵"
   },
   "廣": {
     "freq_rank": 387,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "广"
   },
   "內": {
     "freq_rank": 314,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "入"
   },
   "左": {
     "freq_rank": 312,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "工"
   },
   "達": {
     "freq_rank": 176,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "辵"
   },
   "承": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "手"
   },
   "明": {
     "freq_rank": 142,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "日"
   },
   "既": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "无"
   },
   "集": {
     "freq_rank": 391,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "隹"
   },
   "典": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "八"
   },
   "亦": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "亠"
   },
   "群": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "羊"
   },
   "英": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "艸"
   },
   "書": {
     "freq_rank": 190,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "曰"
   },
   "壁": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "土"
   },
   "經": {
     "freq_rank": 105,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "糸"
   },
   "府": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "广"
   },
   "羅": {
     "freq_rank": 9999,
-    "strokes": 19
+    "strokes": 19,
+    "radical": "网"
   },
   "將": {
     "freq_rank": 371,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "寸"
   },
   "相": {
     "freq_rank": 159,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "目"
   },
   "路": {
     "freq_rank": 156,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "足"
   },
   "卿": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "卩"
   },
   "戶": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "戶"
   },
   "八": {
     "freq_rank": 331,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "八"
   },
   "縣": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "糸"
   },
   "家": {
     "freq_rank": 42,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "宀"
   },
   "給": {
     "freq_rank": 115,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "糸"
   },
   "千": {
     "freq_rank": 335,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "十"
   },
   "高": {
     "freq_rank": 129,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "高"
   },
   "冠": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "冖"
   },
   "振": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "手"
   },
   "世": {
     "freq_rank": 121,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "一"
   },
   "侈": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "人"
   },
   "車": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "車"
   },
   "輕": {
     "freq_rank": 300,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "車"
   },
   "功": {
     "freq_rank": 424,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "力"
   },
   "實": {
     "freq_rank": 197,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "宀"
   },
   "碑": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "石"
   },
   "銘": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "金"
   },
   "時": {
     "freq_rank": 17,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "日"
   },
   "衡": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "行"
   },
   "微": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "彳"
   },
   "旦": {
     "freq_rank": 281,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "日"
   },
   "孰": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "子"
   },
   "營": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "火"
   },
   "公": {
     "freq_rank": 343,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "八"
   },
   "弱": {
     "freq_rank": 304,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "弓"
   },
   "漢": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "水"
   },
   "武": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "止"
   },
   "勿": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "勹"
   },
   "多": {
     "freq_rank": 52,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "夕"
   },
   "士": {
     "freq_rank": 9999,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "士"
   },
   "寧": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "宀"
   },
   "楚": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "木"
   },
   "更": {
     "freq_rank": 166,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "曰"
   },
   "趙": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "走"
   },
   "魏": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "鬼"
   },
   "橫": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "木"
   },
   "土": {
     "freq_rank": 9999,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "土"
   },
   "會": {
     "freq_rank": 41,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "曰"
   },
   "何": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "人"
   },
   "遵": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "辵"
   },
   "弊": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "廾"
   },
   "起": {
     "freq_rank": 62,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "走"
   },
   "頗": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "頁"
   },
   "用": {
     "freq_rank": 72,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "用"
   },
   "軍": {
     "freq_rank": 345,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "車"
   },
   "精": {
     "freq_rank": 436,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "米"
   },
   "沙": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "水"
   },
   "漠": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "水"
   },
   "丹": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "丶"
   },
   "青": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "青"
   },
   "九": {
     "freq_rank": 332,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "乙"
   },
   "州": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "巛"
   },
   "禹": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "禸"
   },
   "百": {
     "freq_rank": 334,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "白"
   },
   "郡": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "邑"
   },
   "秦": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "禾"
   },
   "宗": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "宀"
   },
   "禪": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "示"
   },
   "云": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "二"
   },
   "門": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "門"
   },
   "塞": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "土"
   },
   "城": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "土"
   },
   "昆": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "日"
   },
   "池": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "水"
   },
   "石": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "石"
   },
   "鉅": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "金"
   },
   "洞": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "水"
   },
   "庭": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "广"
   },
   "遠": {
     "freq_rank": 318,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "辵"
   },
   "邈": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "辵"
   },
   "本": {
     "freq_rank": 174,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "木"
   },
   "於": {
     "freq_rank": 54,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "方"
   },
   "務": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "力"
   },
   "茲": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "艸"
   },
   "載": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "車"
   },
   "南": {
     "freq_rank": 316,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "十"
   },
   "我": {
     "freq_rank": 5,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "戈"
   },
   "新": {
     "freq_rank": 153,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "斤"
   },
   "陟": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "阜"
   },
   "孟": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "子"
   },
   "史": {
     "freq_rank": 266,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "口"
   },
   "直": {
     "freq_rank": 169,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "目"
   },
   "庶": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "广"
   },
   "幾": {
     "freq_rank": 151,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "幺"
   },
   "中": {
     "freq_rank": 22,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "丨"
   },
   "庸": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "广"
   },
   "勞": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "力"
   },
   "謹": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "言"
   },
   "敕": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "攴"
   },
   "音": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "音"
   },
   "察": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "宀"
   },
   "理": {
     "freq_rank": 145,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "玉"
   },
   "厥": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "厂"
   },
   "勉": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "力"
   },
   "其": {
     "freq_rank": 132,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "八"
   },
   "省": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "目"
   },
   "躬": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "身"
   },
   "誡": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "言"
   },
   "抗": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "手"
   },
   "極": {
     "freq_rank": 390,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "木"
   },
   "近": {
     "freq_rank": 319,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "辵"
   },
   "幸": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "干"
   },
   "兩": {
     "freq_rank": 123,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "入"
   },
   "見": {
     "freq_rank": 141,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "見"
   },
   "解": {
     "freq_rank": 425,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "角"
   },
   "索": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "糸"
   },
   "居": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "尸"
   },
   "處": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "虍"
   },
   "求": {
     "freq_rank": 363,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "水"
   },
   "尋": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "寸"
   },
   "散": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "攴"
   },
   "慮": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "心"
   },
   "遙": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "辵"
   },
   "奏": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "大"
   },
   "歡": {
     "freq_rank": 9999,
-    "strokes": 21
+    "strokes": 21,
+    "radical": "欠"
   },
   "招": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "手"
   },
   "渠": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "水"
   },
   "荷": {
     "freq_rank": 250,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "艸"
   },
   "歷": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "止"
   },
   "抽": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "手"
   },
   "陳": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "阜"
   },
   "落": {
     "freq_rank": 322,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "艸"
   },
   "游": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "水"
   },
   "獨": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "犬"
   },
   "運": {
     "freq_rank": 377,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "辵"
   },
   "霄": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "雨"
   },
   "市": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "巾"
   },
   "目": {
     "freq_rank": 204,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "目"
   },
   "屬": {
     "freq_rank": 9999,
-    "strokes": 21
+    "strokes": 21,
+    "radical": "尸"
   },
   "耳": {
     "freq_rank": 205,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "耳"
   },
   "垣": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "土"
   },
   "牆": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "爿"
   },
   "具": {
     "freq_rank": 408,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "八"
   },
   "適": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "辵"
   },
   "充": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "儿"
   },
   "親": {
     "freq_rank": 131,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "見"
   },
   "故": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "攴"
   },
   "舊": {
     "freq_rank": 305,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "臼"
   },
   "少": {
     "freq_rank": 168,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "小"
   },
   "異": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "田"
   },
   "御": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "彳"
   },
   "侍": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "人"
   },
   "潔": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "水"
   },
   "銀": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "金"
   },
   "煌": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "火"
   },
   "寐": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "宀"
   },
   "象": {
     "freq_rank": 353,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "豕"
   },
   "酒": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "酉"
   },
   "接": {
     "freq_rank": 185,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "手"
   },
   "舉": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "臼"
   },
   "觴": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "角"
   },
   "頓": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "頁"
   },
   "足": {
     "freq_rank": 207,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "足"
   },
   "且": {
     "freq_rank": 147,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "一"
   },
   "康": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "广"
   },
   "後": {
     "freq_rank": 38,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "彳"
   },
   "續": {
     "freq_rank": 9999,
-    "strokes": 21
+    "strokes": 21,
+    "radical": "糸"
   },
   "祀": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "示"
   },
   "嘗": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "口"
   },
   "再": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "冂"
   },
   "拜": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "手"
   },
   "要": {
     "freq_rank": 32,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "襾"
   },
   "顧": {
     "freq_rank": 9999,
-    "strokes": 21
+    "strokes": 21,
+    "radical": "頁"
   },
   "涼": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "水"
   },
   "獲": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "犬"
   },
   "筆": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "竹"
   },
   "紙": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "糸"
   },
   "鈞": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "金"
   },
   "任": {
     "freq_rank": 399,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "人"
   },
   "釋": {
     "freq_rank": 9999,
-    "strokes": 20
+    "strokes": 20,
+    "radical": "釆"
   },
   "利": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "刀"
   },
   "俗": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "人"
   },
   "並": {
     "freq_rank": 347,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "一"
   },
   "皆": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "白"
   },
   "佳": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "人"
   },
   "妙": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "女"
   },
   "施": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "方"
   },
   "淑": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "水"
   },
   "工": {
     "freq_rank": 188,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "工"
   },
   "年": {
     "freq_rank": 27,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "干"
   },
   "矢": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "矢"
   },
   "每": {
     "freq_rank": 149,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "毋"
   },
   "暉": {
     "freq_rank": 284,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "日"
   },
   "朗": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "月"
   },
   "環": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "玉"
   },
   "照": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "火"
   },
   "永": {
     "freq_rank": 339,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "水"
   },
   "步": {
     "freq_rank": 420,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "止"
   },
   "引": {
     "freq_rank": 434,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "弓"
   },
   "領": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "頁"
   },
   "俯": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "人"
   },
   "仰": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "人"
   },
   "廊": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "广"
   },
   "莊": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "艸"
   },
   "瞻": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "目"
   },
   "陋": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "阜"
   },
   "聞": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "耳"
   },
   "蒙": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "艸"
   },
   "等": {
     "freq_rank": 182,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "竹"
   },
   "謂": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "言"
   },
   "語": {
     "freq_rank": 430,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "言"
   },
   "者": {
     "freq_rank": 127,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "老"
   },
   "焉": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "火"
   },
   "哉": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "口"
   },
   "乎": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "丿"
   },
   "也": {
     "freq_rank": 35,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "乙"
   },
   "十": {
     "freq_rank": 333,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "十"
   },
   "為": {
     "freq_rank": 20,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "火"
   },
   "先": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "儿"
   },
   "清": {
     "freq_rank": 392,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "水"
   },
   "于": {
     "freq_rank": 9999,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "二"
   },
   "前": {
     "freq_rank": 91,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "刀"
   },
   "棄": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "木"
   },
   "六": {
     "freq_rank": 329,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "八"
   },
   "矣": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "矢"
   },
   "降": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "阜"
   },
   "壽": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "士"
   },
   "醴": {
     "freq_rank": 9999,
-    "strokes": 20
+    "strokes": 20,
+    "radical": "酉"
   },
   "差": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "工"
   },
   "壇": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "土"
   },
   "顏": {
     "freq_rank": 9999,
-    "strokes": 18
+    "strokes": 18,
+    "radical": "頁"
   },
   "肯": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "肉"
   },
   "兆": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "儿"
   },
   "又": {
     "freq_rank": 97,
-    "strokes": 2
+    "strokes": 2,
+    "radical": "又"
   },
   "昔": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "日"
   },
   "雖": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "隹"
   },
   "然": {
     "freq_rank": 53,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "火"
   },
   "徵": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "彳"
   },
   "今": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "人"
   },
   "孫": {
     "freq_rank": 257,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "子"
   },
   "著": {
     "freq_rank": 28,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "艸"
   },
   "山": {
     "freq_rank": 227,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "山"
   },
   "沖": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "水"
   },
   "遂": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "辵"
   },
   "侔": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "人"
   },
   "恪": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "心"
   },
   "復": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "彳"
   },
   "爰": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "爪"
   },
   "請": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "言"
   },
   "三": {
     "freq_rank": 326,
-    "strokes": 3
+    "strokes": 3,
+    "radical": "一"
   },
   "壯": {
     "freq_rank": 9999,
-    "strokes": 7
+    "strokes": 7,
+    "radical": "士"
   },
   "尚": {
     "freq_rank": 146,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "小"
   },
   "督": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "目"
   },
   "浙": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "水"
   },
   "紀": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "糸"
   },
   "各": {
     "freq_rank": 199,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "口"
   },
   "或": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "戈"
   },
   "監": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "皿"
   },
   "越": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "走"
   },
   "至": {
     "freq_rank": 9999,
-    "strokes": 6
+    "strokes": 6,
+    "radical": "至"
   },
   "北": {
     "freq_rank": 317,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "匕"
   },
   "童": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "立"
   },
   "倪": {
     "freq_rank": 9999,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "人"
   },
   "逮": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "辵"
   },
   "參": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "厶"
   },
   "藉": {
     "freq_rank": 9999,
-    "strokes": 17
+    "strokes": 17,
+    "radical": "艸"
   },
   "尤": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "尢"
   },
   "由": {
     "freq_rank": 403,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "田"
   },
   "刊": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "刀"
   },
   "儉": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "人"
   },
   "未": {
     "freq_rank": 9999,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "木"
   },
   "曾": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "曰"
   },
   "開": {
     "freq_rank": 79,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "門"
   },
   "真": {
     "freq_rank": 310,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "目"
   },
   "撰": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "手"
   },
   "一": {
     "freq_rank": 2,
-    "strokes": 1
+    "strokes": 1,
+    "radical": "一"
   },
   "絕": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "糸"
   },
   "記": {
     "freq_rank": 406,
-    "strokes": 10
+    "strokes": 10,
+    "radical": "言"
   },
   "室": {
     "freq_rank": 9999,
-    "strokes": 9
+    "strokes": 9,
+    "radical": "宀"
   },
   "隋": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "阜"
   },
   "臻": {
     "freq_rank": 9999,
-    "strokes": 16
+    "strokes": 16,
+    "radical": "至"
   },
   "加": {
     "freq_rank": 167,
-    "strokes": 5
+    "strokes": 5,
+    "radical": "力"
   },
   "閣": {
     "freq_rank": 9999,
-    "strokes": 14
+    "strokes": 14,
+    "radical": "門"
   },
   "氏": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "氏"
   },
   "篆": {
     "freq_rank": 9999,
-    "strokes": 15
+    "strokes": 15,
+    "radical": "竹"
   },
   "元": {
     "freq_rank": 9999,
-    "strokes": 4
+    "strokes": 4,
+    "radical": "儿"
   },
   "竦": {
     "freq_rank": 9999,
-    "strokes": 12
+    "strokes": 12,
+    "radical": "立"
   },
   "視": {
     "freq_rank": 9999,
-    "strokes": 11
+    "strokes": 11,
+    "radical": "示"
   },
   "固": {
     "freq_rank": 9999,
-    "strokes": 8
+    "strokes": 8,
+    "radical": "囗"
   },
   "塗": {
     "freq_rank": 9999,
-    "strokes": 13
+    "strokes": 13,
+    "radical": "土"
   }
 }
