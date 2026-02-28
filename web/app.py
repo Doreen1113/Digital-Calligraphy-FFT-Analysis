@@ -84,14 +84,15 @@ async def stats_middleware(request: Request, call_next):
 
 
 # === 註冊路由 ===
-from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher, api_stats
+from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher, api_stats, api_upload
 
 app.include_router(pages.router)
-app.include_router(api_character.router, prefix="/api/character", tags=["character"])
-app.include_router(api_analysis.router, prefix="/api/analysis", tags=["analysis"])
-app.include_router(api_search.router, prefix="/api/search", tags=["search"])
+app.include_router(api_character.router,    prefix="/api/character",    tags=["character"])
+app.include_router(api_analysis.router,     prefix="/api/analysis",     tags=["analysis"])
+app.include_router(api_search.router,       prefix="/api/search",       tags=["search"])
 app.include_router(api_calligrapher.router, prefix="/api/calligrapher", tags=["calligrapher"])
-app.include_router(api_stats.router, prefix="/api/stats", tags=["stats"])
+app.include_router(api_stats.router,        prefix="/api/stats",        tags=["stats"])
+app.include_router(api_upload.router,       prefix="/api/upload",       tags=["upload"])
 
 
 # === 啟動事件 ===

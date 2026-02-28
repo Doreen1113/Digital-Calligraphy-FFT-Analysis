@@ -20,63 +20,63 @@ except:
     pass
 
 
-# 特徵解釋資料
+# 特徵解釋資料（面向觀眾的易懂版本）
 FEATURE_DESCRIPTIONS = {
     'low_freq': {
-        'name': '低頻能量',
-        'name_en': 'Low-freq Energy',
-        'description': '反映字體的整體結構與基本形態',
-        'high_meaning': '結構穩定、形態規整',
-        'low_meaning': '結構變化大、形態靈活',
-        'calligraphy_meaning': '低頻高表示楷書規整，低頻低表示行草自由'
+        'name': '結構穩定度',
+        'name_en': 'Structural Stability',
+        'description': '衡量字的整體骨架是否端正工整，來自傅立葉低頻能量。',
+        'high_meaning': '字形骨架穩固、間架方正',
+        'low_meaning': '字形較為自由靈動、不拘一格',
+        'calligraphy_meaning': '歐體、柳體等楷書此項較高；行書草書較低'
     },
     'mid_freq': {
-        'name': '中頻能量',
-        'name_en': 'Mid-freq Energy',
-        'description': '反映筆畫的粗細變化與轉折',
-        'high_meaning': '筆畫變化豐富、轉折明顯',
-        'low_meaning': '筆畫均勻、變化較少',
-        'calligraphy_meaning': '中頻高表示筆法豐富，中頻低表示用筆單純'
+        'name': '筆畫變化度',
+        'name_en': 'Stroke Variation',
+        'description': '衡量筆畫粗細、轉折、提按的豐富程度，來自傅立葉中頻能量。',
+        'high_meaning': '提按明顯、筆勢變化豐富',
+        'low_meaning': '用筆均勻穩定、變化較少',
+        'calligraphy_meaning': '顏真卿肥瘦對比大此項高；歐陽詢用筆較均勻此項低'
     },
     'high_freq': {
-        'name': '高頻能量',
-        'name_en': 'High-freq Energy',
-        'description': '反映筆觸細節、飛白與邊緣變化',
-        'high_meaning': '細節豐富、筆觸自然',
-        'low_meaning': '邊緣平滑、細節較少',
-        'calligraphy_meaning': '高頻高表示筆觸生動，高頻低表示線條工整'
+        'name': '細節豐富度',
+        'name_en': 'Detail Richness',
+        'description': '衡量飛白、毛邊、牽絲等細微筆觸的多寡，來自傅立葉高頻能量。',
+        'high_meaning': '墨色層次多、有飛白與毛邊效果',
+        'low_meaning': '線條光滑乾淨、邊緣整齊',
+        'calligraphy_meaning': '碑帖中保留自然書寫質感的此項較高'
     },
     'centroid': {
-        'name': '頻譜重心',
-        'name_en': 'Spectral Centroid',
-        'description': '頻譜能量分布的重心位置',
-        'high_meaning': '能量集中在高頻（細節為主）',
-        'low_meaning': '能量集中在低頻（結構為主）',
-        'calligraphy_meaning': '重心高表示注重細節，重心低表示注重結構'
+        'name': '細節vs結構',
+        'name_en': 'Detail-Structure Balance',
+        'description': '頻譜能量重心偏向細節端還是結構端，反映整體風格取向。',
+        'high_meaning': '重視細節表現（裝飾性強）',
+        'low_meaning': '重視整體結構（骨架為主）',
+        'calligraphy_meaning': '行草書重視細節此項高；楷書重視結構此項低'
     },
     'dc_ratio': {
-        'name': 'DC/基頻比',
-        'name_en': 'DC/Fund. Ratio',
-        'description': '直流分量與基頻的比例',
-        'high_meaning': '整體形態占主導',
-        'low_meaning': '週期性特徵明顯',
-        'calligraphy_meaning': '比值高表示字形完整，比值低表示筆畫分明'
+        'name': '字形完整度',
+        'name_en': 'Form Completeness',
+        'description': '衡量字的輪廓是否渾然一體，來自直流分量與基頻之比。',
+        'high_meaning': '筆畫連貫、字形渾然天成',
+        'low_meaning': '筆畫獨立分明、結構清晰',
+        'calligraphy_meaning': '沈尹默此項最高（筆畫連貫），歐陽詢較低（筆畫分明）'
     },
     'slope': {
-        'name': '頻譜斜率',
-        'name_en': 'Spectral Slope',
-        'description': '頻譜能量的衰減趨勢',
-        'high_meaning': '高頻保留較多（平坦）',
-        'low_meaning': '高頻衰減快（陡峭）',
-        'calligraphy_meaning': '斜率高表示細節保留好，斜率低表示簡化明顯'
+        'name': '細節保留度',
+        'name_en': 'Detail Preservation',
+        'description': '高頻能量衰減的平緩程度，反映書寫細節是否被保留下來。',
+        'high_meaning': '細膩筆觸完好保存、質感豐富',
+        'low_meaning': '細節簡化明顯、線條概括',
+        'calligraphy_meaning': '顏真卿此項最高（細節豐富），智永較低（線條簡潔）'
     },
     'hf_decay': {
-        'name': '高頻衰減率',
-        'name_en': 'HF Decay Rate',
-        'description': '高頻部分的能量衰減速度',
-        'high_meaning': '高頻快速衰減',
-        'low_meaning': '高頻緩慢衰減',
-        'calligraphy_meaning': '衰減快表示收筆乾淨，衰減慢表示筆觸延伸'
+        'name': '收筆乾淨度',
+        'name_en': 'Stroke Ending Cleanness',
+        'description': '高頻衰減速率——衡量筆觸收尾是否乾脆。',
+        'high_meaning': '收筆果斷、筆觸延伸自然',
+        'low_meaning': '收筆較為拘謹、速度較慢',
+        'calligraphy_meaning': '沈尹默此項最高（行氣流暢），歐陽詢較低（收筆嚴謹）'
     }
 }
 
@@ -121,7 +121,7 @@ def plot_radar_chart(styles_results: Dict[str, np.ndarray],
     ax = fig.add_subplot(111, projection='polar')
 
     # 顏色設定
-    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
+    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#9B59B6']
 
     # 繪製每位書法家的雷達線
     for idx, (name, values) in enumerate(normalized_data.items()):
@@ -243,7 +243,7 @@ def plot_feature_comparison_bars(styles_results: Dict[str, np.ndarray],
     # 設定柱狀圖參數
     x = np.arange(num_features)
     width = 0.8 / num_calligraphers
-    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
+    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#9B59B6']
 
     # 繪製每位書法家的柱子
     for i, calligrapher in enumerate(calligraphers):

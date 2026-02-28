@@ -12,6 +12,16 @@ class FontDataLoader:
     def __init__(self):
         self.config = get_config()
         self.calligraphers = self.config.get_calligraphers()
+        # 專案根目錄 = config.yaml 所在目錄，用於將相對路徑轉成絕對路徑
+        self.project_root = Path(self.config.config_path).parent
+
+    def _resolve(self, rel_path: str) -> str:
+        """將 config.yaml 裡的相對路徑（./Fonts/...）解析成絕對路徑。
+        不管從哪個目錄執行腳本都能正確找到檔案。"""
+        p = Path(rel_path)
+        if p.is_absolute():
+            return str(p)
+        return str(self.project_root / p)
 
     def get_calligrapher_list(self, use_display_name: bool = True) -> List[str]:
         """取得所有書法家名稱列表
@@ -49,7 +59,7 @@ class FontDataLoader:
         if not info:
             raise ValueError(f"找不到書法家: {calligrapher_name}")
 
-        labels_file = info['labels_file']
+        labels_file = self._resolve(info['labels_file'])
         if not os.path.exists(labels_file):
             raise FileNotFoundError(f"標註檔不存在: {labels_file}")
 
@@ -70,18 +80,18 @@ class FontDataLoader:
         if not info:
             return None
 
-        image_path = os.path.join(info['image_dir'], filename)
+        image_path = os.path.join(self._resolve(info['image_dir']), filename)
         if not os.path.exists(image_path):
             return None
 
         return cv2.imread(image_path)
 
     def get_image_path(self, calligrapher_name: str, filename: str) -> str:
-        """取得圖片的完整路徑"""
+        """取得圖片的完整絕對路徑"""
         info = self.get_calligrapher_info(calligrapher_name)
         if not info:
             return ""
-        return os.path.join(info['image_dir'], filename)
+        return os.path.join(self._resolve(info['image_dir']), filename)
 
     def get_all_characters(self, calligrapher_name: str) -> List[Tuple[str, str]]:
         """取得指定書法家的所有字元
@@ -120,7 +130,7 @@ class FontDataLoader:
             return []
 
         info = self.get_calligrapher_info(calligrapher_name)
-        image_dir = info['image_dir']
+        image_dir = self._resolve(info['image_dir'])
 
         return [os.path.join(image_dir, filename) for filename in matches['filename']]
 

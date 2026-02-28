@@ -39,7 +39,10 @@ class FontCSVGenerator:
         self.font_num = str(font_num).zfill(2)
         self.project_root = Path(__file__).parent.parent
         self.font_dir = self.project_root / "Fonts" / "my_fonts" / self.font_num
-        self.txt_file = self.project_root / "Fonts" / f"{self.font_num}.txt"
+        # 優先讀 docs/XX.txt（一字一行格式），不存在才退回 Fonts/XX.txt
+        docs_txt = self.project_root / "docs" / f"{self.font_num}.txt"
+        fonts_txt = self.project_root / "Fonts" / f"{self.font_num}.txt"
+        self.txt_file = docs_txt if docs_txt.exists() else fonts_txt
         self.csv_dir = self.project_root / "Fonts" / "my_fonts" / "csv"
         self.csv_file = self.csv_dir / f"{self.font_num}.csv"
         self.auto_confirm = False  # 自動確認標籤
@@ -48,7 +51,7 @@ class FontCSVGenerator:
         if not self.font_dir.exists():
             raise FileNotFoundError(f"字帖資料夾不存在: {self.font_dir}")
         if not self.txt_file.exists():
-            raise FileNotFoundError(f"字元順序檔不存在: {self.txt_file}")
+            raise FileNotFoundError(f"字元順序檔不存在（找過 docs/{self.font_num}.txt 和 Fonts/{self.font_num}.txt）")
 
         # 建立 csv 目錄
         self.csv_dir.mkdir(parents=True, exist_ok=True)

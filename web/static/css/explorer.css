@@ -101,6 +101,65 @@
     color: var(--accent, #C62828);
 }
 
+/* --- 部首篩選 --- */
+.radical-filter-group {
+    min-width: 100% !important;
+}
+
+.radical-filter-btns {
+    max-height: 120px;
+    overflow-y: auto;
+    align-content: flex-start;
+}
+
+.radical-btn {
+    min-width: 44px;
+    padding: 0.3rem 0.6rem !important;
+    font-size: 1rem !important;
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+}
+
+.radical-btn sup {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-left: 1px;
+}
+
+.radical-btn.active sup {
+    color: rgba(255,255,255,0.8);
+}
+
+.radical-more-toggle {
+    font-size: 0.8rem !important;
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+
+.radical-rare-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    width: 100%;
+    margin-top: 0.3rem;
+}
+
+.radical-count-badge {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.detail-tag.radical-tag {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.detail-tag.radical-tag:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
 /* --- 字元網格 --- */
 .explorer-grid-section {
     margin-bottom: 2rem;
@@ -189,6 +248,75 @@
 .page-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+/* --- 字元詳情 Popup --- */
+.char-detail-modal {
+    max-width: 420px;
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-char-big {
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--primary-dark);
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+    margin: 0.5rem 0 1rem;
+}
+
+.detail-tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.detail-tag {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.detail-section-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.detail-cal-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+}
+
+.detail-cal-badge {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 20px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.82rem;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 @media (max-width: 768px) {

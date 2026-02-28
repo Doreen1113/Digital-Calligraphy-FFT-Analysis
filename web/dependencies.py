@@ -70,6 +70,34 @@ def get_name_display_dict() -> dict:
     return dict(get_name_to_display())
 
 
+@lru_cache()
+def get_name_to_font_label() -> tuple:
+    """取得英文名到「書法家·字帖」標籤的對應
+
+    例如：
+      "yan_zhenqing"    → "顏真卿·玄秘塔碑"
+      "yan_zhenqing_07" → "顏真卿·多寶塔碑"
+      "zhiyong"         → "智永·真草千字文"
+    """
+    cals = get_calligrapher_list()
+    result = []
+    for cal in cals:
+        book = cal.get('book', '')
+        label = f"{cal['display_name']}·{book}" if book else cal['display_name']
+        result.append((cal['name'], label))
+    return tuple(result)
+
+
+def get_name_font_label_dict() -> dict:
+    """取得英文名到 font_label 的字典（用於顯示書法家+字帖）"""
+    return dict(get_name_to_font_label())
+
+
+def get_font_label_to_name_dict() -> dict:
+    """取得 font_label 到英文名的反向字典（用於篩選）"""
+    return {label: name for name, label in get_name_to_font_label()}
+
+
 def validate_environment():
     """驗證執行環境，啟動時呼叫"""
     config = _get_config()

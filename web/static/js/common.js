@@ -137,6 +137,8 @@ function closeImageModal(event) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeImageModal();
+        // 也關閉字元詳情 popup（如果存在）
+        if (typeof closeCharDetail === 'function') closeCharDetail();
     }
 });
 

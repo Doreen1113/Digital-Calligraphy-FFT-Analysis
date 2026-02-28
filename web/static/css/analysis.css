@@ -1,129 +1,449 @@
-/* === 風格分析頁樣式 === */
+/* === 風格分析頁樣式 v2 - 互動式面板 === */
 
-.analysis-charts {
-    margin-bottom: 1.5rem;
-    display: grid !important;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-}
-
-.analysis-bars {
+/* --- 書法家選擇器 --- */
+.calligrapher-selector {
     margin-bottom: 1.5rem;
 }
 
-.analysis-charts .img-container,
-.analysis-bars .img-container {
-    overflow: auto;
-    border-radius: var(--radius);
+.cal-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
 }
 
-.analysis-charts .img-container img,
-.analysis-bars .img-container img {
-    max-height: 600px;
-    width: 100%;
-    height: auto;
-    display: block;
+.cal-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
 }
 
-/* 相似度矩陣專用樣式 - 更加緊湊 */
-#similarityContainer {
-    max-height: 700px;
-    overflow-y: auto;
+.cal-toggle:hover {
+    border-color: var(--primary);
 }
 
-#similarityContainer img {
-    width: 100%;
-    height: auto;
+.cal-toggle.active {
+    border-color: var(--cal-color, var(--primary));
+    background: var(--cal-color-light, var(--bg-light));
 }
 
-/* --- 特徵說明 --- */
-.feature-section {
-    margin-bottom: 2rem;
+.cal-toggle .cal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--cal-color, var(--primary));
 }
 
-.feature-intro {
-    color: var(--text-light);
+.cal-toggle .cal-name {
     font-size: 0.9rem;
+}
+
+/* --- 區塊通用 --- */
+.analysis-section {
+    margin-bottom: 1.5rem;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    font-size: 0.88rem;
     margin-bottom: 1rem;
 }
 
-.feature-grid {
+/* --- 互動式雷達圖 --- */
+.radar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 450px;
+    padding: 1rem;
+}
+
+.radar-container canvas {
+    max-width: 100%;
+    max-height: 450px;
+}
+
+.radar-image-container img {
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+}
+
+/* --- 互動式相似度面板 --- */
+.similarity-panel {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    min-height: 350px;
 }
 
-.feature-card {
-    background: var(--bg);
-    border: 1px solid var(--border-light);
+.similarity-grid {
+    display: grid;
+    gap: 2px;
+    background: var(--border-light);
     border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    transition: var(--transition);
-    border-left: 4px solid var(--primary);
+    overflow: hidden;
 }
 
-.feature-card:hover {
-    box-shadow: var(--shadow);
-    border-left-color: var(--accent);
+.sim-row {
+    display: contents;
 }
 
-.feature-name {
-    font-size: 1.05rem;
+.sim-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.sim-cell:hover {
+    transform: scale(1.05);
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.sim-cell.header {
+    background: var(--primary-dark);
+    color: #fff;
+    cursor: default;
+    font-weight: 600;
+}
+
+.sim-cell.header:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.sim-cell.corner {
+    background: var(--bg-dark);
+}
+
+.sim-cell.selected {
+    outline: 3px solid var(--accent);
+    outline-offset: -3px;
+}
+
+/* 相似度顏色漸層 */
+.sim-cell[data-sim] {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- 相似度詳情面板 --- */
+.similarity-detail {
+    background: var(--bg-light);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    border: 1px solid var(--border-light);
+}
+
+.detail-placeholder {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+
+.detail-placeholder .placeholder-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.detail-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-title {
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--primary-dark);
     margin-bottom: 0.3rem;
 }
 
-.feature-name-en {
+.detail-similarity {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.detail-similarity.high { color: #2E7D32; }
+.detail-similarity.medium { color: #F57C00; }
+.detail-similarity.low { color: #C62828; }
+
+.detail-label {
     font-size: 0.8rem;
     color: var(--text-muted);
-    margin-bottom: 0.5rem;
 }
 
-.feature-desc {
-    font-size: 0.9rem;
+.detail-comparison {
+    margin-top: 1rem;
+}
+
+.comparison-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--border-light);
+    font-size: 0.85rem;
+}
+
+.comparison-item:last-child {
+    border-bottom: none;
+}
+
+.comparison-feature {
     color: var(--text-light);
-    margin-bottom: 0.6rem;
-    line-height: 1.5;
 }
 
-.feature-meaning {
-    font-size: 0.82rem;
+.comparison-values {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 80px;
+    max-width: 140px;
+}
+
+.cmp-bar {
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    min-width: 2px;
+    transition: width 0.3s ease;
+}
+
+.comparison-values span:not(.cmp-bar) {
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.similarity-image-container img {
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+}
+
+/* --- 特徵手風琴 --- */
+.feature-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.accordion-item {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    background: var(--bg);
+    transition: background 0.2s;
+}
+
+.accordion-header:hover {
+    background: var(--bg-light);
+}
+
+.accordion-header .feature-title {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.accordion-header .feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: var(--primary);
+    color: #fff;
+}
+
+.accordion-header .feature-name {
+    font-weight: 600;
+    color: var(--primary-dark);
+    font-size: 1rem;
+}
+
+.accordion-header .feature-name-en {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.accordion-header .expand-icon {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    transition: transform 0.3s;
+}
+
+.accordion-item.open .expand-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    display: none;
+    padding: 1rem 1.2rem;
+    border-top: 1px solid var(--border-light);
+    background: #fff;
+}
+
+.accordion-item.open .accordion-content {
+    display: block;
+}
+
+.feature-description {
+    font-size: 0.92rem;
+    color: var(--text);
     line-height: 1.6;
+    margin-bottom: 1rem;
 }
 
-.feature-meaning .high {
+.feature-meanings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+}
+
+.meaning-box {
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+}
+
+.meaning-box.high {
+    background: #E8F5E9;
+    border-left: 3px solid #2E7D32;
+}
+
+.meaning-box.low {
+    background: #FFEBEE;
+    border-left: 3px solid #C62828;
+}
+
+.meaning-box.cal {
+    background: #FFF8E1;
+    border-left: 3px solid var(--primary);
+}
+
+.meaning-box .meaning-label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.meaning-box.high .meaning-label { color: #2E7D32; }
+.meaning-box.low .meaning-label { color: #C62828; }
+.meaning-box.cal .meaning-label { color: var(--primary); }
+
+/* --- 書法家風格總覽 --- */
+.style-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.style-card {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    border-top: 4px solid var(--cal-color, var(--primary));
+    transition: box-shadow 0.2s;
+}
+
+.style-card:hover {
+    box-shadow: var(--shadow);
+}
+
+.style-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.style-card-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--cal-color, var(--primary));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.style-card-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.style-card-dynasty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.style-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.style-trait {
+    padding: 0.25rem 0.6rem;
+    background: var(--bg);
+    border-radius: 12px;
+    font-size: 0.78rem;
+    color: var(--text-light);
+}
+
+.style-trait.high {
+    background: #E8F5E9;
     color: #2E7D32;
 }
 
-.feature-meaning .low {
+.style-trait.low {
+    background: #FFEBEE;
     color: #C62828;
 }
 
-.feature-meaning .cal {
-    color: var(--primary);
-    font-weight: 500;
+.style-summary {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.5;
 }
 
-/* --- 未生成提示 --- */
-.not-generated {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-}
-
-.not-generated p {
-    margin-bottom: 0.5rem;
-}
-
-.not-generated code {
-    background: var(--bg-dark);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-/* Badge 樣式（用於卡片標題） */
+/* Badge 樣式 */
 .card-title .badge {
     display: inline-block;
     background-color: var(--accent-light);
@@ -135,17 +455,39 @@
     margin-left: 0.5rem;
 }
 
+/* --- RWD --- */
+@media (max-width: 900px) {
+    .similarity-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .similarity-detail {
+        order: -1;
+    }
+}
+
 @media (max-width: 768px) {
-    .analysis-charts {
+    .cal-toggle {
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .cal-toggle .cal-name {
+        font-size: 0.82rem;
+    }
+    
+    .radar-container {
+        min-height: 300px;
+    }
+    
+    .radar-container canvas {
+        max-height: 300px;
+    }
+    
+    .style-overview {
         grid-template-columns: 1fr;
     }
-
-    .feature-grid {
+    
+    .feature-meanings {
         grid-template-columns: 1fr;
-    }
-
-    .analysis-charts .img-container img,
-    .analysis-bars .img-container img {
-        max-height: 400px;
     }
 }

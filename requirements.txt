@@ -18,3 +18,4 @@ python-multipart
 
 # === 其他 ===
 pygame
+pypinyin

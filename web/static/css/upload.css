@@ -1,0 +1,193 @@
+/* === 上傳比對頁樣式 === */
+
+.upload-section { margin-bottom: 1.5rem; }
+
+/* 左右布局 */
+.upload-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.upload-settings {
+    flex-shrink: 0;
+    width: 220px;
+}
+
+/* 字元輸入框 */
+.upload-char-input {
+    width: 100px;
+    height: 80px;
+    font-size: 2.8rem;
+    text-align: center;
+    border: 3px solid var(--border);
+    border-radius: var(--radius-lg);
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+    color: var(--primary-dark);
+    background: #fff;
+    transition: var(--transition);
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.upload-char-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(91,58,41,0.1);
+}
+
+.upload-char-input::placeholder { color: var(--border); }
+
+.form-group { margin-bottom: 1.2rem; }
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-full { width: 100%; }
+
+.upload-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* 拖放區 */
+.upload-drop-area {
+    flex: 1;
+    min-height: 260px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-drop-area:hover,
+.upload-drop-area.drag-over {
+    border-color: var(--primary);
+    background: rgba(91,58,41,0.04);
+}
+
+.drop-inner {
+    text-align: center;
+    padding: 2rem;
+}
+
+.drop-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.drop-text { font-size: 1rem; color: var(--text); font-weight: 500; margin-bottom: 0.3rem; }
+.drop-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+/* 預覽圖 */
+.preview-img {
+    max-width: 100%;
+    max-height: 240px;
+    border-radius: var(--radius);
+    display: block;
+    margin: 0 auto;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+.preview-overlay:hover { background: var(--accent); }
+
+/* 結果區 */
+.upload-result { margin-bottom: 1.5rem; }
+.upload-result .card { text-align: center; }
+
+.upload-result img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.upload-result img:hover {
+    box-shadow: 0 8px 24px rgba(91,58,41,0.25);
+    transform: scale(1.02);
+}
+
+.result-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* 使用說明 */
+.upload-tips { margin-bottom: 2rem; }
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.tip-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.tip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.tip-item strong {
+    display: block;
+    color: var(--primary-dark);
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.tip-item p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* 響應式 */
+@media (max-width: 768px) {
+    .upload-layout {
+        flex-direction: column;
+    }
+
+    .upload-settings {
+        width: 100%;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+}

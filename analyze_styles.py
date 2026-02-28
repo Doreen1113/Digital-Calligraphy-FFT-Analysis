@@ -101,6 +101,77 @@ def plot_style_results(styles_results, out_path, target_len=50):
     print(f"[OK] Chart saved (DPI=150): {out_path}")
 
 
+def _save_analysis_json(styles_results, config):
+    """
+    將 FFT 分析結果存為 JSON，供 Web 互動圖表使用
+
+    輸出:
+      data/index/style_features.json   → 雷達圖數據（原始值 + 正規化值）
+      data/index/similarity_matrix.json → 相似度矩陣
+    """
+    import json
+
+    index_dir = os.path.join(os.path.dirname(__file__), "data", "index")
+    os.makedirs(index_dir, exist_ok=True)
+
+    # ---- 特徵順序 & 標籤 ----
+    feature_order = ['low_freq', 'mid_freq', 'high_freq', 'centroid',
+                     'dc_ratio', 'slope', 'hf_decay']
+    # 面向觀眾的易懂中文標籤
+    feature_labels = [
+        '結構穩定度', '筆畫變化度', '細節豐富度', '細節vs結構',
+        '字形完整度', '細節保留度', '收筆乾淨度'
+    ]
+
+    cal_names = sorted(styles_results.keys())
+    raw_matrix = np.array([styles_results[n] for n in cal_names])
+
+    # ---- Min-Max 正規化 (0-1) ----
+    min_vals = raw_matrix.min(axis=0)
+    max_vals = raw_matrix.max(axis=0)
+    ranges = max_vals - min_vals
+    ranges[ranges < 1e-10] = 1
+
+    normalized = {}
+    raw_data = {}
+    for name in cal_names:
+        vec = styles_results[name]
+        norm_vec = (vec - min_vals) / ranges
+        normalized[name] = [round(float(v), 4) for v in norm_vec]
+        raw_data[name] = [round(float(v), 6) for v in vec]
+
+    style_json = {
+        "calligraphers": cal_names,
+        "labels": feature_labels,
+        "feature_keys": feature_order,
+        "data": normalized,
+        "raw_data": raw_data,
+    }
+
+    style_path = os.path.join(index_dir, "style_features.json")
+    with open(style_path, 'w', encoding='utf-8') as f:
+        json.dump(style_json, f, ensure_ascii=False, indent=2)
+    print(f"   [OK] 風格特徵 JSON: {style_path}")
+
+    # ---- 相似度矩陣 ----
+    try:
+        from src.analysis.similarity_analyzer import compute_similarity_matrix
+        sim_df, sim_scores = compute_similarity_matrix(styles_results)
+
+        sim_json = {
+            "calligraphers": list(sim_df.index),
+            "matrix": [[round(float(v), 4) for v in row]
+                        for row in sim_df.values],
+        }
+
+        sim_path = os.path.join(index_dir, "similarity_matrix.json")
+        with open(sim_path, 'w', encoding='utf-8') as f:
+            json.dump(sim_json, f, ensure_ascii=False, indent=2)
+        print(f"   [OK] 相似度矩陣 JSON: {sim_path}")
+    except Exception as e:
+        print(f"   [Warning] 相似度 JSON 儲存失敗: {e}")
+
+
 def run_style_analysis(max_samples=None):
     """Execute complete calligraphy style analysis workflow"""
     config = get_config()
@@ -136,7 +207,9 @@ def run_style_analysis(max_samples=None):
         img_dir = info['image_dir']
         img_paths = sorted(glob.glob(os.path.join(img_dir, "*.[pj][np]g")))
 
-        img_paths = img_paths[:int(sample_limit)]
+        # Limit samples if specified (skip if processing all)
+        if max_samples is not None:
+            img_paths = img_paths[:max_samples]
 
         all_vecs = []
         success_count = 0
@@ -224,6 +297,10 @@ def run_style_analysis(max_samples=None):
         print("[Error] 無法產生結果！")
         return
 
+    # ====== 儲存 JSON 數據（供 Web 互動圖表使用）======
+    print("\n 儲存分析數據 (JSON)...")
+    _save_analysis_json(styles_results, config)
+
     # Generate style comparison chart
     print("\n 產生風格比較圖表...")
     report_path = os.path.join(output_dir, "style_analysis_report.png")
@@ -274,6 +351,8 @@ def run_style_analysis(max_samples=None):
     print(f"   - 風格雷達圖: {os.path.join(output_dir, 'style_radar_chart.png')}")
     print(f"   - 特徵解釋面板: {os.path.join(output_dir, 'feature_explanation.png')}")
     print(f"   - 特徵比較圖: {os.path.join(output_dir, 'feature_comparison_bars.png')}")
+    print(f"   - 風格特徵 JSON: data/index/style_features.json")
+    print(f"   - 相似度矩陣 JSON: data/index/similarity_matrix.json")
     print("="*70 + "\n")
 
 

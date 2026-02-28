@@ -38,7 +38,9 @@ def build_fonts_index():
     for cal in loader.calligraphers:
         name = cal['name']
         display_name = cal['display_name']
-        print(f"\n分析: {display_name}")
+        book = cal.get('book', '')
+        label = f"{display_name}·{book}" if book else display_name
+        print(f"\n分析: {label}")
 
         try:
             stats = loader.get_statistics(name)
@@ -47,14 +49,15 @@ def build_fonts_index():
             fonts_index["calligraphers"][name] = {
                 "id": cal['id'],
                 "display_name": cal['display_name'],
+                "book": cal.get('book', ''),
                 "dynasty": cal['dynasty'],
                 "style": cal['style'],
                 "description": cal['description'],
                 "total_images": stats['total_images'],
                 "unique_characters": stats['unique_characters'],
                 "avg_confidence": stats['avg_confidence'],
-                "image_dir": cal['image_dir'],
-                "labels_file": cal['labels_file'],
+                "image_dir": loader._resolve(cal['image_dir']),
+                "labels_file": loader._resolve(cal['labels_file']),
                 "character_list": df['character'].tolist()
             }
 
@@ -64,8 +67,8 @@ def build_fonts_index():
         except Exception as e:
             print(f"  [Error] 錯誤: {e}")
 
-    # 儲存索引
-    index_path = config.get_index_path('fonts_index')
+    # 儲存索引（路徑解析為絕對路徑，不受 CWD 影響）
+    index_path = loader._resolve(config.get_index_path('fonts_index'))
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
     with open(index_path, 'w', encoding='utf-8') as f:
@@ -90,7 +93,9 @@ def build_character_index():
     for cal in loader.calligraphers:
         name = cal['name']
         display_name = cal['display_name']
-        print(f"\n掃描: {display_name}")
+        book = cal.get('book', '')
+        label = f"{display_name}·{book}" if book else display_name
+        print(f"\n掃描: {label}")
 
         try:
             df = loader.load_labels(name)
@@ -109,7 +114,9 @@ def build_character_index():
                 character_map[char][name].append({
                     "filename": filename,
                     "image_path": loader.get_image_path(name, filename),
-                    "confidence": row.get('confidence', 1.0)
+                    "confidence": row.get('confidence', 1.0),
+                    "book": cal.get('book', ''),      # 字帖名稱
+                    "font_id": cal['id'],             # 資料夾編號
                 })
 
             print(f"  [OK] 已掃描 {len(df)} 個字")
@@ -156,8 +163,8 @@ def build_character_index():
         if len(cals) >= 2:
             character_index["character_map"][char] = cals
 
-    # 儲存索引
-    index_path = config.get_index_path('character_index')
+    # 儲存索引（路徑解析為絕對路徑）
+    index_path = loader._resolve(config.get_index_path('character_index'))
 
     with open(index_path, 'w', encoding='utf-8') as f:
         json.dump(character_index, f, ensure_ascii=False, indent=2)
@@ -169,18 +176,38 @@ def build_character_index():
 
 
 def print_summary(fonts_index, character_index):
-    """列印摘要報告"""
+    """列印摘要報告（按書法家分組，同一書法家多本字帖合併顯示）"""
+    from collections import defaultdict
+
     print("\n" + "="*70)
     print(" 索引建立完成！摘要報告")
     print("="*70)
 
-    print(f"\n 字庫總覽:")
-    print(f"  - 書法家數量: {fonts_index['total_calligraphers']}")
-
+    # 按 display_name 分組（同一書法家可能有多本字帖）
+    cal_groups = defaultdict(list)
     for name, info in fonts_index['calligraphers'].items():
-        print(f"\n  【{info['display_name']}】({info['dynasty']})")
-        print(f"    圖片數: {info['total_images']}")
-        print(f"    獨特字: {info['unique_characters']}")
+        cal_groups[info['display_name']].append(info)
+
+    total_books = len(fonts_index['calligraphers'])
+    total_cals  = len(cal_groups)
+
+    print(f"\n 字庫總覽（不重複書法家）:")
+    print(f"  - 書法家數量: {total_cals} 位 / 字帖數量: {total_books} 本")
+
+    for display_name, books in cal_groups.items():
+        dynasty = books[0].get('dynasty', '')
+        total_images = sum(b['total_images'] for b in books)
+        print(f"\n  【{display_name}】({dynasty})")
+        if len(books) == 1:
+            b = books[0]
+            book_name = b.get('book', '')
+            prefix = f"〔{book_name}〕 " if book_name else ""
+            print(f"    {prefix}圖片數: {b['total_images']}　獨特字: {b['unique_characters']}")
+        else:
+            print(f"    共 {len(books)} 本字帖，合計圖片: {total_images}")
+            for b in books:
+                book_name = b.get('book', '未知字帖')
+                print(f"    ├─ 〔{book_name}〕 圖片: {b['total_images']}　獨特字: {b['unique_characters']}")
 
     print(f"\n 同字索引:")
     print(f"  - 總獨特字數: {character_index['total_unique_characters']}")
