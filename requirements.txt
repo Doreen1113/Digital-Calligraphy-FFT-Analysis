@@ -16,6 +16,9 @@ python-multipart
 # === GUI（python run_gui.py）===
 # PyQt5  # 目前未使用，可選安裝
 
+# === 圖片處理 ===
+Pillow>=10.0.0
+
 # === 其他 ===
 pygame
 pypinyin

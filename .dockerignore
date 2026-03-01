@@ -1,0 +1,46 @@
+# 虛擬環境
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Git 與 IDE
+.git/
+.gitignore
+.vscode/
+.claude/
+
+# 大型備份資料（透過 volume 掛載）
+Fonts/original/
+Fonts/kaggle_dataset/
+Fonts/source/
+Fonts/temp/
+
+# 輸出快取（透過 volume 掛載）
+output/
+
+# 測試與文件
+test*.py
+TEST_*.py
+*.txt
+*.md
+CHANGELOG*
+CHANGES*
+DEVELOPMENT*
+FEATURE*
+FIX_*
+FUNCTION*
+IMPLEMENTATION*
+PROJECT_SUMMARY*
+USAGE_GUIDE*
+V2_*
+
+# 開發工具
+images/
+docs/
+
+# Docker 自身
+Dockerfile
+docker-compose.yml
+.dockerignore

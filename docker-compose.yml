@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # 掛載字庫與資料（避免打包進 image，也方便更新）
+      - ./Fonts:/app/Fonts
+      - ./data:/app/data
+      - ./output:/app/output
+    environment:
+      - PORT=8000
+      - MPLBACKEND=Agg
+    restart: unless-stopped

@@ -54,7 +54,8 @@ if fonts_dir.exists():
     app.mount("/fonts", StaticFiles(directory=str(fonts_dir)), name="fonts")
 
 # === 訪客統計中介軟體 ===
-_SKIP_PREFIXES = ('/api', '/static', '/fonts', '/output', '/docs', '/redoc', '/openapi', '/favicon')
+_SKIP_PREFIXES = ('/api', '/static', '/fonts', '/output', '/docs', '/redoc', '/openapi', '/favicon',
+                  '/robots.txt', '/sitemap.xml')
 
 @app.middleware("http")
 async def stats_middleware(request: Request, call_next):
@@ -83,8 +84,50 @@ async def stats_middleware(request: Request, call_next):
     return response
 
 
+# === SEO：robots.txt 與 sitemap.xml ===
+SITE_BASE_URL = os.getenv("SITE_BASE_URL", "https://example.com").rstrip("/")
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots_txt():
+    """robots.txt — 允許所有爬蟲，指向 sitemap"""
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        f"Sitemap: {SITE_BASE_URL}/sitemap.xml\n"
+    )
+    return Response(content=content, media_type="text/plain")
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml():
+    """動態 sitemap.xml"""
+    from datetime import date
+    today = date.today().isoformat()
+    pages_list = [
+        ("",              "weekly",  "1.0"),
+        ("/compare",      "weekly",  "0.9"),
+        ("/explorer",     "weekly",  "0.9"),
+        ("/calligraphers","monthly", "0.8"),
+        ("/score",        "weekly",  "0.9"),
+    ]
+    urls_xml = "\n".join(
+        f"""  <url>
+    <loc>{SITE_BASE_URL}{path}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>{freq}</changefreq>
+    <priority>{priority}</priority>
+  </url>"""
+        for path, freq, priority in pages_list
+    )
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls_xml}
+</urlset>"""
+    return Response(content=xml, media_type="application/xml")
+
+
 # === 註冊路由 ===
-from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher, api_stats, api_upload
+from web.routers import pages, api_character, api_analysis, api_search, api_calligrapher, api_stats, api_upload, api_score
 
 app.include_router(pages.router)
 app.include_router(api_character.router,    prefix="/api/character",    tags=["character"])
@@ -93,6 +136,7 @@ app.include_router(api_search.router,       prefix="/api/search",       tags=["s
 app.include_router(api_calligrapher.router, prefix="/api/calligrapher", tags=["calligrapher"])
 app.include_router(api_stats.router,        prefix="/api/stats",        tags=["stats"])
 app.include_router(api_upload.router,       prefix="/api/upload",       tags=["upload"])
+app.include_router(api_score.router,        prefix="/api/score",        tags=["score"])
 
 
 # === 啟動事件 ===

@@ -51,11 +51,15 @@ def main():
     print()
     print("=" * 60)
 
+    port = int(os.environ.get("PORT", 8000))
+    host = "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1"
+    reload = not os.environ.get("PORT")  # 雲端部署時關閉 reload
+
     uvicorn.run(
         "web.app:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True,
+        host=host,
+        port=port,
+        reload=reload,
     )
 
 

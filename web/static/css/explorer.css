@@ -333,3 +333,17 @@
         grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
     }
 }
+
+@media (max-width: 480px) {
+    .char-grid {
+        grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    }
+
+    .radical-filter-btns {
+        max-height: 100px;
+    }
+
+    .detail-char-big {
+        font-size: 3.5rem;
+    }
+}

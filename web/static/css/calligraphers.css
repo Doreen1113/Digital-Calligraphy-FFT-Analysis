@@ -412,3 +412,29 @@
         width: 50px;
     }
 }
+
+@media (max-width: 480px) {
+    .cal-name {
+        font-size: 1.2rem;
+    }
+
+    .cal-stats {
+        gap: 0.75rem;
+    }
+
+    .cal-stat-num {
+        font-size: 1.1rem;
+    }
+
+    .timeline-node {
+        min-width: 70px;
+    }
+
+    .timeline-dynasty {
+        font-size: 0.82rem;
+    }
+
+    .timeline-names {
+        font-size: 0.7rem;
+    }
+}
