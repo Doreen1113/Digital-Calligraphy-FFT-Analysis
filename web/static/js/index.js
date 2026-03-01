@@ -190,6 +190,9 @@ async function loadStats() {
         const data = await api('/api/search/stats');
         document.getElementById('statTotal').textContent = data.total_characters || '-';
         document.getElementById('statCommon').textContent = data.common_characters_count || '-';
+        // 更新輸入框旁的提示
+        const hint = document.getElementById('charTotalHint');
+        if (hint && data.total_characters) hint.textContent = data.total_characters.toLocaleString();
     } catch (err) {
         // 靜默失敗
     }

@@ -72,15 +72,10 @@ async def explorer(request: Request):
 
 
 @router.get("/upload")
-async def upload(request: Request):
-    """上傳比對頁：上傳你的手寫字，與大師比一比"""
-    return templates.TemplateResponse("upload.html", {
-        "request": request,
-        "title": "上傳你的字，與大師比一比",
-        "active": "upload",
-        "page_desc": "上傳你手寫的中文字圖片，與智永、顏真卿等書法大師的版本並排比對。",
-        "page_keywords": "書法練習,手寫漢字,書法比對,自學書法,書法評分",
-    })
+async def upload_redirect(request: Request):
+    """舊版 /upload 頁面 → 重新導向至 /score（上傳 & 評分）"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/score", status_code=301)
 
 
 @router.get("/score")
