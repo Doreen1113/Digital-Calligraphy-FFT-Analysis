@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/score.css">
+{% endblock %}
+
+{% block content %}
+<div class="score-container">
+
+    <!-- 頁面標題 -->
+    <header class="score-header">
+        <h1 class="score-title">🖌️ 練字評分</h1>
+        <p class="score-subtitle">上傳你的手寫字，與書法大師比一比，立即獲得形態與結構的評分回饋</p>
+    </header>
+
+    <!-- 輸入表單 -->
+    <section class="score-form-card">
+
+        <div class="form-row">
+            <!-- 字元輸入 -->
+            <div class="form-group">
+                <label class="form-label" for="charInput">你練的字</label>
+                <input id="charInput"
+                       class="char-input"
+                       type="text"
+                       maxlength="1"
+                       placeholder="字"
+                       autocomplete="off"
+                       title="輸入一個中文字">
+            </div>
+
+            <!-- 書法家選擇 -->
+            <div class="form-group cal-select-wrap">
+                <label class="form-label" for="calSelect">對比書法家</label>
+                <select id="calSelect" class="cal-select" disabled>
+                    <option value="">— 請先輸入字元 —</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 上傳區 -->
+        <div class="form-group">
+            <label class="form-label">上傳手寫圖片</label>
+            <div id="uploadZone" class="upload-zone">
+                <input id="fileInput"
+                       class="upload-file-input"
+                       type="file"
+                       accept="image/jpeg,image/png,image/webp,image/bmp"
+                       title="選擇圖片">
+
+                <!-- 上傳提示 -->
+                <div id="uploadHint">
+                    <div class="upload-icon">🖼️</div>
+                    <p class="upload-hint">
+                        拖曳圖片到這裡，或 <strong>點此選擇</strong><br>
+                        <small>支援 JPG / PNG / WebP / BMP，最大 5 MB</small>
+                    </p>
+                </div>
+
+                <!-- 圖片預覽 -->
+                <div id="uploadPreview" class="upload-preview">
+                    <img id="previewImg" class="preview-img" src="" alt="預覽">
+                    <span id="previewFilename" class="preview-filename"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 錯誤訊息 -->
+        <div id="scoreError" class="score-error"></div>
+
+        <!-- 分析按鈕 -->
+        <button id="analyzeBtn" class="btn-analyze">
+            <div class="spinner"></div>
+            <span class="btn-text">開始評分</span>
+        </button>
+    </section>
+
+    <!-- 結果區（初始隱藏） -->
+    <section id="scoreResults" class="score-results">
+
+        <!-- 整體分數 -->
+        <div class="total-score-card">
+            <div class="score-ring-wrap">
+                <div class="score-ring">
+                    <svg width="110" height="110" viewBox="0 0 110 110">
+                        <circle class="score-ring-bg"
+                                cx="55" cy="55" r="46"></circle>
+                        <circle id="ringFill"
+                                class="score-ring-fill"
+                                cx="55" cy="55" r="46"
+                                stroke-dasharray="289.03"
+                                stroke-dashoffset="289.03"></circle>
+                    </svg>
+                    <div class="score-ring-text">
+                        <span id="ringNumber" class="score-number">0</span>
+                        <span class="score-unit">/ 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-score-info">
+                <p class="total-score-title">綜合評分</p>
+                <p id="feedbackOverall" class="feedback-overall"></p>
+            </div>
+        </div>
+
+        <!-- 細分分數 -->
+        <div class="sub-scores">
+
+            <!-- 形態相似度 -->
+            <div class="sub-score-card">
+                <div class="sub-score-label">
+                    <span class="icon">🔍</span> 整體形態相似度
+                </div>
+                <div class="sub-score-bar-wrap">
+                    <div id="shapeScoreBar" class="sub-score-bar"></div>
+                </div>
+                <div id="shapeScoreVal" class="sub-score-val">—</div>
+                <div id="shapeFeedback" class="sub-score-feedback"></div>
+            </div>
+
+            <!-- 結構平衡度 -->
+            <div class="sub-score-card">
+                <div class="sub-score-label">
+                    <span class="icon">⚖️</span> 結構平衡度
+                </div>
+                <div class="sub-score-bar-wrap">
+                    <div id="balanceScoreBar" class="sub-score-bar"></div>
+                </div>
+                <div id="balanceScoreVal" class="sub-score-val">—</div>
+                <div id="balanceFeedback" class="sub-score-feedback"></div>
+
+                <!-- 細節 chips -->
+                <div class="balance-detail">
+                    <span class="balance-chip" id="chipLR"></span>
+                    <span class="balance-chip" id="chipTB"></span>
+                    <span class="balance-chip" id="chipCenter"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 圖片比對 -->
+        <div class="comparison-section">
+            <h3 class="section-title">字形比對</h3>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <img id="userCompareImg" src="" alt="你的字">
+                    <span class="comparison-label user-label">你的字</span>
+                </div>
+                <div class="comparison-item">
+                    <img id="refCompareImg" src="" alt="大師版本">
+                    <span id="refCalLabel" class="comparison-label"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 再試一次 -->
+        <div>
+            <button id="btnRetry" class="btn-retry">↩ 再試一次</button>
+        </div>
+
+    </section>
+
+    <!-- 使用說明 -->
+    <section class="score-form-card" style="font-size:0.9rem; color:var(--text-muted,#8a7560); gap:0.6rem;">
+        <p style="margin:0; font-weight:600; color:var(--primary,#5a3e28);">📋 使用說明</p>
+        <ul style="margin:0; padding-left:1.2rem; line-height:1.9;">
+            <li>在白紙上以毛筆或墨筆書寫，拍照或掃描後上傳</li>
+            <li>圖片建議保持方形、背景較淺、字跡清晰</li>
+            <li>可選擇想與哪位書法家的版本比對（預設自動）</li>
+            <li>評分僅供練習參考，著重形態與結構，不評筆順</li>
+        </ul>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/score.js"></script>
+{% endblock %}

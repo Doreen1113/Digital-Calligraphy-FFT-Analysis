@@ -1,0 +1,505 @@
+/* ===========================
+   練字評分頁面樣式 (score.css)
+   =========================== */
+
+.score-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 頁面標題 */
+.score-header {
+    text-align: center;
+    padding: 1rem 0 0;
+}
+
+.score-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary, #5a3e28);
+    margin: 0 0 0.4rem;
+}
+
+.score-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted, #8a7560);
+    margin: 0;
+}
+
+/* ── 輸入區 ─────────────────────────────────── */
+.score-form-card {
+    background: var(--bg-card, #faf6f0);
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--primary, #5a3e28);
+    letter-spacing: 0.02em;
+}
+
+.char-input {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 2rem;
+    text-align: center;
+    border: 2px solid var(--border, #d4bfa0);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--primary, #5a3e28);
+    font-family: "Kaiti SC", "KaiTi", "標楷體", serif;
+    transition: border-color 0.15s;
+    outline: none;
+}
+
+.char-input:focus {
+    border-color: var(--accent, #8b5a2b);
+}
+
+/* 書法家選擇 */
+.cal-select-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 180px;
+}
+
+.cal-select {
+    height: 3.5rem;
+    padding: 0 0.8rem;
+    border: 2px solid var(--border, #d4bfa0);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text, #3d2b1a);
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.cal-select:focus {
+    border-color: var(--accent, #8b5a2b);
+}
+
+/* 上傳區 */
+.upload-zone {
+    border: 2px dashed var(--border, #d4bfa0);
+    border-radius: 10px;
+    background: #fff;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    padding: 1.5rem;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+    border-color: var(--accent, #8b5a2b);
+    background: var(--accent-light, #f5ede0);
+}
+
+.upload-zone.has-file {
+    border-style: solid;
+    border-color: var(--accent, #8b5a2b);
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    color: var(--text-muted, #8a7560);
+}
+
+.upload-hint {
+    font-size: 0.92rem;
+    color: var(--text-muted, #8a7560);
+    text-align: center;
+}
+
+.upload-hint strong {
+    color: var(--accent, #8b5a2b);
+}
+
+.upload-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* 預覽圖 */
+.upload-preview {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-preview.show {
+    display: flex;
+}
+
+.preview-img {
+    max-width: 140px;
+    max-height: 140px;
+    border-radius: 6px;
+    border: 1px solid var(--border, #d4bfa0);
+    object-fit: contain;
+    background: #fafaf8;
+}
+
+.preview-filename {
+    font-size: 0.8rem;
+    color: var(--text-muted, #8a7560);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 送出按鈕 */
+.btn-analyze {
+    align-self: flex-end;
+    padding: 0.75rem 2.2rem;
+    background: var(--accent, #8b5a2b);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-analyze:hover:not(:disabled) {
+    background: var(--primary, #5a3e28);
+}
+
+.btn-analyze:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn-analyze .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.btn-analyze.loading .spinner { display: inline-block; }
+.btn-analyze.loading .btn-text { display: none; }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 錯誤訊息 */
+.score-error {
+    background: #fff0f0;
+    border: 1px solid #f5c6c6;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    color: #c62828;
+    font-size: 0.95rem;
+    display: none;
+}
+
+.score-error.show { display: block; }
+
+/* ── 結果區 ──────────────────────────────────── */
+.score-results {
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeInUp 0.4s ease;
+}
+
+.score-results.show { display: flex; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 整體分數大卡 */
+.total-score-card {
+    background: var(--bg-card, #faf6f0);
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.score-ring-wrap {
+    flex-shrink: 0;
+}
+
+/* 環形分數 */
+.score-ring {
+    position: relative;
+    width: 110px;
+    height: 110px;
+}
+
+.score-ring svg {
+    transform: rotate(-90deg);
+}
+
+.score-ring-bg {
+    fill: none;
+    stroke: var(--border, #d4bfa0);
+    stroke-width: 8;
+}
+
+.score-ring-fill {
+    fill: none;
+    stroke: var(--accent, #8b5a2b);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.score-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary, #5a3e28);
+    line-height: 1;
+}
+
+.score-unit {
+    font-size: 0.72rem;
+    color: var(--text-muted, #8a7560);
+}
+
+.total-score-info {
+    flex: 1;
+}
+
+.total-score-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary, #5a3e28);
+    margin: 0 0 0.5rem;
+}
+
+.feedback-overall {
+    font-size: 1rem;
+    color: var(--text, #3d2b1a);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* 細分分數條 */
+.sub-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.sub-score-card {
+    background: var(--bg-card, #faf6f0);
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+}
+
+.sub-score-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--primary, #5a3e28);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sub-score-label .icon {
+    font-size: 1.1rem;
+}
+
+.sub-score-bar-wrap {
+    background: var(--border, #d4bfa0);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.sub-score-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent, #8b5a2b);
+    width: 0%;
+    transition: width 1s ease;
+}
+
+.sub-score-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent, #8b5a2b);
+}
+
+.sub-score-feedback {
+    font-size: 0.82rem;
+    color: var(--text-muted, #8a7560);
+    margin-top: 0.3rem;
+}
+
+/* 比對圖區 */
+.comparison-section {
+    border-top: 1px solid var(--border, #d4bfa0);
+    padding-top: 1.2rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    color: var(--primary, #5a3e28);
+    margin: 0 0 1rem;
+    font-weight: 600;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.comparison-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.comparison-item img {
+    width: 100%;
+    max-width: 220px;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 8px;
+    background: #fafaf8;
+}
+
+.comparison-label {
+    font-size: 0.88rem;
+    color: var(--text-muted, #8a7560);
+    font-weight: 500;
+}
+
+.comparison-label.user-label {
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* 平衡細節 */
+.balance-detail {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.balance-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--accent-light, #f5ede0);
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 99px;
+    padding: 0.25rem 0.8rem;
+    font-size: 0.82rem;
+    color: var(--primary, #5a3e28);
+}
+
+/* 再測按鈕 */
+.btn-retry {
+    align-self: flex-start;
+    padding: 0.6rem 1.4rem;
+    background: transparent;
+    color: var(--accent, #8b5a2b);
+    border: 1.5px solid var(--accent, #8b5a2b);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-retry:hover {
+    background: var(--accent, #8b5a2b);
+    color: #fff;
+}
+
+/* ── RWD ────────────────────────────────────── */
+@media (max-width: 680px) {
+    .sub-scores {
+        grid-template-columns: 1fr;
+    }
+
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .total-score-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .btn-analyze {
+        align-self: stretch;
+        justify-content: center;
+    }
+}

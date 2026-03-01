@@ -15,20 +15,6 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 _CHAR_DATA_FILE = PROJECT_ROOT / "data" / "index" / "char_data.json"
 
-# 中文顯示名 → 字元索引英文 key 的對應表
-_CALLIGRAPHER_NAME_MAP: dict = {
-    "智永": "zhiyong",
-    "沈尹默": "shen_yinmo",
-    "顏真卿": "yan_zhenqing",
-    "歐陽詢": "ouyang_xun",
-    "趙孟頫": "zhao_mengfu",
-    # 也接受英文 key（向後相容）
-    "zhiyong": "zhiyong",
-    "shen_yinmo": "shen_yinmo",
-    "yan_zhenqing": "yan_zhenqing",
-    "ouyang_xun": "ouyang_xun",
-    "zhao_mengfu": "zhao_mengfu",
-}
 
 
 def _get_char_map() -> dict:
@@ -76,17 +62,25 @@ def get_filtered_characters(
     radical: Optional[str] = None,
 ) -> List[str]:
     """依書法家數量（與可選的書法家名稱、部首）篩選字元"""
+    from web.dependencies import get_name_font_label_dict
     char_map = _get_char_map()
     char_data = _load_char_data() if radical else {}
+    label_map = get_name_font_label_dict() if calligrapher else {}
+
     result = []
     for char, cals in char_map.items():
         count = len(cals)
         if not (min_count <= count <= max_count):
             continue
-        # 若有指定書法家，只保留該書法家擁有的字
-        cal_key = _CALLIGRAPHER_NAME_MAP.get(calligrapher, calligrapher) if calligrapher else None
-        if cal_key and cal_key not in cals:
-            continue
+        # 若有指定書法家，用 font_label 萃取 display_name 比對（支援多本字帖 + _XX 新格式）
+        if calligrapher:
+            char_display_names = set()
+            for cal_name in cals.keys():
+                font_label = label_map.get(cal_name, cal_name)
+                display_name = font_label.split('·')[0] if '·' in font_label else font_label
+                char_display_names.add(display_name)
+            if calligrapher not in char_display_names:
+                continue
         # 若有指定部首，只保留該部首的字
         if radical and char_data.get(char, {}).get('radical', '') != radical:
             continue

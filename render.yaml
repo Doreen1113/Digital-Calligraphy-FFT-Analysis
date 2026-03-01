@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: calligraphy-analyzer
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: MPLBACKEND
+        value: Agg

@@ -19,6 +19,7 @@ async def index(request: Request):
         "title": "輸入一個字，看大師怎麼寫",
         "active": "index",
         "page_desc": "輸入任一中文字，即時比較智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的筆法差異。",
+        "page_keywords": "書法比對,漢字,毛筆字,楷書,行書,王羲之,顏真卿,書法教學",
     })
 
 
@@ -30,6 +31,7 @@ async def analysis(request: Request):
         "title": "書法風格 DNA",
         "active": "analysis",
         "page_desc": "以傅立葉描述子（FFT）量化分析書法風格特徵，呈現五位大師的風格 DNA 比對。",
+        "page_keywords": "書法風格分析,傅立葉描述子,FFT,書法特徵,風格比較,書法科學",
     })
 
 
@@ -41,6 +43,7 @@ async def calligraphers(request: Request):
         "title": "認識書法家",
         "active": "calligraphers",
         "page_desc": "深入了解智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的生平與風格特色。",
+        "page_keywords": "書法家介紹,智永,顏真卿,歐陽詢,趙孟頫,王羲之,書法大師,書法歷史",
     })
 
 
@@ -52,6 +55,7 @@ async def compare(request: Request):
         "title": "批次比對",
         "active": "compare",
         "page_desc": "一次輸入多個文字，批次產生五位書法大師的對照圖，方便教學與研究使用。",
+        "page_keywords": "批次書法比對,漢字對照,書法教學,毛筆字練習,書法範本",
     })
 
 
@@ -63,6 +67,7 @@ async def explorer(request: Request):
         "title": "字元探索",
         "active": "explorer",
         "page_desc": "瀏覽全部可比對的書法字元，支援字頻序、筆畫序排列，依書法家篩選。",
+        "page_keywords": "漢字探索,書法字庫,字元查詢,筆畫查詢,部首查詢,書法字典",
     })
 
 
@@ -74,4 +79,17 @@ async def upload(request: Request):
         "title": "上傳你的字，與大師比一比",
         "active": "upload",
         "page_desc": "上傳你手寫的中文字圖片，與智永、顏真卿等書法大師的版本並排比對。",
+        "page_keywords": "書法練習,手寫漢字,書法比對,自學書法,書法評分",
+    })
+
+
+@router.get("/score")
+async def score(request: Request):
+    """練字評分頁：上傳手寫字，與大師比一比並獲得評分"""
+    return templates.TemplateResponse("score.html", {
+        "request": request,
+        "title": "練字評分",
+        "active": "score",
+        "page_desc": "上傳你手寫的中文字圖片，與書法大師版本比對，獲得整體形態相似度與結構平衡度評分，適合書法初學者自我練習。",
+        "page_keywords": "書法評分,練字,手寫漢字,書法練習,書法比對,書法初學者,形態相似度,結構平衡",
     })

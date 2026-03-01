@@ -9,7 +9,7 @@
 
     <!-- SEO meta -->
     <meta name="description" content="{{ page_desc | default('輸入任一中文字，即時比較智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的筆法。使用傅立葉描述子（FFT）分析書法風格。') }}">
-    <meta name="keywords" content="書法,書法比較,書法分析,智永,沈尹默,顏真卿,趙孟頫,歐陽詢,楷書,行書,FFT,傅立葉,風格分析">
+    <meta name="keywords" content="{{ page_keywords | default('書法,書法比較,書法分析,智永,沈尹默,顏真卿,趙孟頫,歐陽詢,楷書,行書,FFT,傅立葉,風格分析') }}">
     <meta name="author" content="書法風格分析系統">
     <meta name="robots" content="index, follow">
 
@@ -19,14 +19,35 @@
     <meta property="og:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
     <meta property="og:locale"      content="zh_TW">
     <meta property="og:site_name"   content="書法風格分析系統">
+    <meta property="og:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <!-- Twitter Card -->
-    <meta name="twitter:card"        content="summary">
+    <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="{{ title }} - 書法風格分析系統">
     <meta name="twitter:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
+    <meta name="twitter:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
 
     <link rel="stylesheet" href="/static/css/base.css">
     {% block head %}{% endblock %}
+
+    <!-- JSON-LD 結構化資料 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "書法風格分析系統",
+      "description": "使用傅立葉描述子（FFT）分析書法風格，支援多位大師同字比對",
+      "url": "{{ request.url.scheme }}://{{ request.url.netloc }}",
+      "inLanguage": "zh-TW",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ request.url.scheme }}://{{ request.url.netloc }}/explorer?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- 導航列 -->
@@ -44,6 +65,7 @@
                 <li><a href="/compare"       class="{% if active == 'compare'       %}active{% endif %}">批次比對</a></li>
                 <li><a href="/explorer"      class="{% if active == 'explorer'      %}active{% endif %}">字元探索</a></li>
                 <li><a href="/upload"        class="{% if active == 'upload'        %}active{% endif %}">上傳比對</a></li>
+                <li><a href="/score"         class="{% if active == 'score'         %}active{% endif %}">練字評分</a></li>
             </ul>
         </div>
     </nav>
