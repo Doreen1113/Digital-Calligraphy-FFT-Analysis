@@ -7,6 +7,7 @@
 
 適合書法初學者，給予鼓勵性回饋。
 """
+import base64
 import cv2
 import numpy as np
 from pathlib import Path
@@ -69,16 +70,17 @@ def get_available_calligraphers(char: str) -> list[dict]:
     """
     取得某字可用的書法家清單（各帶一張圖片 URL）
 
-    Returns: [{"name": "顏真卿", "image_url": "/fonts/..."}, ...]
+    Returns: [{"name": "顏真卿・玄秘塔碑", "image_url": "/fonts/..."}, ...]
+    使用 font_label（書法家・字帖）以區分同一書法家的不同版本。
     """
-    from web.dependencies import get_character_index, get_name_display_dict
+    from web.dependencies import get_character_index, get_name_font_label_dict
     char_index = get_character_index()
     char_map = char_index.get("character_map", {})
 
     if char not in char_map:
         return []
 
-    name_map = get_name_display_dict()
+    name_map = get_name_font_label_dict()
     result = []
 
     for cal_name, instances in char_map[char].items():
@@ -90,9 +92,9 @@ def get_available_calligraphers(char: str) -> list[dict]:
         img_path = _resolve_image_path(img_path_str)
         if not img_path.exists():
             continue
-        display = name_map.get(cal_name, cal_name)
+        label = name_map.get(cal_name, cal_name)
         result.append({
-            "name": display,
+            "name": label,
             "image_url": _image_url_from_path(img_path),
         })
 
@@ -108,17 +110,17 @@ def _load_reference_binary(char: str,
     Returns:
         (binary_256x256, display_name, image_url)
     """
-    from web.dependencies import get_character_index, get_name_display_dict
+    from web.dependencies import get_character_index, get_name_font_label_dict
     char_index = get_character_index()
     char_map = char_index.get("character_map", {})
 
     if char not in char_map:
         raise ValueError(f"字庫中找不到「{char}」，目前不支援此字")
 
-    name_map = get_name_display_dict()
+    name_map = get_name_font_label_dict()
     cal_data = char_map[char]
 
-    # 找指定書法家，或回退至第一個有效圖片
+    # 找指定書法家（font_label 比對），或回退至第一個有效圖片
     selected_instances = None
     selected_display = None
 
@@ -300,6 +302,46 @@ def _make_feedback(shape: float, balance: float) -> dict:
     }
 
 
+# ─── 差異疊合圖 ────────────────────────────────────────────────────────────────
+
+def _generate_diff_overlay(user_bin: np.ndarray, ref_bin: np.ndarray) -> str:
+    """
+    生成使用者與大師的差異疊合圖（base64 PNG data URL）。
+
+    重心對齊後逐像素比對：
+    - 深灰 [70, 70, 70]  ：雙方都有墨（相符筆劃）
+    - 紅色 [220, 60, 60] ：使用者多寫（user 有墨，master 無墨）
+    - 藍色 [60, 110, 220]：使用者少寫（master 有墨，user 無墨）
+    - 淺灰 [240, 240, 240]：雙方皆無墨（空白區域）
+
+    Returns: "data:image/png;base64,..." 字串，失敗時回傳 ""
+    """
+    u_aligned = _align_centroid(user_bin)
+    r_aligned = _align_centroid(ref_bin)
+
+    # ink mask: True = 有墨（pixel < 128）
+    u_ink = u_aligned < 128
+    r_ink = r_aligned < 128
+
+    h, w = u_aligned.shape
+    overlay = np.full((h, w, 3), 240, dtype=np.uint8)   # 淺灰背景
+
+    # 雙方都有墨 → 深灰（相符）
+    overlay[u_ink & r_ink] = [70, 70, 70]
+
+    # 使用者多寫 → 紅
+    overlay[u_ink & ~r_ink] = [220, 60, 60]
+
+    # 使用者少寫 → 藍
+    overlay[~u_ink & r_ink] = [60, 110, 220]
+
+    success, buf = cv2.imencode('.png', overlay)
+    if not success:
+        return ""
+    b64 = base64.b64encode(buf.tobytes()).decode('ascii')
+    return f"data:image/png;base64,{b64}"
+
+
 # ─── 主要評分入口 ─────────────────────────────────────────────────────────────
 
 def analyze_character(user_img_bytes: bytes,
@@ -325,6 +367,7 @@ def analyze_character(user_img_bytes: bytes,
     shape   = _compute_shape_similarity(user_bin, ref_bin)
     balance = _compute_balance(user_bin)
     fb      = _make_feedback(shape, balance["score"])
+    diff_img = _generate_diff_overlay(user_bin, ref_bin)
 
     return {
         "char":          char,
@@ -344,4 +387,5 @@ def analyze_character(user_img_bytes: bytes,
         },
         "ref_cal_name":  ref_display,
         "ref_image_url": ref_url,
+        "diff_image":    diff_img,
     }

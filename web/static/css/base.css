@@ -152,6 +152,23 @@ body {
     font-size: 1rem;
 }
 
+.page-notice {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.3rem 1rem;
+    background: var(--bg-card, #faf6f0);
+    border: 1px solid var(--border, #d4bfa0);
+    border-radius: 99px;
+    font-size: 0.85rem;
+    color: var(--text-muted, #8a7560);
+}
+
+.char-limit-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted, #8a7560);
+    white-space: nowrap;
+}
+
 /* --- 卡片 --- */
 .card {
     background: var(--bg-card);

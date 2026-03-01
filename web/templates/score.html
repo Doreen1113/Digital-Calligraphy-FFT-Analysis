@@ -139,9 +139,9 @@
             </div>
         </div>
 
-        <!-- 圖片比對 -->
+        <!-- 圖片比對（評分參照） -->
         <div class="comparison-section">
-            <h3 class="section-title">字形比對</h3>
+            <h3 class="section-title">字形比對（評分參照）</h3>
             <div class="comparison-grid">
                 <div class="comparison-item">
                     <img id="userCompareImg" src="" alt="你的字">
@@ -154,6 +154,41 @@
             </div>
         </div>
 
+        <!-- 筆劃差異標示圖 -->
+        <div class="diff-section" id="diffSection" style="display:none">
+            <h3 class="section-title">筆劃差異標示</h3>
+            <div class="diff-body">
+                <img id="diffImg" src="" alt="筆劃差異標示" class="diff-img"
+                     onclick="openImageModal(this.src, '筆劃差異標示（對齊重心後比對）')">
+                <div class="diff-right">
+                    <div class="diff-legend">
+                        <div class="legend-row">
+                            <span class="legend-dot dot-match"></span>
+                            <span>相符筆劃</span>
+                        </div>
+                        <div class="legend-row">
+                            <span class="legend-dot dot-extra"></span>
+                            <span>多寫（紅）— 可適度減少</span>
+                        </div>
+                        <div class="legend-row">
+                            <span class="legend-dot dot-missing"></span>
+                            <span>少寫（藍）— 尚待補強</span>
+                        </div>
+                    </div>
+                    <p class="diff-hint">
+                        兩圖已對齊重心後再做比對，<br>
+                        點擊圖片可放大檢視細節。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 全部大師版本 -->
+        <div class="masters-section" id="mastersSection" style="display:none">
+            <h3 class="section-title">全部大師版本</h3>
+            <div class="masters-grid" id="mastersGrid"></div>
+        </div>
+
         <!-- 再試一次 -->
         <div>
             <button id="btnRetry" class="btn-retry">↩ 再試一次</button>
@@ -161,16 +196,31 @@
 
     </section>
 
-    <!-- 使用說明 -->
-    <section class="score-form-card" style="font-size:0.9rem; color:var(--text-muted,#8a7560); gap:0.6rem;">
-        <p style="margin:0; font-weight:600; color:var(--primary,#5a3e28);">📋 使用說明</p>
-        <ul style="margin:0; padding-left:1.2rem; line-height:1.9;">
-            <li>在白紙上以毛筆或墨筆書寫，拍照或掃描後上傳</li>
-            <li>圖片建議保持方形、背景較淺、字跡清晰</li>
-            <li>可選擇想與哪位書法家的版本比對（預設自動）</li>
-            <li>評分僅供練習參考，著重形態與結構，不評筆順</li>
-        </ul>
+    <!-- 拍攝技巧 + 使用說明 -->
+    <section class="score-form-card tips-section">
+        <p class="tips-title">📷 拍攝小技巧</p>
+        <div class="tips-grid">
+            <div class="tip-item">
+                <span class="tip-icon">☀️</span>
+                <div><strong>充足光線</strong><p>在自然光或明亮室內拍攝，避免陰影</p></div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">📐</span>
+                <div><strong>正面取景</strong><p>讓相機正對紙張，避免傾斜造成變形</p></div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">⬛</span>
+                <div><strong>高對比度</strong><p>深色筆寫在白紙上效果最佳</p></div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🔲</span>
+                <div><strong>單字裁切</strong><p>圖片盡量只包含要評分的那個字</p></div>
+            </div>
+        </div>
+        <p class="tips-note">評分僅供練習參考，著重形態與結構，不評筆順。
+            目前字庫收錄 <strong>1,010</strong> 個字元，7 位書法大師。</p>
     </section>
+
 
 </div>
 {% endblock %}

@@ -25,6 +25,7 @@ const resultsPanel = document.getElementById('scoreResults');
 
 let selectedFile = null;
 let calFetchTimer = null;
+let cachedCalligraphers = [];   // 快取：目前字的書法家清單（含圖 URL）
 
 // ─── 字元輸入 → 動態載入書法家 ────────────────────────────────────────────
 
@@ -44,6 +45,7 @@ async function loadCalligraphers(char) {
         if (!resp.ok) return;
         const data = await resp.json();
         const cals = data.calligraphers || [];
+        cachedCalligraphers = cals;   // 快取供評分後的圖庫使用
 
         calSelect.innerHTML = '<option value="">自動選擇（第一位）</option>';
         cals.forEach(cal => {
@@ -178,9 +180,45 @@ function displayResults(data) {
     }
     refLabel.textContent = `大師版本（${data.ref_cal_name}）`;
 
+    // 筆劃差異標示圖
+    const diffSection = document.getElementById('diffSection');
+    const diffImg     = document.getElementById('diffImg');
+    if (data.diff_image) {
+        diffImg.src = data.diff_image;
+        diffSection.style.display = 'block';
+    } else {
+        diffSection.style.display = 'none';
+    }
+
+    // 全部大師版本圖庫
+    showMastersGallery(cachedCalligraphers, data.ref_cal_name);
+
     // 顯示結果
     resultsPanel.classList.add('show');
     resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showMastersGallery(cals, refCalName) {
+    const section = document.getElementById('mastersSection');
+    const grid    = document.getElementById('mastersGrid');
+
+    if (!cals || cals.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    grid.innerHTML = cals.map(cal => {
+        const isRef = cal.name === refCalName;
+        return `<div class="master-gallery-item ${isRef ? 'is-ref' : ''}"
+                     onclick="openImageModal('${cal.image_url}', '${cal.name}')">
+            <img src="${cal.image_url}" alt="${cal.name}" loading="lazy">
+            <span class="master-gallery-name">
+                ${cal.name}${isRef ? '<em>評分參照</em>' : ''}
+            </span>
+        </div>`;
+    }).join('');
+
+    section.style.display = 'block';
 }
 
 function setRingScore(pct) {
