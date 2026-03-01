@@ -1,5 +1,5 @@
 {
-  "total_views": 288,
+  "total_views": 323,
   "unique_visitors": 41,
   "visitor_ids": [
     "ca897516-2b8e-4d82-a9a1-c727388d841a",
@@ -45,13 +45,13 @@
     "5e39a85d-0863-4d87-b3e6-86a4f5c157c1"
   ],
   "page_views": {
-    "home": 91,
+    "home": 111,
     "analysis": 34,
-    "calligraphers": 32,
+    "calligraphers": 33,
     "compare": 42,
-    "explorer": 41,
+    "explorer": 51,
     "upload": 30,
     "daily": 9,
-    "score": 9
+    "score": 13
   }
 }

@@ -446,9 +446,9 @@ async function showCharDetail(char) {
             ).join('');
 
         const strokesHtml = data.strokes
-            ? `<span class="detail-tag">✎ ${data.strokes} 畫</span>` : '';
+            ? `<span class="detail-tag">${data.strokes} 畫</span>` : '';
         const freqHtml = data.freq_rank
-            ? `<span class="detail-tag">📊 字頻 #${data.freq_rank}</span>` : '';
+            ? `<span class="detail-tag">字頻 #${data.freq_rank}</span>` : '';
         const radicalHtml = data.radical
             ? `<span class="detail-tag radical-tag" onclick="event.stopPropagation(); closeCharDetail(); setRadicalFromDetail('${data.radical}')" title="點擊篩選此部首">⺀ ${data.radical}部</span>` : '';
 

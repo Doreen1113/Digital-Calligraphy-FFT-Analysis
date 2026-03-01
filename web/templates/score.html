@@ -9,7 +9,7 @@
 
     <!-- 頁面標題 -->
     <header class="score-header">
-        <h1 class="score-title">🖌️ 練字評分</h1>
+        <h1 class="score-title">練字評分</h1>
         <p class="score-subtitle">上傳你的手寫字，與書法大師比一比，立即獲得形態與結構的評分回饋</p>
     </header>
 
@@ -50,7 +50,15 @@
 
                 <!-- 上傳提示 -->
                 <div id="uploadHint">
-                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.5"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 16 12 12 8 16"></polyline>
+                            <line x1="12" y1="12" x2="12" y2="21"></line>
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                        </svg>
+                    </div>
                     <p class="upload-hint">
                         拖曳圖片到這裡，或 <strong>點此選擇</strong><br>
                         <small>支援 JPG / PNG / WebP / BMP，最大 5 MB</small>
@@ -110,7 +118,7 @@
             <!-- 形態相似度 -->
             <div class="sub-score-card">
                 <div class="sub-score-label">
-                    <span class="icon">🔍</span> 整體形態相似度
+                    整體形態相似度
                 </div>
                 <div class="sub-score-bar-wrap">
                     <div id="shapeScoreBar" class="sub-score-bar"></div>
@@ -122,7 +130,7 @@
             <!-- 結構平衡度 -->
             <div class="sub-score-card">
                 <div class="sub-score-label">
-                    <span class="icon">⚖️</span> 結構平衡度
+                    結構平衡度
                 </div>
                 <div class="sub-score-bar-wrap">
                     <div id="balanceScoreBar" class="sub-score-bar"></div>
@@ -198,22 +206,22 @@
 
     <!-- 拍攝技巧 + 使用說明 -->
     <section class="score-form-card tips-section">
-        <p class="tips-title">📷 拍攝小技巧</p>
+        <p class="tips-title">拍攝小技巧</p>
         <div class="tips-grid">
             <div class="tip-item">
-                <span class="tip-icon">☀️</span>
+                <span class="tip-icon">光</span>
                 <div><strong>充足光線</strong><p>在自然光或明亮室內拍攝，避免陰影</p></div>
             </div>
             <div class="tip-item">
-                <span class="tip-icon">📐</span>
+                <span class="tip-icon">正</span>
                 <div><strong>正面取景</strong><p>讓相機正對紙張，避免傾斜造成變形</p></div>
             </div>
             <div class="tip-item">
-                <span class="tip-icon">⬛</span>
+                <span class="tip-icon">墨</span>
                 <div><strong>高對比度</strong><p>深色筆寫在白紙上效果最佳</p></div>
             </div>
             <div class="tip-item">
-                <span class="tip-icon">🔲</span>
+                <span class="tip-icon">框</span>
                 <div><strong>單字裁切</strong><p>圖片盡量只包含要評分的那個字</p></div>
             </div>
         </div>

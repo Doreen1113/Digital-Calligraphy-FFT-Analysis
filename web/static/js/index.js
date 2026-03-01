@@ -4,6 +4,7 @@
 
 // === 常數 ===
 const HISTORY_KEY = 'calligraphy_history';
+const GUIDE_KEY   = 'guide_dismissed';
 const MAX_HISTORY = 20;
 
 
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStats();               // 字元統計
     loadSiteStats();           // 網站瀏覽統計
     renderHistory();           // 歷史紀錄
+    initGuideBanner();         // 新手引導 banner
 
     // Enter 鍵觸發比對
     const charInput = document.getElementById('charInput');
@@ -302,4 +304,32 @@ function renderHistory() {
     container.innerHTML = history.map(char =>
         `<button class="char-pill" onclick="quickCompare('${escapeHtml(char)}')" title="${escapeHtml(char)}">${escapeHtml(char)}</button>`
     ).join('');
+}
+
+
+// ============================
+// === 新手引導 banner ===
+// ============================
+
+/**
+ * 初始化引導 banner：若未曾關閉則顯示
+ */
+function initGuideBanner() {
+    if (localStorage.getItem(GUIDE_KEY)) return;
+    const banner = document.getElementById('guideBanner');
+    if (banner) banner.classList.add('show');
+}
+
+
+/**
+ * 關閉引導 banner 並記住使用者選擇
+ */
+function dismissGuide() {
+    localStorage.setItem(GUIDE_KEY, '1');
+    const banner = document.getElementById('guideBanner');
+    if (!banner) return;
+    banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-6px)';
+    setTimeout(() => { banner.style.display = 'none'; }, 300);
 }

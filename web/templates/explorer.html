@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/explorer.css">
+<link rel="stylesheet" href="/static/css/explorer.css?v=3">
 {% endblock %}
 
 {% block content %}
 <section class="page-header">
     <h1 class="page-title">字元探索</h1>
     <p class="page-subtitle">瀏覽所有可比對的字元，支援多種篩選與排序方式</p>
-    <p class="page-notice">📦 目前收錄 <strong>1,010</strong> 個字元，涵蓋 <strong>7</strong> 位書法大師——若找不到某字，表示尚未收錄。</p>
+    <p class="page-notice">目前收錄 <strong>1,010</strong> 個字元，涵蓋 <strong>7</strong> 位書法大師——若找不到某字，表示尚未收錄。</p>
 </section>
 
 <!-- 篩選、排序與搜尋 -->
@@ -93,7 +93,7 @@
         <h3 class="modal-title" id="charDetailTitle"></h3>
         <div id="charDetailBody"></div>
         <div class="detail-actions">
-            <button class="btn btn-primary" id="charDetailCompareBtn">✎ 立即比對</button>
+            <button class="btn btn-primary" id="charDetailCompareBtn">立即比對</button>
             <button class="btn btn-secondary" onclick="closeCharDetail()">關閉</button>
         </div>
     </div>
@@ -101,5 +101,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/explorer.js"></script>
+<script src="/static/js/explorer.js?v=2"></script>
 {% endblock %}
