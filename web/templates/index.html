@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/index.css?v=2">
 {% endblock %}
 
 {% block content %}
@@ -9,6 +9,30 @@
 <section class="hero">
     <h1 class="hero-title">輸入一個字，看大師怎麼寫</h1>
     <p class="hero-subtitle">比較多位書法大師的同一個字</p>
+</section>
+
+<!-- 新手引導 banner（localStorage 關閉後不再顯示） -->
+<section class="guide-banner" id="guideBanner">
+    <div class="guide-steps">
+        <div class="guide-step">
+            <span class="guide-num">1</span>
+            <strong>輸入漢字</strong>
+            <p>在下方輸入任一中文字</p>
+        </div>
+        <span class="guide-arrow" aria-hidden="true">→</span>
+        <div class="guide-step">
+            <span class="guide-num">2</span>
+            <strong>大師對照</strong>
+            <p>即時比較 7 位書法大師的寫法</p>
+        </div>
+        <span class="guide-arrow" aria-hidden="true">→</span>
+        <div class="guide-step">
+            <span class="guide-num">3</span>
+            <strong>上傳評分</strong>
+            <p>練完字後上傳，獲得形態與結構回饋</p>
+        </div>
+    </div>
+    <button class="guide-close" onclick="dismissGuide()" title="關閉提示" aria-label="關閉引導">✕</button>
 </section>
 
 <!-- 操作區 -->
@@ -107,5 +131,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/index.js"></script>
+<script src="/static/js/index.js?v=2"></script>
 {% endblock %}

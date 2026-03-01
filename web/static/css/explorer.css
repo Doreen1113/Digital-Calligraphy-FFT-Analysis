@@ -258,7 +258,7 @@
 
 .modal-title {
     font-size: 1.1rem;
-    color: var(--primary-dark);
+    color: var(--text-light);
     margin-bottom: 1rem;
     padding-bottom: 0.6rem;
     border-bottom: 1px solid var(--border);
@@ -267,7 +267,7 @@
 .detail-char-big {
     font-size: 5rem;
     line-height: 1;
-    color: var(--primary-dark);
+    color: var(--text-light);
     font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
     margin: 0.5rem 0 1rem;
 }

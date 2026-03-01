@@ -16,13 +16,13 @@ const CALLIGRAPHER_COLORS = {
 
 // 特徵圖示（對應 7 個易懂標籤）
 const FEATURE_ICONS = {
-    low_freq: '🏛️',
-    mid_freq: '✒️',
-    high_freq: '🔍',
-    centroid: '⚖️',
-    dc_ratio: '🔗',
-    slope: '🎨',
-    hf_decay: '✨'
+    low_freq: '低頻',
+    mid_freq: '中頻',
+    high_freq: '高頻',
+    centroid: '重心',
+    dc_ratio: '比例',
+    slope: '斜度',
+    hf_decay: '衰減'
 };
 
 // 全域狀態
@@ -435,7 +435,7 @@ function initFeatureAccordion() {
         const feat = features[key];
         if (!feat) return;
 
-        const icon = FEATURE_ICONS[key] || '📋';
+        const icon = FEATURE_ICONS[key] || '—';
         const isOpen = index === 0;
 
         const item = document.createElement('div');

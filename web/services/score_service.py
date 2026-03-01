@@ -272,13 +272,13 @@ def _make_feedback(shape: float, balance: float) -> dict:
     total = shape * 0.7 + balance * 0.3
 
     if total >= 0.72:
-        overall = "非常出色！形態與結構均達高水準，已有書法家的神韻 🎉"
+        overall = "非常出色！形態與結構均達高水準，已有書法家的神韻。"
     elif total >= 0.58:
-        overall = "寫得不錯！基本功具備，繼續臨摹會更精進 ✨"
+        overall = "寫得不錯！基本功具備，繼續臨摹會更精進。"
     elif total >= 0.42:
-        overall = "有進步空間，多觀察大師的筆劃走向，持續練習 💪"
+        overall = "有進步空間，多觀察大師的筆劃走向，持續練習。"
     else:
-        overall = "初學者加油！每天堅持練習，一定會有進步的 🖌️"
+        overall = "初學者加油！每天堅持練習，一定會有進步的。"
 
     if shape >= 0.65:
         shape_fb = "筆劃走向與大師高度吻合，形態掌握良好"

@@ -134,8 +134,8 @@
 }
 
 .upload-icon {
-    font-size: 2.5rem;
     color: var(--text-muted, #8a7560);
+    line-height: 0;  /* 避免 SVG 下方多餘空白 */
 }
 
 .upload-hint {
@@ -630,9 +630,19 @@
 }
 
 .tip-icon {
-    font-size: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    background: var(--accent, #8b5a2b);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
     flex-shrink: 0;
-    line-height: 1.2;
+    font-family: "Kaiti SC", "KaiTi", "標楷體", serif;
+    letter-spacing: 0;
 }
 
 .tip-item p {
