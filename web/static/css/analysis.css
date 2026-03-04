@@ -5,6 +5,18 @@
     margin-bottom: 1.5rem;
 }
 
+.card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.card-title-row .card-title {
+    margin-bottom: 0;
+}
+
 .cal-toggle-group {
     display: flex;
     flex-wrap: wrap;

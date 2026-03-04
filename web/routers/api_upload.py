@@ -78,9 +78,15 @@ def _generate_comparison(char: str, user_img: np.ndarray,
             continue
         img_path = instances[0].get('image_path', '')
         img_path = img_path.replace("\\", "/")
-        if not img_path.startswith('./'):
-            img_path = './' + img_path
-        full_path = Path(__file__).parent.parent.parent / img_path.lstrip('./')
+        # 處理 Windows 絕對路徑（如 C:/My_Project/.../Fonts/my_fonts/...）
+        _project_root = Path(__file__).parent.parent.parent
+        if "Fonts/my_fonts/" in img_path:
+            rel = img_path.split("Fonts/my_fonts/", 1)[-1]
+            full_path = _project_root / "Fonts" / "my_fonts" / rel
+        elif img_path.startswith('/') or (len(img_path) > 1 and img_path[1] == ':'):
+            full_path = Path(img_path)
+        else:
+            full_path = _project_root / img_path.lstrip('./')
         cal_img = cv2.imread(str(full_path), cv2.IMREAD_GRAYSCALE)
         if cal_img is not None:
             cal_images.append((display, cal_img))
@@ -126,15 +132,43 @@ def _generate_comparison(char: str, user_img: np.ndarray,
     return str(out_file)
 
 
+_font_prop_cache = None
+
 def _get_font_prop():
-    """取得中文字型屬性"""
+    """取得中文字型屬性（跨平台：掃描系統字體找到真實 CJK 字體檔）"""
+    global _font_prop_cache
+    if _font_prop_cache is not None:
+        return _font_prop_cache
+
+    import matplotlib
     import matplotlib.font_manager as fm
-    for name in ['Microsoft YaHei', 'SimHei', 'PingFang SC', 'Noto Sans CJK TC']:
-        try:
-            return fm.FontProperties(family=name)
-        except Exception:
-            pass
-    return fm.FontProperties()
+
+    # 設定全域回退列表（確保 rcParams 也能渲染中文）
+    matplotlib.rcParams['font.sans-serif'] = [
+        'Microsoft YaHei', 'SimHei', 'SimSun',          # Windows
+        'PingFang SC', 'Heiti TC',                       # macOS
+        'Noto Sans CJK TC', 'Noto Sans CJK SC',          # Linux
+        'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei',      # Linux (文泉驛)
+        'sans-serif',
+    ]
+    matplotlib.rcParams['font.family'] = 'sans-serif'
+    matplotlib.rcParams['axes.unicode_minus'] = False
+
+    # 掃描系統字體，找到第一個真實 CJK 字體檔
+    _cjk_kw = ['yahei', 'simhei', 'simsun', 'pingfang', 'heiti',
+                'noto', 'cjk', 'wenquanyi', 'wqy', 'kaiti']
+    for path in fm.findSystemFonts():
+        lower = path.lower()
+        if any(kw in lower for kw in _cjk_kw):
+            try:
+                prop = fm.FontProperties(fname=path)
+                _font_prop_cache = prop
+                return prop
+            except Exception:
+                continue
+
+    _font_prop_cache = fm.FontProperties()
+    return _font_prop_cache
 
 
 @router.post("/compare")
