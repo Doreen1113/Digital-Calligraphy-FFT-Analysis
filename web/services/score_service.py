@@ -44,12 +44,31 @@ def load_user_image(img_bytes: bytes) -> np.ndarray:
 
 
 def _resolve_image_path(img_path_str: str) -> Path:
-    """解析 character_index 中儲存的圖片路徑（支援絕對/相對路徑）"""
-    p = Path(img_path_str.replace("\\", "/"))
-    if p.is_absolute():
+    """解析 character_index 中儲存的圖片路徑（支援絕對/相對路徑）
+
+    字元索引存的可能是 Windows 絕對路徑（C:/My_Project/...），
+    在 Linux/Docker 上這些路徑不存在，需要自動轉換成相對路徑。
+    """
+    norm = img_path_str.replace("\\", "/")
+    p = Path(norm)
+
+    # 若路徑本身就可用，直接回傳
+    if p.exists():
         return p
+
+    # Windows 絕對路徑在 Linux 失效 → 擷取 Fonts/my_fonts/ 之後的相對部分
+    for marker in ("Fonts/my_fonts/", "data/fonts/"):
+        if marker in norm:
+            rel = norm.split(marker, 1)[-1]
+            candidate = FONTS_MY_FONTS / rel if marker == "Fonts/my_fonts/" else PROJECT_ROOT / "data" / "fonts" / rel
+            if candidate.exists():
+                return candidate
+
     # 相對路徑：相對於專案根目錄
-    return PROJECT_ROOT / img_path_str.replace("\\", "/").lstrip("./")
+    if not p.is_absolute():
+        return PROJECT_ROOT / norm.lstrip("./")
+
+    return p  # 回傳原路徑（exists() 將回傳 False）
 
 
 def _image_url_from_path(img_path: Path) -> str:

@@ -29,7 +29,18 @@ let cachedCalligraphers = [];   // 快取：目前字的書法家清單（含圖
 
 // ─── 字元輸入 → 動態載入書法家 ────────────────────────────────────────────
 
+// 手機中文輸入法（IME）compositionend 確保取到最終字
+let _scoreComposing = false;
+charInput.addEventListener('compositionstart', () => { _scoreComposing = true; });
+charInput.addEventListener('compositionend', () => {
+    _scoreComposing = false;
+    const char = charInput.value.trim();
+    clearTimeout(calFetchTimer);
+    if (char.length === 1) loadCalligraphers(char);
+    else resetCalSelect();
+});
 charInput.addEventListener('input', () => {
+    if (_scoreComposing) return;
     const char = charInput.value.trim();
     clearTimeout(calFetchTimer);
     if (char.length === 1) {

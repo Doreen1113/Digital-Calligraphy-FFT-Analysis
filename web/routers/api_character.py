@@ -74,7 +74,12 @@ async def character_info(char: str):
         images = []
         for inst in instances:
             img_path = inst.get('image_path', '')
-            rel = img_path.replace("\\", "/").replace("./Fonts/my_fonts/", "")
+            norm = img_path.replace("\\", "/")
+            # 支援 Windows 絕對路徑（C:/My_Project/.../Fonts/my_fonts/...）
+            if "Fonts/my_fonts/" in norm:
+                rel = norm.split("Fonts/my_fonts/", 1)[-1]
+            else:
+                rel = norm.lstrip("./")
             images.append({
                 "filename": inst.get('filename', ''),
                 "image_url": f"/fonts/{rel}",
