@@ -135,10 +135,13 @@ async function loadCalligraphers() {
 
         container.innerHTML = uniqueCals.map(cal =>
             `<label class="checkbox-item">
-                <input type="checkbox" value="${escapeHtml(cal.display_name)}" checked>
+                <input type="checkbox" value="${escapeHtml(cal.display_name)}">
                 <span>${escapeHtml(cal.display_name)} <small>${escapeHtml(cal.dynasty)}</small></span>
             </label>`
         ).join('');
+
+        // 更新全選按鈕狀態
+        _updateSelectAllBtn();
 
         // 更新統計中的書法家數量（以不重複的書法家為準）和總圖片數
         const statCalligraphers = document.getElementById('statCalligraphers');
@@ -310,6 +313,30 @@ function renderHistory() {
 // ============================
 // === 新手引導 banner ===
 // ============================
+
+/**
+ * 全選 / 全取消 書法家 checkbox
+ */
+function toggleSelectAll() {
+    const checkboxes = document.querySelectorAll('#calCheckboxes input[type="checkbox"]');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    checkboxes.forEach(cb => { cb.checked = !allChecked; });
+    _updateSelectAllBtn();
+}
+
+function _updateSelectAllBtn() {
+    const btn = document.getElementById('selectAllBtn');
+    if (!btn) return;
+    const checkboxes = document.querySelectorAll('#calCheckboxes input[type="checkbox"]');
+    const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+    btn.textContent = allChecked ? '全取消' : '全選';
+}
+
+// 每次 checkbox 狀態變化時同步按鈕文字
+document.addEventListener('change', e => {
+    if (e.target.closest('#calCheckboxes')) _updateSelectAllBtn();
+});
+
 
 /**
  * 初始化引導 banner：若未曾關閉則顯示

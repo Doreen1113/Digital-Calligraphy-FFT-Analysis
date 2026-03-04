@@ -22,6 +22,26 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from src.utils import get_config, FontDataLoader
 
+_PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+def _resolve_img_path(raw: str) -> str:
+    """將 character_index 中的路徑轉換為當前環境可用的路徑。
+
+    索引可能存 Windows 絕對路徑（C:/My_Project/...），
+    在 Linux/Docker 上需自動對應到 Fonts/my_fonts/ 下的相對路徑。
+    """
+    norm = raw.replace("\\", "/")
+    if os.path.exists(norm):
+        return norm
+    for marker in ("Fonts/my_fonts/", "data/fonts/"):
+        if marker in norm:
+            rel = norm.split(marker, 1)[-1]
+            candidate = os.path.join(_PROJECT_ROOT, marker, rel)
+            candidate = os.path.normpath(candidate)
+            if os.path.exists(candidate):
+                return candidate
+    return norm
+
 # Matplotlib configuration for Chinese characters
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'SimSun', 'sans-serif']
 plt.rcParams['font.family'] = 'sans-serif'
@@ -113,7 +133,7 @@ def compare_character(character, output_path=None, selected_calligraphers=None):
 
         # Use the first instance
         if instances:
-            img_path = instances[0]['image_path']
+            img_path = _resolve_img_path(instances[0]['image_path'])
             if os.path.exists(img_path):
                 img = cv2.imread(img_path)
                 if img is not None:

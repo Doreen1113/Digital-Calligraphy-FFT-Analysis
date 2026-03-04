@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/index.css?v=2">
+<link rel="stylesheet" href="/static/css/index.css?v=3">
 {% endblock %}
 
 {% block content %}
@@ -59,7 +59,10 @@
 
             <!-- 右側：書法家選擇 -->
             <div class="cal-select">
-                <label class="select-label">選擇書法家</label>
+                <div class="select-label-row">
+                    <label class="select-label">選擇書法家</label>
+                    <button id="selectAllBtn" class="btn-select-all" onclick="toggleSelectAll()">全選</button>
+                </div>
                 <div class="checkbox-group" id="calCheckboxes">
                     <div class="loading" style="min-height:120px"></div>
                 </div>
@@ -131,5 +134,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/index.js?v=2"></script>
+<script src="/static/js/index.js?v=3"></script>
 {% endblock %}

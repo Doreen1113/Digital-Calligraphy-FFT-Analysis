@@ -434,16 +434,20 @@ async function showCharDetail(char) {
 
     title.textContent = `「${char}」詳細資訊`;
     body.innerHTML = '<div class="loading" style="min-height:80px"></div>';
-    compareBtn.onclick = () => { closeCharDetail(); goToCompare(char); };
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
 
     try {
         const data = await api(`/api/character/info/${encodeURIComponent(char)}`);
         const calList = Object.entries(data.calligraphers || {})
-            .map(([name, imgs]) =>
-                `<span class="detail-cal-badge">${escapeHtml(name)} (${imgs.length}張)</span>`
-            ).join('');
+            .map(([name, imgs]) => {
+                const firstUrl = (imgs[0] && imgs[0].image_url) ? escapeHtml(imgs[0].image_url) : '';
+                return `<span class="detail-cal-badge"
+                    data-img="${firstUrl}"
+                    data-name="${escapeHtml(name)}"
+                    onclick="showCalImage(this)"
+                    title="點擊查看圖片">${escapeHtml(name)} (${imgs.length}張)</span>`;
+            }).join('');
 
         const strokesHtml = data.strokes
             ? `<span class="detail-tag">${data.strokes} 畫</span>` : '';
@@ -455,11 +459,39 @@ async function showCharDetail(char) {
         body.innerHTML = `
             <div class="detail-char-big">${escapeHtml(char)}</div>
             <div class="detail-tags">${strokesHtml}${freqHtml}${radicalHtml}</div>
-            <div class="detail-section-label">收錄書法家（共 ${data.count} 位）</div>
+            <div class="detail-section-label">收錄書法家（共 ${data.count} 位）— 點擊查看字帖圖片</div>
             <div class="detail-cal-list">${calList || '<span class="text-muted">無資料</span>'}</div>
+            <div class="detail-img-preview" id="detailImgPreview" style="display:none">
+                <div class="detail-preview-label" id="detailPreviewName"></div>
+                <img id="detailPreviewImg" src="" alt="字帖圖片"
+                     onclick="openImageModal(this.src, document.getElementById('detailPreviewName').textContent)">
+            </div>
         `;
     } catch (err) {
         body.innerHTML = `<div class="error-msg">載入失敗：${escapeHtml(err.message)}</div>`;
+    }
+}
+
+/**
+ * 點擊書法家 badge → 在 modal 內顯示字帖圖片
+ */
+function showCalImage(el) {
+    const url  = el.dataset.img;
+    const name = el.dataset.name;
+
+    // 高亮選中的 badge
+    el.closest('.detail-cal-list').querySelectorAll('.detail-cal-badge')
+        .forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+
+    const preview = document.getElementById('detailImgPreview');
+    const img     = document.getElementById('detailPreviewImg');
+    const label   = document.getElementById('detailPreviewName');
+
+    if (url) {
+        img.src = url;
+        label.textContent = name;
+        preview.style.display = 'block';
     }
 }
 
