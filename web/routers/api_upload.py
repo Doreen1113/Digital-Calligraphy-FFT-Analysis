@@ -20,6 +20,8 @@ router = APIRouter()
 _OUTPUT_DIR = Path(__file__).parent.parent.parent / "output" / "upload"
 _OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+_MAX_CACHED_FILES = 100   # 最多保留幾張比對圖
+
 _ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/bmp"}
 _MAX_SIZE = 5 * 1024 * 1024   # 5 MB
 _plot_lock = threading.Lock()
@@ -115,6 +117,11 @@ def _generate_comparison(char: str, user_img: np.ndarray,
         plt.savefig(str(out_file), dpi=120, bbox_inches='tight',
                     facecolor='white', edgecolor='none')
         plt.close(fig)
+
+    # 超過上限時，刪除最舊的檔案
+    files = sorted(_OUTPUT_DIR.glob("upload_*.png"), key=lambda f: f.stat().st_mtime)
+    for old in files[:-_MAX_CACHED_FILES]:
+        old.unlink(missing_ok=True)
 
     return str(out_file)
 

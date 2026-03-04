@@ -4,16 +4,13 @@
 !Fonts/input.txt
 __pycache__
 
-images/
-images/*.svg
+/images/
+/images/*.svg
 video/
 
-# 排除大部分圖片（只保留少量範例）
-data/*/*.jpg
-data/*/*.png
-!data/*/char_000[1-5].png
-!data/*/char_000[1-5].jpg
-!data/*/font_*_000[1-5].png
+# 排除 output 暫存圖（非字庫）
+output/*.png
+output/comparison_*.png
 
 # 排除舊資料備份
 data/archived/
@@ -58,11 +55,10 @@ project_restructure_plan.md
 test*.py
 QUICK_COMMIT.sh
 *.md
-output/*.png
-output/comparison_*.png
 
 # 排除 Web 生成的比對圖片快取
 output/comparison/
+output/upload/
 
 # 排除 GUI 相關檔案（如有舊版本）
 gui/
