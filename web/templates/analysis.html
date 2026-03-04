@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/analysis.css?v=4">
+<link rel="stylesheet" href="/static/css/analysis.css?v=5">
 <!-- Chart.js for interactive charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -17,7 +17,10 @@
 
 <!-- 書法家選擇器 -->
 <section class="calligrapher-selector card">
-    <h3 class="card-title">選擇書法家 <span class="badge" id="selectedCount">0/0</span></h3>
+    <div class="card-title-row">
+        <h3 class="card-title">選擇書法家 <span class="badge" id="selectedCount">0/0</span></h3>
+        <button class="btn btn-sm btn-secondary" id="selectAllToggle" onclick="toggleSelectAllCal()">全選</button>
+    </div>
     <div class="cal-toggle-group" id="calToggles">
         <div class="loading" style="min-height:50px"></div>
     </div>
@@ -93,5 +96,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/analysis.js?v=4"></script>
+<script src="/static/js/analysis.js?v=5"></script>
 {% endblock %}

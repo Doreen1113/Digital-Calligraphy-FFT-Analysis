@@ -51,7 +51,7 @@ async def radar_data():
                 "available": False,
                 "message": "風格分析數據尚未生成，請先執行 FFT 風格分析",
             }
-        return {"available": True, **data}
+        return {**data, "available": True}   # True 必須在 **data 之後，覆蓋 JSON 中可能的 null 值
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"取得雷達圖數據失敗：{e}")
 
@@ -67,6 +67,6 @@ async def similarity_data():
                 "available": False,
                 "message": "相似度數據尚未生成",
             }
-        return {"available": True, **data}
+        return {**data, "available": True}   # True 必須在 **data 之後，覆蓋 JSON 中可能的 null 值
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"取得相似度數據失敗：{e}")

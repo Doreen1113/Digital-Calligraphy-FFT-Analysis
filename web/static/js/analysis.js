@@ -11,7 +11,8 @@ const CALLIGRAPHER_COLORS = {
     '歐陽詢': { color: '#F4A261', light: '#FFF4E8' },
     '褚遂良': { color: '#9B59B6', light: '#F5EEF8' },
     '柳公權': { color: '#3498DB', light: '#EBF5FB' },
-    '趙孟頫': { color: '#8B5A2B', light: '#FFF8E1' }
+    '趙孟頫': { color: '#8B5A2B', light: '#FFF8E1' },
+    '虞世南': { color: '#6A4C93', light: '#F0ECF8' }   // 補齊虞世南（獨立紫色）
 };
 
 // 特徵圖示（對應 7 個易懂標籤）
@@ -130,6 +131,16 @@ function updateSelectedCalligraphers() {
     analysisData.selectedCalligraphers = Array.from(toggles).map(t => t.dataset.calligrapher);
     updateSelectedCount();
     updateRadarChart();
+}
+
+function toggleSelectAllCal() {
+    const all = document.querySelectorAll('.cal-toggle');
+    const allActive = Array.from(all).every(t => t.classList.contains('active'));
+    all.forEach(t => {
+        if (allActive) t.classList.remove('active');
+        else t.classList.add('active');
+    });
+    updateSelectedCalligraphers();
 }
 
 // ========== 互動式雷達圖 ==========
@@ -521,6 +532,11 @@ function initStyleOverview() {
             dynasty: '元代',
             traits: ['筆法圓轉', '結構嚴謹', '風格秀美'],
             summary: '趙孟頫創「趙體」，集晉唐書法大成，筆法圓潤流暢，是楷書四大家之一。'
+        },
+        '虞世南': {
+            dynasty: '唐代',
+            traits: ['筆法圓健', '外柔內剛', '結構端莊'],
+            summary: '虞世南為初唐四大書家之一，書法秀逸清雅，筆意含蓄而內藏骨力，被唐太宗譽為「德行、忠直、博學、文辭、書翰」五絕。'
         }
     };
 
@@ -635,5 +651,11 @@ function updateSelectedCount() {
     const badge = document.getElementById('selectedCount');
     if (badge) {
         badge.textContent = `${analysisData.selectedCalligraphers.length}/${analysisData.allCalligraphers.length}`;
+    }
+    // 同步全選按鈕文字
+    const btn = document.getElementById('selectAllToggle');
+    if (btn) {
+        const allSelected = analysisData.selectedCalligraphers.length === analysisData.allCalligraphers.length;
+        btn.textContent = allSelected ? '全取消' : '全選';
     }
 }
