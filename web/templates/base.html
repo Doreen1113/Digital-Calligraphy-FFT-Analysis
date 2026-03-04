@@ -5,27 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- 動態標題 -->
-    <title>{{ title }} - 書法風格分析系統</title>
+    <title>{{ title }} - 墨跡習字</title>
 
     <!-- SEO meta -->
     <meta name="description" content="{{ page_desc | default('輸入任一中文字，即時比較智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的筆法。使用傅立葉描述子（FFT）分析書法風格。') }}">
     <meta name="keywords" content="{{ page_keywords | default('書法,書法比較,書法分析,智永,沈尹默,顏真卿,趙孟頫,歐陽詢,楷書,行書,FFT,傅立葉,風格分析') }}">
-    <meta name="author" content="書法風格分析系統">
+    <meta name="author" content="墨跡習字">
     <meta name="robots" content="index, follow">
 
     <!-- OpenGraph (社群分享) -->
     <meta property="og:type"        content="website">
-    <meta property="og:title"       content="{{ title }} - 書法風格分析系統">
+    <meta property="og:title"       content="{{ title }} - 墨跡習字">
     <meta property="og:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
     <meta property="og:locale"      content="zh_TW">
-    <meta property="og:site_name"   content="書法風格分析系統">
+    <meta property="og:site_name"   content="墨跡習字">
     <meta property="og:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:title"       content="{{ title }} - 書法風格分析系統">
+    <meta name="twitter:title"       content="{{ title }} - 墨跡習字">
     <meta name="twitter:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
     <meta name="twitter:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
 
@@ -37,7 +37,7 @@
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "書法風格分析系統",
+      "name": "墨跡習字",
       "description": "使用傅立葉描述子（FFT）分析書法風格，支援多位大師同字比對",
       "url": "{{ request.url.scheme }}://{{ request.url.netloc }}",
       "inLanguage": "zh-TW",
@@ -55,7 +55,7 @@
         <div class="nav-container">
             <a href="/" class="nav-brand">
                 <span class="brand-icon">墨</span>
-                <span class="brand-text">書法風格分析</span>
+                <span class="brand-text">墨跡習字</span>
             </a>
             <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
             <ul class="nav-links" id="navLinks">
@@ -77,7 +77,7 @@
     <!-- 頁尾 -->
     <footer class="site-footer">
         <div class="footer-container">
-            <p>書法風格分析系統 v2.0 | 使用傅立葉描述子（FFT）分析書法風格</p>
+            <p>墨跡習字 | 使用傅立葉描述子（FFT）分析書法風格</p>
             <p class="footer-sub" id="footerStats">載入中…</p>
         </div>
     </footer>
@@ -112,7 +112,7 @@
                 `收錄 ${cals} 位書法大師 | ${images} 張書法圖片 | ${chars} 個字元 | 累計瀏覽 ${views} 次`;
         } catch(e) {
             const el = document.getElementById('footerStats');
-            if (el) el.textContent = '書法風格分析系統';
+            if (el) el.textContent = '墨跡習字';
         }
     })();
     </script>

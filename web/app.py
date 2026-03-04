@@ -1,5 +1,5 @@
 """
-書法風格分析系統 - FastAPI 應用程式
+墨跡習字 - FastAPI 應用程式
 
 提供 Web API 和前端頁面服務
 """
@@ -22,7 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # === 建立 FastAPI 應用 ===
 app = FastAPI(
-    title="書法風格分析系統",
+    title="墨跡習字",
     description="使用傅立葉描述子分析書法風格，支援同字比對與風格查詢",
     version="2.0",
 )
