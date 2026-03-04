@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # 安裝 Python 依賴
-COPY requirements.txt .
 # 使用 headless 版 OpenCV（不需要 GUI 依賴）
 RUN pip install --no-cache-dir \
     numpy \
