@@ -15,9 +15,11 @@ output/comparison_*.png
 # 排除舊資料備份
 data/archived/
 
-# 排除 Fonts 目錄下的所有圖片
+# 排除 Fonts 目錄下的圖片（my_fonts 是 Web 服務用的字庫，需要保留）
 Fonts/**/*.jpg
 Fonts/**/*.png
+!Fonts/my_fonts/**/*.jpg
+!Fonts/my_fonts/**/*.png
 !Fonts/sample_*.jpg
 
 # 排除臨時檔案與快取
