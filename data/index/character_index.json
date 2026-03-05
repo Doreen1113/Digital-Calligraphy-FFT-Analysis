@@ -6788,15 +6788,6 @@
           "book": "題筆陣圖後",
           "font_id": "08"
         }
-      ],
-      "shen_yinmo_10": [
-        {
-          "filename": "char_0285.png",
-          "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0285.png",
-          "confidence": 1.0,
-          "book": "右軍筆陣圖",
-          "font_id": "10"
-        }
       ]
     },
     "遐": {
@@ -11917,13 +11908,6 @@
         {
           "filename": "char_0125.png",
           "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0125.png",
-          "confidence": 1.0,
-          "book": "右軍筆陣圖",
-          "font_id": "10"
-        },
-        {
-          "filename": "char_0153.png",
-          "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0153.png",
           "confidence": 1.0,
           "book": "右軍筆陣圖",
           "font_id": "10"
@@ -27665,6 +27649,13 @@
           "font_id": "10"
         },
         {
+          "filename": "char_0153.png",
+          "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0153.png",
+          "confidence": 1.0,
+          "book": "右軍筆陣圖",
+          "font_id": "10"
+        },
+        {
           "filename": "char_0175.png",
           "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0175.png",
           "confidence": 1.0,
@@ -37935,6 +37926,15 @@
           "confidence": 1.0,
           "book": "玄妙觀重修三門記",
           "font_id": "04"
+        }
+      ],
+      "shen_yinmo_10": [
+        {
+          "filename": "char_0503.png",
+          "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0503.png",
+          "confidence": 1.0,
+          "book": "右軍筆陣圖",
+          "font_id": "10"
         }
       ]
     },
@@ -51374,6 +51374,13 @@
         }
       ],
       "shen_yinmo_10": [
+        {
+          "filename": "char_0285.png",
+          "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0285.png",
+          "confidence": 1.0,
+          "book": "右軍筆陣圖",
+          "font_id": "10"
+        },
         {
           "filename": "char_0312.png",
           "image_path": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10\\char_0312.png",
