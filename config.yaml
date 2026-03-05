@@ -90,6 +90,39 @@ fonts:
       total_chars: 2011
       description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
 
+    - id: "08"
+      name: "shen_yinmo_08"
+      display_name: "沈尹默"
+      book: "題筆陣圖後"
+      dynasty: "近代"
+      style: "楷書"
+      image_dir: "./Fonts/my_fonts/08"
+      labels_file: "./Fonts/my_fonts/csv/08.csv"
+      total_chars: 534
+      description: "沈尹默（1883-1971），近代著名書法家"
+
+    - id: "09"
+      name: "shen_yinmo_09"
+      display_name: "沈尹默"
+      book: "心經"
+      dynasty: "近代"
+      style: "楷書"
+      image_dir: "./Fonts/my_fonts/09"
+      labels_file: "./Fonts/my_fonts/csv/09.csv"
+      total_chars: 276
+      description: "沈尹默（1883-1971），近代著名書法家"
+
+    - id: "10"
+      name: "shen_yinmo_10"
+      display_name: "沈尹默"
+      book: "右軍筆陣圖"
+      dynasty: "近代"
+      style: "楷書"
+      image_dir: "./Fonts/my_fonts/10"
+      labels_file: "./Fonts/my_fonts/csv/10.csv"
+      total_chars: 546
+      description: "沈尹默（1883-1971），近代著名書法家"
+
 # === 索引配置 ===
 index:
   fonts_index: "./data/index/fonts_index.json"
