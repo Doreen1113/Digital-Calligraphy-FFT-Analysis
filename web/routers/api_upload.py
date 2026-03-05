@@ -135,35 +135,54 @@ def _generate_comparison(char: str, user_img: np.ndarray,
 _font_prop_cache = None
 
 def _get_font_prop():
-    """取得中文字型屬性（跨平台：掃描系統字體找到真實 CJK 字體檔）"""
+    """取得中文字型屬性（優先用已知字體路徑，避免 variable font 相容問題）"""
     global _font_prop_cache
     if _font_prop_cache is not None:
         return _font_prop_cache
 
+    import os
     import matplotlib
     import matplotlib.font_manager as fm
 
-    # 設定全域回退列表（確保 rcParams 也能渲染中文）
+    # 設定全域回退列表
     matplotlib.rcParams['font.sans-serif'] = [
-        'Microsoft YaHei', 'SimHei', 'SimSun',          # Windows
-        'PingFang SC', 'Heiti TC',                       # macOS
-        'Noto Sans CJK TC', 'Noto Sans CJK SC',          # Linux
-        'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei',      # Linux (文泉驛)
-        'sans-serif',
+        'Microsoft YaHei', 'SimHei', 'SimSun',
+        'PingFang SC', 'Heiti TC',
+        'Noto Sans CJK TC', 'Noto Sans CJK SC',
+        'WenQuanYi Micro Hei', 'sans-serif',
     ]
     matplotlib.rcParams['font.family'] = 'sans-serif'
     matplotlib.rcParams['axes.unicode_minus'] = False
 
-    # 掃描系統字體，找到第一個真實 CJK 字體檔
-    _cjk_kw = ['yahei', 'simhei', 'simsun', 'pingfang', 'heiti',
-                'noto', 'cjk', 'wenquanyi', 'wqy', 'kaiti']
-    for path in fm.findSystemFonts():
-        lower = path.lower()
-        if any(kw in lower for kw in _cjk_kw):
+    # 優先嘗試已知的靜態字體路徑（排除 variable font）
+    _known = [
+        r'C:\Windows\Fonts\msyh.ttc',       # Microsoft YaHei（Windows）
+        r'C:\Windows\Fonts\simsun.ttc',      # SimSun（Windows）
+        r'C:\Windows\Fonts\STKAITI.TTF',     # STKaiti（Windows）
+        '/Library/Fonts/Arial Unicode.ttf',  # macOS
+        '/System/Library/Fonts/PingFang.ttc',
+        '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',  # Linux
+        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+    ]
+    for path in _known:
+        p = path.replace('\\', os.sep).replace('/', os.sep)
+        if os.path.exists(p):
             try:
-                prop = fm.FontProperties(fname=path)
+                prop = fm.FontProperties(fname=p)
                 _font_prop_cache = prop
                 return prop
+            except Exception:
+                continue
+
+    # 回退：掃描系統字體（排除 variable font 檔）
+    _cjk_kw = ['msyh', 'simhei', 'simsun', 'kaiti', 'fangsong',
+                'wenquanyi', 'wqy', 'pingfang', 'heiti']
+    for path in fm.findSystemFonts():
+        lower = path.lower()
+        if any(kw in lower for kw in _cjk_kw) and '-vf' not in lower:
+            try:
+                _font_prop_cache = fm.FontProperties(fname=path)
+                return _font_prop_cache
             except Exception:
                 continue
 
