@@ -13,6 +13,36 @@
         <p class="score-subtitle">上傳你的手寫字，與書法大師比一比，立即獲得形態與結構的評分回饋</p>
     </header>
 
+    <!-- 新手引導 banner -->
+    <section class="guide-banner" id="scoreGuideBanner">
+        <div class="guide-steps">
+            <div class="guide-step">
+                <span class="guide-num">1</span>
+                <strong>輸入字元</strong>
+                <p>填入你練習的那個字</p>
+            </div>
+            <span class="guide-arrow" aria-hidden="true">→</span>
+            <div class="guide-step">
+                <span class="guide-num">2</span>
+                <strong>選書法家</strong>
+                <p>選想和哪位大師比較</p>
+            </div>
+            <span class="guide-arrow" aria-hidden="true">→</span>
+            <div class="guide-step">
+                <span class="guide-num">3</span>
+                <strong>上傳圖片</strong>
+                <p>拍下你寫的字並上傳</p>
+            </div>
+            <span class="guide-arrow" aria-hidden="true">→</span>
+            <div class="guide-step">
+                <span class="guide-num">4</span>
+                <strong>查看評分</strong>
+                <p>獲得形態與結構詳細回饋</p>
+            </div>
+        </div>
+        <button class="guide-close" onclick="dismissScoreGuide()" title="關閉提示" aria-label="關閉引導">✕</button>
+    </section>
+
     <!-- 輸入表單 -->
     <section class="score-form-card">
 
@@ -234,5 +264,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/score.js?v=2"></script>
+<script src="/static/js/score.js?v=3"></script>
 {% endblock %}

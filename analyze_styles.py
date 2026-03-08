@@ -12,8 +12,8 @@ import cv2
 sys.path.insert(0, os.path.dirname(__file__))
 
 from src.core.preprocessing import clean_image
-from core.SVG import bitmap_to_contour_svg
-from core import fft
+from src.core.svg import bitmap_to_contour_svg
+from src.core import fft
 from src.utils import get_config, FontDataLoader
 
 # Matplotlib configuration for Chinese characters

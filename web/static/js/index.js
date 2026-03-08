@@ -110,7 +110,7 @@ async function doCompare() {
     }
 
     // 滾動到結果區
-    resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 
@@ -143,13 +143,16 @@ async function loadCalligraphers() {
         // 更新全選按鈕狀態
         _updateSelectAllBtn();
 
-        // 更新統計中的書法家數量（以不重複的書法家為準）和總圖片數
+        // 更新統計：書法家數（去重）、字帖數（全部）、圖片總數
         const statCalligraphers = document.getElementById('statCalligraphers');
         if (statCalligraphers) statCalligraphers.textContent = uniqueCals.length;
 
+        const statBooks = document.getElementById('statBooks');
+        if (statBooks) statBooks.textContent = calligraphers.length;
+
         const totalImages = calligraphers.reduce((sum, cal) => sum + (cal.total_images || 0), 0);
         const statImages = document.getElementById('statImages');
-        if (statImages) statImages.textContent = totalImages;
+        if (statImages) statImages.textContent = totalImages.toLocaleString();
     } catch (err) {
         console.error('無法加載書法家列表:', err);
     }
@@ -221,11 +224,15 @@ async function loadSiteStats() {
 
 
 /**
- * 快速比對（從共有字按鈕觸發）
+ * 快速比對（從共有字按鈕觸發）—— 自動選全部書法家
  */
 function quickCompare(char) {
     const charInput = document.getElementById('charInput');
     charInput.value = char;
+    // 先全選，確保顯示所有書法家
+    const checkboxes = document.querySelectorAll('#calCheckboxes input[type="checkbox"]');
+    checkboxes.forEach(cb => { cb.checked = true; });
+    _updateSelectAllBtn();
     doCompare();
 }
 
