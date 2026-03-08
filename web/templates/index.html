@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/index.css?v=3">
+<link rel="stylesheet" href="/static/css/index.css?v=4">
 {% endblock %}
 
 {% block content %}
@@ -11,35 +11,11 @@
     <p class="hero-subtitle">比較多位書法大師的同一個字</p>
 </section>
 
-<!-- 新手引導 banner（localStorage 關閉後不再顯示） -->
-<section class="guide-banner" id="guideBanner">
-    <div class="guide-steps">
-        <div class="guide-step">
-            <span class="guide-num">1</span>
-            <strong>輸入漢字</strong>
-            <p>在下方輸入任一中文字</p>
-        </div>
-        <span class="guide-arrow" aria-hidden="true">→</span>
-        <div class="guide-step">
-            <span class="guide-num">2</span>
-            <strong>大師對照</strong>
-            <p>即時比較 7 位書法大師的寫法</p>
-        </div>
-        <span class="guide-arrow" aria-hidden="true">→</span>
-        <div class="guide-step">
-            <span class="guide-num">3</span>
-            <strong>上傳評分</strong>
-            <p>練完字後上傳，獲得形態與結構回饋</p>
-        </div>
-    </div>
-    <button class="guide-close" onclick="dismissGuide()" title="關閉提示" aria-label="關閉引導">✕</button>
-</section>
-
 <!-- 操作區 -->
 <section class="compare-section">
     <div class="card">
         <div class="compare-controls">
-            <!-- 左側：輸入區 -->
+            <!-- 輸入區 -->
             <div class="input-area">
                 <div class="char-input-wrapper">
                     <input type="text"
@@ -56,16 +32,16 @@
                     <span class="char-limit-hint">（字庫收錄 <span id="charTotalHint">1,010</span> 字）</span>
                 </p>
             </div>
+        </div>
 
-            <!-- 右側：書法家選擇 -->
-            <div class="cal-select">
-                <div class="select-label-row">
-                    <label class="select-label">選擇書法家</label>
-                    <button id="selectAllBtn" class="btn-select-all" onclick="toggleSelectAll()">全選</button>
-                </div>
-                <div class="checkbox-group" id="calCheckboxes">
-                    <div class="loading" style="min-height:120px"></div>
-                </div>
+        <!-- 書法家選擇（橫向排列） -->
+        <div class="cal-select-horizontal">
+            <div class="select-label-row">
+                <label class="select-label">選擇書法家</label>
+                <button id="selectAllBtn" class="btn-select-all" onclick="toggleSelectAll()">全選</button>
+            </div>
+            <div class="checkbox-group checkbox-group-horizontal" id="calCheckboxes">
+                <div class="loading" style="min-height:60px"></div>
             </div>
         </div>
     </div>
@@ -115,7 +91,7 @@
         </div>
         <div class="stat-card">
             <div class="stat-number" id="statCalligraphers">-</div>
-            <div class="stat-label">書法大師</div>
+            <div class="stat-label">書法家<span class="stat-sublabel">（<span id="statBooks">-</span> 本字帖）</span></div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="statImages">-</div>
@@ -134,5 +110,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/index.js?v=3"></script>
+<script src="/static/js/index.js?v=4"></script>
 {% endblock %}

@@ -130,37 +130,56 @@ def build_character_index():
     print("-"*70)
 
     total_unique_chars = len(character_map)
-    calligrapher_names = [cal['name'] for cal in loader.calligraphers]
-    common_chars = []
 
-    # 找出所有書法家都有的字
+    # name → display_name 對應表
+    name_to_display = {cal['name']: cal['display_name'] for cal in loader.calligraphers}
+
+    # 不重複書法家清單（保留順序）
+    seen = {}
+    for cal in loader.calligraphers:
+        dn = cal['display_name']
+        if dn not in seen:
+            seen[dn] = []
+        seen[dn].append(cal['name'])
+    unique_display_names = list(seen.keys())          # e.g. ['智永','沈尹默','顏真卿',...]
+    display_to_names     = seen                        # display_name → [name, name2, ...]
+
+    # 找出所有書法家（以 display_name 合併）都有的字
+    all_display_set = set(unique_display_names)
+    common_chars = []
     for char, cals in character_map.items():
-        if len(cals) == len(calligrapher_names):
+        char_displays = set(name_to_display[n] for n in cals.keys())
+        if char_displays >= all_display_set:
             common_chars.append(char)
 
     print(f"總獨特字數: {total_unique_chars}")
     print(f"所有書法家共有的字: {len(common_chars)}")
 
-    # 統計每個書法家有多少字
-    for cal in loader.calligraphers:
-        name = cal['name']
-        display_name = cal['display_name']
-        count = sum(1 for char_cals in character_map.values() if name in char_cals)
-        print(f"  {display_name}: {count} 個字")
+    # 統計每位書法家（合併多本字帖）有多少獨特字
+    for display_name in unique_display_names:
+        names = display_to_names[display_name]
+        # 取各本字帖的聯集
+        char_set = set(
+            char for char, cals in character_map.items()
+            if any(n in cals for n in names)
+        )
+        print(f"  {display_name}: {len(char_set)} 個字")
 
     # 建立索引結構
+    all_names = [cal['name'] for cal in loader.calligraphers]
     character_index = {
         "version": "2.0",
         "total_unique_characters": total_unique_chars,
         "total_common_characters": len(common_chars),
-        "calligraphers": calligrapher_names,
+        "calligraphers": all_names,
         "common_characters": sorted(common_chars),
         "character_map": {}
     }
 
-    # 只保存有 2 位以上書法家的字（節省空間）
+    # 只保存有 2 位以上書法家（display_name 不同）的字（節省空間）
     for char, cals in character_map.items():
-        if len(cals) >= 2:
+        char_displays = set(name_to_display[n] for n in cals.keys())
+        if len(char_displays) >= 2:
             character_index["character_map"][char] = cals
 
     # 儲存索引（路徑解析為絕對路徑）

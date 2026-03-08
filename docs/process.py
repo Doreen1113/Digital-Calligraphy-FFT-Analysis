@@ -32,8 +32,8 @@ def wrap_text_custom_chars(input_file, output_file, chars_per_line=8):
         print(f"發生錯誤：{e}")
 
 # --- ⚙️ 使用設定區 ---
-input_filename = '06.txt'    # 原始檔案
-output_filename = '06.txt'      # 輸出檔案
-target_count = 1                # 在這裡修改您想要的「每行字數」👈
+input_filename = '10.txt'    # 原始檔案
+output_filename = '10.txt'      # 輸出檔案
+target_count = 7                # 在這裡修改您想要的「每行字數」👈
 
 wrap_text_custom_chars(input_filename, output_filename, target_count)

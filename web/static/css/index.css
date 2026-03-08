@@ -123,12 +123,13 @@
 
 .compare-controls {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 1.5rem;
     align-items: flex-start;
 }
 
 .input-area {
-    flex: 1;
+    width: 100%;
 }
 
 .char-input-wrapper {
@@ -220,6 +221,52 @@
     color: var(--text-muted);
     font-size: 0.8rem;
     margin-left: 0.3rem;
+}
+
+/* --- 書法家橫向選擇 --- */
+.cal-select-horizontal {
+    width: 100%;
+    padding-top: 0.5rem;
+}
+
+/* 全選按鈕靠近標籤，不撐到右端 */
+.cal-select-horizontal .select-label-row {
+    justify-content: flex-start;
+    gap: 0.6rem;
+}
+
+.stat-sublabel {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.checkbox-group-horizontal {
+    flex-direction: row !important;
+    gap: 1.2rem !important;
+    align-items: center;
+}
+
+.cal-select-horizontal .checkbox-item {
+    padding: 0.3rem 0;
+    border-radius: 0;
+    transition: var(--transition);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cal-select-horizontal .checkbox-item:hover {
+    background: transparent;
+}
+
+.cal-select-horizontal .checkbox-item small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-left: 0;
+    display: block;
 }
 
 /* --- 歷史紀錄 --- */
@@ -399,20 +446,14 @@
         font-size: 1rem;
     }
 
-    .compare-controls {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
     .char-input {
         width: 90px;
         height: 70px;
         font-size: 2.5rem;
     }
 
-    .cal-select .checkbox-group {
-        flex-direction: row;
-        flex-wrap: wrap;
+    .checkbox-group-horizontal {
+        gap: 0.8rem !important;
     }
 
     .grid-3-wide {

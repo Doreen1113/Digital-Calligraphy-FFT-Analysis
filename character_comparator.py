@@ -54,6 +54,49 @@ except:
     pass
 
 
+_font_prop_cache = None
+
+def _get_font_prop():
+    """Get proper font for CJK rendering, with Windows direct path priority"""
+    global _font_prop_cache
+    if _font_prop_cache is not None:
+        return _font_prop_cache
+
+    # Known CJK font paths (Windows & Linux)
+    _known = [
+        r'C:\Windows\Fonts\msyh.ttc',
+        r'C:\Windows\Fonts\simsun.ttc',
+        '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',
+        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+    ]
+
+    for path in _known:
+        p = path.replace('\\', os.sep).replace('/', os.sep)
+        if os.path.exists(p):
+            try:
+                prop = fm.FontProperties(fname=p)
+                _font_prop_cache = prop
+                return prop
+            except Exception:
+                continue
+
+    # Fallback: scan system fonts (exclude variable fonts)
+    _cjk_kw = ['msyh', 'simhei', 'simsun', 'kaiti', 'wqy', 'notosans']
+    for path in fm.findSystemFonts():
+        lower = path.lower()
+        if any(kw in lower for kw in _cjk_kw) and '-vf' not in lower:
+            try:
+                prop = fm.FontProperties(fname=path)
+                _font_prop_cache = prop
+                return prop
+            except Exception:
+                continue
+
+    # Last resort: use default
+    _font_prop_cache = fm.FontProperties()
+    return _font_prop_cache
+
+
 def load_character_index():
     """Load character index from file"""
     config = get_config()
@@ -162,10 +205,11 @@ def compare_character(character, output_path=None, selected_calligraphers=None):
     else:
         axes = axes.flatten()
 
+    font_prop = _get_font_prop()
     for idx, (display_name, img) in enumerate(sorted(images.items())):
         ax = axes[idx] if num_images > 1 else axes[0]
         ax.imshow(img, cmap='gray')
-        ax.set_title(f"{display_name}", fontsize=14, fontweight='bold')
+        ax.set_title(f"{display_name}", fontsize=14, fontweight='bold', fontproperties=font_prop)
         ax.axis('off')
 
     # Hide extra subplots

@@ -10,6 +10,23 @@
 
 'use strict';
 
+// ─── 引導 banner ──────────────────────────────────────────────────────────
+(function initScoreGuide() {
+    if (localStorage.getItem('score_guide_dismissed')) return;
+    const banner = document.getElementById('scoreGuideBanner');
+    if (banner) banner.classList.add('show');
+})();
+
+function dismissScoreGuide() {
+    localStorage.setItem('score_guide_dismissed', '1');
+    const banner = document.getElementById('scoreGuideBanner');
+    if (!banner) return;
+    banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-6px)';
+    setTimeout(() => { banner.style.display = 'none'; }, 300);
+}
+
 // ─── DOM refs ──────────────────────────────────────────────────────────────
 const charInput    = document.getElementById('charInput');
 const calSelect    = document.getElementById('calSelect');
