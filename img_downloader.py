@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qs
 
-def download_wechat_images_final(url, output_folder="10"):
+def download_wechat_images_final(url, output_folder="12"):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
@@ -73,6 +73,6 @@ def download_wechat_images_final(url, output_folder="10"):
 
 if __name__ == "__main__":
     # === 網址打在這裡 ===
-    my_url = "https://mp.weixin.qq.com/s?__biz=Mzg4NTczNjg2NA%3D%3D&mid=2247515484&idx=1&sn=6879c01bfd9f248ca2ccf4be5ed7d47c&source=41&scene=21&poc_token=HG7lqGmjO9il7HYxXx8A6Lnl1L85_Y6wTJeoEAMC" 
+    my_url = "https://mp.weixin.qq.com/s/RODx39pYaepHvwzqBxwNkA" 
     # ==================
     download_wechat_images_final(my_url)

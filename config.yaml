@@ -36,15 +36,15 @@ fonts:
       description: "沈尹默（1883-1971），近代著名書法家"
 
     - id: "02"
-      name: "yan_zhenqing_02"
-      display_name: "顏真卿"
+      name: "liu_gongquan_02"
+      display_name: "柳公權"
       book: "玄秘塔碑"
       dynasty: "唐代"
       style: "楷書"
       image_dir: "./Fonts/my_fonts/02"
       labels_file: "./Fonts/my_fonts/csv/02.csv"
       total_chars: 1636
-      description: "顏真卿（709-785），唐代書法家，楷書四大家之一"
+      description: "柳公權（778-865），唐代書法家，楷書四大家之一，以骨力勁健著稱，與顏真卿並稱「顏筋柳骨」"
 
     - id: "03"
       name: "ouyang_xun_03"

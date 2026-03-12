@@ -367,3 +367,5 @@ function dismissGuide() {
     banner.style.transform = 'translateY(-6px)';
     setTimeout(() => { banner.style.display = 'none'; }, 300);
 }
+
+

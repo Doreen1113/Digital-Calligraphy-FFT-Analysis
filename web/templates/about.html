@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/about.css">
+{% endblock %}
+
+{% block content %}
+
+<!-- 開發中提示橫幅 -->
+<div class="dev-banner">
+    🚧 本網站目前仍在持續開發中，部分功能可能尚未完善，歡迎提供建議！
+</div>
+
+<!-- Hero -->
+<section class="about-hero">
+    <div class="about-hero-inner">
+        <img src="/favicon.ico" class="about-logo" alt="墨跡習字" onerror="this.style.display='none'">
+        <h1 class="about-title">墨跡習字</h1>
+        <p class="about-tagline">用數位工具，讓書法學習變得更直觀</p>
+    </div>
+</section>
+
+<!-- 成立初衷 -->
+<section class="about-section">
+    <div class="card">
+        <h2 class="section-heading">✦ 成立初衷</h2>
+        <p class="about-text">
+            書法是中華文化最美麗的藝術之一，但對許多學習者來說，
+            「如何知道自己寫得好不好？」「不同書法家同一個字究竟差在哪？」
+            這些問題往往沒有直觀的答案。
+        </p>
+        <p class="about-text">
+            <strong>墨跡習字</strong>希望用現代數位技術——傅立葉描述子（FFT）分析——
+            將書法風格量化，讓任何人都能直觀地比較大師筆法、了解自己與大師之間的差距，
+            讓書法學習更有方向、更有樂趣。
+        </p>
+    </div>
+</section>
+
+<!-- 功能介紹 -->
+<section class="about-section">
+    <h2 class="section-heading-outside">✦ 網站功能</h2>
+    <div class="feature-cards">
+        <a href="/" class="feature-card">
+            <div class="feature-icon">比</div>
+            <h3>單字比對</h3>
+            <p>輸入任一中文字，即時展示多位書法大師的寫法，直觀比較筆法差異</p>
+        </a>
+        <a href="/compare" class="feature-card">
+            <div class="feature-icon">批</div>
+            <h3>批次比對</h3>
+            <p>一次輸入多個字元，產生完整對照圖，方便教學、臨摹練習</p>
+        </a>
+        <a href="/score" class="feature-card">
+            <div class="feature-icon">評</div>
+            <h3>練字評分</h3>
+            <p>上傳你的手寫字照片，與大師版本比對，獲得形態與結構的量化評分</p>
+        </a>
+        <a href="/analysis" class="feature-card">
+            <div class="feature-icon">DNA</div>
+            <h3>風格 DNA</h3>
+            <p>用 FFT 特徵向量量化書法風格，以雷達圖和相似度矩陣呈現大師之間的距離</p>
+        </a>
+        <a href="/calligraphers" class="feature-card">
+            <div class="feature-icon">人</div>
+            <h3>認識書法家</h3>
+            <p>深入了解各位書法大師的生平、字帖背景與藝術特色</p>
+        </a>
+        <a href="/explorer" class="feature-card">
+            <div class="feature-icon">探</div>
+            <h3>字元探索</h3>
+            <p>瀏覽字庫全部字元，依筆畫、字頻排序，快速找到想要的字</p>
+        </a>
+    </div>
+</section>
+
+<!-- 收錄書法家 -->
+<section class="about-section">
+    <div class="card">
+        <h2 class="section-heading">✦ 收錄書法家</h2>
+        <div class="calligrapher-list">
+            <div class="cal-chip">智永 <span>（隋）</span></div>
+            <div class="cal-chip">歐陽詢 <span>（唐）</span></div>
+            <div class="cal-chip">虞世南 <span>（唐）</span></div>
+            <div class="cal-chip">褚遂良 <span>（唐）</span></div>
+            <div class="cal-chip">顏真卿 <span>（唐）</span></div>
+            <div class="cal-chip">柳公權 <span>（唐）</span></div>
+            <div class="cal-chip">趙孟頫 <span>（元）</span></div>
+            <div class="cal-chip">沈尹默 <span>（現代）</span></div>
+        </div>
+        <p class="about-text" style="margin-top:1rem">
+            目前字庫收錄 <strong>1,010+</strong> 個常用漢字，仍持續擴充中。
+        </p>
+    </div>
+</section>
+
+<!-- 開發狀態 -->
+<section class="about-section">
+    <div class="card dev-status-card">
+        <h2 class="section-heading">🚧 開發狀態</h2>
+        <p class="about-text">本網站目前為個人學習專案，仍在積極開發中。以下功能已完成或規劃中：</p>
+        <div class="status-list">
+            <div class="status-item done">✅ 單字即時比對</div>
+            <div class="status-item done">✅ 批次比對（最多 50 字）</div>
+            <div class="status-item done">✅ 練字上傳評分</div>
+            <div class="status-item done">✅ FFT 風格 DNA 分析</div>
+            <div class="status-item done">✅ 書法家介紹頁</div>
+            <div class="status-item wip">🔄 字元探索優化（持續更新字庫）</div>
+            <div class="status-item todo">📋 筆順動畫展示（規劃中）</div>
+            <div class="status-item todo">📋 社群分享功能（規劃中）</div>
+        </div>
+    </div>
+</section>
+
+<!-- 聯絡我們 -->
+<section class="about-section">
+    <div class="card">
+        <h2 class="section-heading">✦ 聯絡我們</h2>
+        <p class="about-text">
+            若有任何建議、問題回報，或想一起貢獻字庫，歡迎透過以下方式聯絡：
+        </p>
+        <div class="contact-links">
+            <a href="mailto:doreenlqy071@gmail.com" class="contact-btn">
+                <span>✉</span> doreenlqy071@gmail.com
+            </a>
+        </div>
+        <p class="about-note">* 本站所有書法圖片僅供學習研究用途，圖片版權歸原著作權人所有。</p>
+    </div>
+</section>
+
+{% endblock %}

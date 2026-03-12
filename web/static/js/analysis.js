@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initCalligrapherSelector();
     updateSelectedCount();
     initRadarChart();
+    initBarChart();
     initSimilarityGrid();
     initFeatureAccordion();
     initStyleOverview();
@@ -131,6 +132,7 @@ function updateSelectedCalligraphers() {
     analysisData.selectedCalligraphers = Array.from(toggles).map(t => t.dataset.calligrapher);
     updateSelectedCount();
     updateRadarChart();
+    updateBarChart();
 }
 
 function toggleSelectAllCal() {
@@ -588,64 +590,6 @@ function hexToRgba(hex, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-// ========== 檢視切換 ==========
-let radarViewMode = 'chart';
-let similarityViewMode = 'grid';
-
-function toggleRadarView() {
-    const chartContainer = document.getElementById('radarContainer');
-    const imageContainer = document.getElementById('radarImageContainer');
-    const toggleBtn = document.getElementById('radarViewToggle');
-
-    if (radarViewMode === 'chart') {
-        radarViewMode = 'image';
-        chartContainer.style.display = 'none';
-        imageContainer.style.display = 'block';
-        toggleBtn.textContent = '切換為圖表';
-        loadStaticRadarImage(imageContainer);
-    } else {
-        radarViewMode = 'chart';
-        chartContainer.style.display = 'flex';
-        imageContainer.style.display = 'none';
-        toggleBtn.textContent = '切換為圖片';
-    }
-}
-
-function toggleSimilarityView() {
-    const gridContainer = document.getElementById('similarityPanel');
-    const imageContainer = document.getElementById('similarityImageContainer');
-    const toggleBtn = document.getElementById('simViewToggle');
-
-    if (similarityViewMode === 'grid') {
-        similarityViewMode = 'image';
-        gridContainer.style.display = 'none';
-        imageContainer.style.display = 'block';
-        toggleBtn.textContent = '切換為矩陣';
-        loadStaticSimilarityImageOnly(imageContainer);
-    } else {
-        similarityViewMode = 'grid';
-        gridContainer.style.display = 'grid';
-        imageContainer.style.display = 'none';
-        toggleBtn.textContent = '切換為圖片';
-    }
-}
-
-async function loadStaticSimilarityImageOnly(container) {
-    try {
-        const data = await api('/api/analysis/images');
-        if (data.similarity_image) {
-            container.innerHTML = `
-                <img src="${data.similarity_image}" alt="相似度矩陣"
-                     style="max-width:100%; cursor:pointer;"
-                     onclick="openImageModal('${data.similarity_image.replace(/'/g, "\\'")}', '書法家相似度矩陣')">
-            `;
-        } else {
-            container.innerHTML = '<div class="not-generated"><p>相似度矩陣尚未生成</p></div>';
-        }
-    } catch (err) {
-        container.innerHTML = '<div class="error-msg">載入相似度矩陣失敗</div>';
-    }
-}
 
 function updateSelectedCount() {
     const badge = document.getElementById('selectedCount');
@@ -658,4 +602,122 @@ function updateSelectedCount() {
         const allSelected = analysisData.selectedCalligraphers.length === analysisData.allCalligraphers.length;
         btn.textContent = allSelected ? '全取消' : '全選';
     }
+}
+
+
+// ========== 特徵橫向對比條形圖 ==========
+let barChart = null;
+let _barFeatureIdx = 0;
+
+function initBarChart() {
+    const controls = document.getElementById('barControls');
+    const wrap = document.getElementById('barChartWrap');
+    if (!controls || !wrap) return;
+
+    const labels = analysisData.radarData?.labels;
+    const features = analysisData.calligrapherFeatures;
+
+    if (!labels || !features || Object.keys(features).length === 0) {
+        controls.innerHTML = '';
+        wrap.innerHTML = '<div class="not-generated"><p>特徵資料尚未生成</p></div>';
+        return;
+    }
+
+    // 生成特徵選擇按鈕
+    controls.innerHTML = labels.map((label, idx) =>
+        `<button class="bar-feat-btn ${idx === 0 ? 'active' : ''}"
+                 onclick="selectBarFeature(${idx})">${escapeHtml(label)}</button>`
+    ).join('');
+
+    // 確保 canvas 存在
+    if (!wrap.querySelector('canvas')) {
+        wrap.innerHTML = '<canvas id="barChart" height="180"></canvas>';
+    }
+
+    drawBarChart(0);
+}
+
+function selectBarFeature(idx) {
+    _barFeatureIdx = idx;
+    document.querySelectorAll('.bar-feat-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+    });
+    drawBarChart(idx);
+}
+
+function updateBarChart() {
+    drawBarChart(_barFeatureIdx);
+}
+
+function drawBarChart(featureIdx) {
+    const canvas = document.getElementById('barChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const features = analysisData.calligrapherFeatures;
+    const labels = analysisData.radarData?.labels;
+    if (!features || !labels) return;
+
+    const cals = analysisData.selectedCalligraphers.filter(c => features[c]);
+    if (cals.length === 0) return;
+
+    const values = cals.map(cal => {
+        const vals = Array.isArray(features[cal]) ? features[cal] : Object.values(features[cal]);
+        return parseFloat((vals[featureIdx] || 0).toFixed(3));
+    });
+
+    const bgColors = cals.map(cal => {
+        const c = CALLIGRAPHER_COLORS[cal] || { color: '#8B5A2B' };
+        return hexToRgba(c.color, 0.7);
+    });
+    const borderColors = cals.map(cal => (CALLIGRAPHER_COLORS[cal] || { color: '#8B5A2B' }).color);
+
+    if (barChart) {
+        barChart.data.labels = cals;
+        barChart.data.datasets[0].data = values;
+        barChart.data.datasets[0].backgroundColor = bgColors;
+        barChart.data.datasets[0].borderColor = borderColors;
+        barChart.data.datasets[0].label = labels[featureIdx];
+        barChart.update();
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: cals,
+            datasets: [{
+                label: labels[featureIdx],
+                data: values,
+                backgroundColor: bgColors,
+                borderColor: borderColors,
+                borderWidth: 2,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 1,
+                    ticks: { callback: v => (v * 100).toFixed(0) + '%' },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 13, weight: 'bold' } }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.dataset.label}: ${(ctx.raw * 100).toFixed(1)}%`
+                    }
+                }
+            }
+        }
+    });
 }

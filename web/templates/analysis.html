@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/analysis.css?v=5">
+<link rel="stylesheet" href="/static/css/analysis.css?v=7">
 <!-- Chart.js for interactive charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -11,6 +11,17 @@
     <h1 class="page-title">書法風格 DNA</h1>
     <p class="page-subtitle">用數學方式解析筆法差異，量化大師之間的風格距離</p>
 </section>
+
+<!-- 說明卡 -->
+<div class="dna-intro card">
+    <div class="dna-intro-icon">🔬</div>
+    <div class="dna-intro-text">
+        <strong>什麼是風格 DNA？</strong>
+        透過傅立葉描述子（FFT）提取每位書法家字跡的 7 個特徵維度，
+        包含筆劃密度（低/中/高頻）、重心位置、筆畫比例、傾斜度與衰減率，
+        以數字客觀呈現每位大師的獨特風格指紋。
+    </div>
+</div>
 
 <!-- 分析狀態 -->
 <div id="analysisStatus"></div>
@@ -29,18 +40,28 @@
 <!-- 互動式雷達圖 -->
 <section class="analysis-section">
     <div class="card">
-        <h3 class="card-title">
-            風格特徵雷達圖
-            <button class="btn btn-sm btn-secondary" onclick="toggleRadarView()">
-                <span id="radarViewToggle">切換為圖片</span>
-            </button>
-        </h3>
-        <p class="section-desc">滑鼠懸停查看詳細數值，點擊特徵名稱查看說明</p>
+        <div class="card-title-row">
+            <div>
+                <h3 class="card-title">風格特徵雷達圖</h3>
+                <p class="section-desc">滑鼠懸停查看詳細數值，點擊圖例可隱藏/顯示書法家</p>
+            </div>
+        </div>
         <div class="radar-container" id="radarContainer">
             <canvas id="radarChart" width="500" height="500"></canvas>
         </div>
-        <div class="radar-image-container" id="radarImageContainer" style="display:none">
-            <div class="loading" style="min-height:400px"></div>
+    </div>
+</section>
+
+<!-- 各書法家特徵橫向對比（條形圖） -->
+<section class="analysis-section">
+    <div class="card">
+        <h3 class="card-title">各書法家特徵對比</h3>
+        <p class="section-desc">選擇一個維度，橫向比較各書法家的特徵數值</p>
+        <div class="bar-controls" id="barControls">
+            <div class="loading" style="min-height:40px"></div>
+        </div>
+        <div class="bar-chart-wrap" id="barChartWrap">
+            <canvas id="barChart" height="180"></canvas>
         </div>
     </div>
 </section>
@@ -48,26 +69,22 @@
 <!-- 互動式相似度面板 -->
 <section class="analysis-section">
     <div class="card">
-        <h3 class="card-title">
-            風格相似度分析
-            <button class="btn btn-sm btn-secondary" onclick="toggleSimilarityView()">
-                <span id="simViewToggle">切換為圖片</span>
-            </button>
-        </h3>
-        <p class="section-desc">點擊任意兩位書法家，查看詳細相似度分析</p>
+        <div class="card-title-row">
+            <div>
+                <h3 class="card-title">風格相似度矩陣</h3>
+                <p class="section-desc">數值越高代表風格越相近，點擊格子查看詳細說明</p>
+            </div>
+        </div>
         <div class="similarity-panel" id="similarityPanel">
             <div class="similarity-grid" id="similarityGrid">
                 <div class="loading" style="min-height:300px"></div>
             </div>
             <div class="similarity-detail" id="similarityDetail">
                 <div class="detail-placeholder">
-                    <span class="placeholder-icon">↑</span>
-                    <p>點擊上方格子查看詳細比較</p>
+                    <span class="placeholder-icon">←</span>
+                    <p>點擊格子查看兩位書法家的詳細比較</p>
                 </div>
             </div>
-        </div>
-        <div class="similarity-image-container" id="similarityImageContainer" style="display:none">
-            <div class="loading" style="min-height:400px"></div>
         </div>
     </div>
 </section>
@@ -96,5 +113,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/analysis.js?v=5"></script>
+<script src="/static/js/analysis.js?v=7"></script>
 {% endblock %}

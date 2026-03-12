@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/index.css?v=4">
+<link rel="stylesheet" href="/static/css/index.css?v=6">
 {% endblock %}
 
 {% block content %}
@@ -14,8 +14,8 @@
 <!-- 操作區 -->
 <section class="compare-section">
     <div class="card">
+        <!-- 單字比對 -->
         <div class="compare-controls">
-            <!-- 輸入區 -->
             <div class="input-area">
                 <div class="char-input-wrapper">
                     <input type="text"
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <!-- 書法家選擇（橫向排列） -->
+        <!-- 書法家選擇 -->
         <div class="cal-select-horizontal">
             <div class="select-label-row">
                 <label class="select-label">選擇書法家</label>
@@ -69,7 +69,7 @@
     </div>
 </section>
 
-<!-- 結果區 -->
+<!-- 結果區（單字） -->
 <section class="result-section" id="resultSection" style="display:none">
     <div class="card">
         <h3 class="card-title">比對結果</h3>
@@ -110,5 +110,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/index.js?v=4"></script>
+<script src="/static/js/index.js?v=6"></script>
 {% endblock %}

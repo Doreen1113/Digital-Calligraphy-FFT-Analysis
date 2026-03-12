@@ -1,4 +1,67 @@
-/* === 風格分析頁樣式 v2 - 互動式面板 === */
+/* === 風格分析頁樣式 v6 - 互動式面板 === */
+
+/* --- DNA 說明卡 --- */
+.dna-intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #FFF8EC, #FAF6F0);
+    border-left: 4px solid var(--primary-light);
+}
+
+.dna-intro-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 0.1rem;
+}
+
+.dna-intro-text {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.7;
+}
+
+.dna-intro-text strong {
+    display: block;
+    color: var(--primary-dark);
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+
+/* --- 特徵對比條形圖 --- */
+.bar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.bar-feat-btn {
+    padding: 0.35rem 0.85rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+}
+
+.bar-feat-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+.bar-feat-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+.bar-chart-wrap {
+    height: 200px;
+    position: relative;
+}
 
 /* --- 書法家選擇器 --- */
 .calligrapher-selector {
