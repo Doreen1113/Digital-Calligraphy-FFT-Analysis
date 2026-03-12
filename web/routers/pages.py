@@ -11,6 +11,18 @@ router = APIRouter()
 templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
 
 
+@router.get("/about")
+async def about(request: Request):
+    """關於頁：網站介紹、成立初衷、聯絡資訊"""
+    return templates.TemplateResponse("about.html", {
+        "request": request,
+        "title": "關於墨跡習字",
+        "active": "about",
+        "page_desc": "墨跡習字 — 用數位科技量化書法風格，讓學習者直觀比較大師筆法、了解練習進度。",
+        "page_keywords": "墨跡習字,書法學習,書法比對,FFT,關於,成立初衷",
+    })
+
+
 @router.get("/")
 async def index(request: Request):
     """首頁：輸入一個字，看大師怎麼寫"""

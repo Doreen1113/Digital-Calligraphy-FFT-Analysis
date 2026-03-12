@@ -12,8 +12,8 @@
       "total_images": 1000,
       "unique_characters": 1000,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\00",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\00.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\00",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\00.csv",
       "character_list": [
         "天",
         "地",
@@ -1027,8 +1027,8 @@
       "total_images": 897,
       "unique_characters": 494,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\01",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\01.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\01",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\01.csv",
       "character_list": [
         "相",
         "親",
@@ -1929,18 +1929,18 @@
         "告"
       ]
     },
-    "yan_zhenqing_02": {
+    "liu_gongquan_02": {
       "id": "02",
-      "display_name": "顏真卿",
+      "display_name": "柳公權",
       "book": "玄秘塔碑",
       "dynasty": "唐代",
       "style": "楷書",
-      "description": "顏真卿（709-785），唐代書法家，楷書四大家之一",
+      "description": "柳公權（778-865），唐代書法家，楷書四大家之一，以骨力勁健著稱，與顏真卿並稱「顏筋柳骨」",
       "total_images": 1636,
       "unique_characters": 657,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\02",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\02.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\02",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\02.csv",
       "character_list": [
         "唐",
         "故",
@@ -3590,8 +3590,8 @@
       "total_images": 1100,
       "unique_characters": 626,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\03",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\03.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\03",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\03.csv",
       "character_list": [
         "九",
         "成",
@@ -4705,8 +4705,8 @@
       "total_images": 497,
       "unique_characters": 333,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\04",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\04.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\04",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\04.csv",
       "character_list": [
         "天",
         "地",
@@ -5217,8 +5217,8 @@
       "total_images": 346,
       "unique_characters": 258,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\06",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\06.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\06",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\06.csv",
       "character_list": [
         "演",
         "連",
@@ -5578,8 +5578,8 @@
       "total_images": 2011,
       "unique_characters": 842,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\07",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\07.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\07",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\07.csv",
       "character_list": [
         "大",
         "唐",
@@ -7604,8 +7604,8 @@
       "total_images": 534,
       "unique_characters": 267,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\08",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\08.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\08",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\08.csv",
       "character_list": [
         "陣",
         "圖",
@@ -8153,8 +8153,8 @@
       "total_images": 276,
       "unique_characters": 125,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\09",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\09.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\09",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\09.csv",
       "character_list": [
         "般",
         "若",
@@ -8444,8 +8444,8 @@
       "total_images": 546,
       "unique_characters": 271,
       "avg_confidence": 1.0,
-      "image_dir": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\10",
-      "labels_file": "C:\\My_Project\\Fourier_drawing\\Fonts\\my_fonts\\csv\\10.csv",
+      "image_dir": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\10",
+      "labels_file": "C:\\My_Project\\Digital-Calligraphy-FFT-Analysis\\Fonts\\my_fonts\\csv\\10.csv",
       "character_list": [
         "夫",
         "紙",

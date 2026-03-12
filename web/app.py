@@ -17,6 +17,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 from fastapi import FastAPI, Request, Response
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -82,6 +83,15 @@ async def stats_middleware(request: Request, call_next):
         except Exception:
             pass
     return response
+
+
+# === Favicon ===
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    icon_path = PROJECT_ROOT / "icon.png"
+    if icon_path.exists():
+        return FileResponse(str(icon_path), media_type="image/png")
+    return Response(status_code=204)
 
 
 # === SEO：robots.txt 與 sitemap.xml ===
