@@ -32,8 +32,8 @@ COPY . .
 # 確保輸出目錄存在
 RUN mkdir -p output/comparison output/upload output/temp
 
-# 重建 matplotlib 字型快取（讓新安裝的 CJK 字型被識別）
-RUN python -c "import matplotlib.font_manager as fm; fm._rebuild()"
+# 清除舊的字型快取，讓 matplotlib 下次啟動時重新掃描已安裝的 CJK 字型
+RUN python -c "import matplotlib, os, glob; [os.remove(f) for f in glob.glob(os.path.join(matplotlib.get_cachedir(), 'fontlist*'))]"
 
 # 設定 matplotlib 非互動模式
 ENV MPLBACKEND=Agg
