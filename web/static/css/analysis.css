@@ -157,70 +157,91 @@
     cursor: pointer;
 }
 
-/* --- 互動式相似度面板 --- */
+/* --- 相似度排名列表 --- */
 .similarity-panel {
     display: grid;
     grid-template-columns: 1fr 300px;
     gap: 1.5rem;
-    min-height: 350px;
+    align-items: start;
 }
 
-.similarity-grid {
-    display: grid;
-    gap: 2px;
-    background: var(--border-light);
+.sim-pair-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sim-pair-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
     border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    background: #fff;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.sim-pair-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-color: var(--primary-light);
+}
+
+.sim-pair-item.active {
+    border-color: var(--primary);
+    background: #FFF8EC;
+}
+
+.sim-rank {
+    width: 20px;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.sim-pair-names {
+    min-width: 120px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.sim-pair-sep { color: var(--text-muted); margin: 0 0.25rem; font-size: 0.75rem; }
+
+.sim-pair-bar-wrap {
+    flex: 1;
+    height: 7px;
+    background: var(--bg-dark);
+    border-radius: 4px;
     overflow: hidden;
 }
 
-.sim-row {
-    display: contents;
+.sim-pair-bar-fill {
+    height: 100%;
+    border-radius: 4px;
 }
 
-.sim-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.8rem;
-    font-size: 0.85rem;
+.sim-pair-pct {
+    width: 34px;
+    text-align: right;
+    font-size: 0.8rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
+    color: var(--text);
+    flex-shrink: 0;
 }
 
-.sim-cell:hover {
-    transform: scale(1.05);
-    z-index: 1;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.sim-pair-tag {
+    font-size: 0.68rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
-.sim-cell.header {
-    background: var(--primary-dark);
-    color: #fff;
-    cursor: default;
-    font-weight: 600;
-}
-
-.sim-cell.header:hover {
-    transform: none;
-    box-shadow: none;
-}
-
-.sim-cell.corner {
-    background: var(--bg-dark);
-}
-
-.sim-cell.selected {
-    outline: 3px solid var(--accent);
-    outline-offset: -3px;
-}
-
-/* 相似度顏色漸層 */
-.sim-cell[data-sim] {
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
+.sim-tag-high { background: #E8F3E8; color: #3D6E3D; }
+.sim-tag-mid  { background: #FFF4DC; color: #8A6200; }
+.sim-tag-low  { background: #F5EAE5; color: #8A4030; }
 
 /* --- 相似度詳情面板 --- */
 .similarity-detail {
@@ -542,10 +563,9 @@
     .similarity-panel {
         grid-template-columns: 1fr;
     }
-    
-    .similarity-detail {
-        order: -1;
-    }
+    .similarity-detail { order: -1; }
+    .sim-pair-names { min-width: 100px; font-size: 0.8rem; }
+    .sim-pair-tag { display: none; }
 }
 
 @media (max-width: 768px) {

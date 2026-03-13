@@ -240,6 +240,59 @@
     border-color: var(--accent);
 }
 
+/* --- 最近查詢 --- */
+.history-section {
+    margin-bottom: 1.5rem;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.char-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.char-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1.1rem;
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--primary-dark);
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.char-pill:hover {
+    background: var(--primary-light, #FFF3E0);
+    border-color: var(--primary);
+    transform: scale(1.08);
+}
+
+.btn-text-sm {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+
+.btn-text-sm:hover { color: var(--accent); }
+
 /* --- 舊版卡片樣式（保留相容） --- */
 .char-image-card {
     background: #fff;

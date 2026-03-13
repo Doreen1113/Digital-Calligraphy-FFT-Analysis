@@ -278,72 +278,67 @@ async function loadStaticRadarImage(container) {
     }
 }
 
-// ========== 互動式相似度矩陣 ==========
+// ========== 相似度排名列表 ==========
 function initSimilarityGrid() {
-    const gridContainer = document.getElementById('similarityGrid');
-    if (!gridContainer) return;
+    const container = document.getElementById('similarityGrid');
+    if (!container) return;
 
     const simData = analysisData.similarityData;
 
     if (!simData || !simData.available || !simData.matrix || !simData.calligraphers) {
-        loadStaticSimilarityImage(gridContainer);
+        loadStaticSimilarityImage(container);
         return;
     }
 
     const calligraphers = simData.calligraphers;
     const matrix = simData.matrix;
-    const n = calligraphers.length;
 
-    gridContainer.style.gridTemplateColumns = `repeat(${n + 1}, 1fr)`;
-    gridContainer.innerHTML = '';
+    // 蒐集所有不重複的 pair（i < j）
+    const pairs = [];
+    for (let i = 0; i < calligraphers.length; i++) {
+        for (let j = i + 1; j < calligraphers.length; j++) {
+            pairs.push({ i, j, cal1: calligraphers[i], cal2: calligraphers[j], sim: matrix[i][j] });
+        }
+    }
+    pairs.sort((a, b) => b.sim - a.sim);   // 由高到低
 
-    // 角落空格
-    const corner = document.createElement('div');
-    corner.className = 'sim-cell header corner';
-    gridContainer.appendChild(corner);
+    container.innerHTML = '';
+    let activePair = null;
 
-    // 標題列
-    calligraphers.forEach(cal => {
-        const headerCell = document.createElement('div');
-        headerCell.className = 'sim-cell header';
-        headerCell.textContent = cal;
-        gridContainer.appendChild(headerCell);
-    });
+    pairs.forEach((pair, rank) => {
+        const pct = (pair.sim * 100).toFixed(0);
+        let tag, tagClass;
+        if (pair.sim >= 0.7)      { tag = '風格相近'; tagClass = 'sim-tag-high'; }
+        else if (pair.sim >= 0.4) { tag = '有共同特點'; tagClass = 'sim-tag-mid'; }
+        else                       { tag = '風格迥異'; tagClass = 'sim-tag-low'; }
 
-    // 資料列
-    calligraphers.forEach((rowCal, i) => {
-        const rowHeader = document.createElement('div');
-        rowHeader.className = 'sim-cell header';
-        rowHeader.textContent = rowCal;
-        gridContainer.appendChild(rowHeader);
+        const c1 = CALLIGRAPHER_COLORS[pair.cal1] || { color: '#8B5A2B' };
+        const c2 = CALLIGRAPHER_COLORS[pair.cal2] || { color: '#8B5A2B' };
 
-        calligraphers.forEach((colCal, j) => {
-            const cell = document.createElement('div');
-            cell.className = 'sim-cell';
+        const item = document.createElement('div');
+        item.className = 'sim-pair-item';
+        item.innerHTML = `
+            <span class="sim-rank">${rank + 1}</span>
+            <span class="sim-pair-names">
+                <span style="color:${c1.color};font-weight:600">${escapeHtml(pair.cal1)}</span>
+                <span class="sim-pair-sep">↔</span>
+                <span style="color:${c2.color};font-weight:600">${escapeHtml(pair.cal2)}</span>
+            </span>
+            <div class="sim-pair-bar-wrap">
+                <div class="sim-pair-bar-fill" style="width:${pct}%;background:${getSimColor(pair.sim)}"></div>
+            </div>
+            <span class="sim-pair-pct">${pct}%</span>
+            <span class="sim-pair-tag ${tagClass}">${tag}</span>
+        `;
 
-            const sim = matrix[i][j];
-            const pct = (sim * 100).toFixed(0);
-            // 不顯示數字，只用顏色傳達訊息；懸停時 tooltip 顯示數值
-            cell.title = `${pct}%`;
-            cell.dataset.sim = sim;
-
-            // 設定顏色
-            cell.style.backgroundColor = getSimColor(sim);
-            cell.style.color = sim >= 0.5 ? '#fff' : '#333';
-            cell.style.fontWeight = '600';
-
-            if (i !== j) {
-                cell.addEventListener('click', () => {
-                    showSimilarityDetail(rowCal, colCal, sim, i, j);
-                    highlightCell(cell);
-                });
-            } else {
-                cell.style.cursor = 'default';
-                cell.style.opacity = '0.5';
-            }
-
-            gridContainer.appendChild(cell);
+        item.addEventListener('click', () => {
+            if (activePair) activePair.classList.remove('active');
+            item.classList.add('active');
+            activePair = item;
+            showSimilarityDetail(pair.cal1, pair.cal2, pair.sim, pair.i, pair.j);
         });
+
+        container.appendChild(item);
     });
 }
 

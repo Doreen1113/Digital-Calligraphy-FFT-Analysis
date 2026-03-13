@@ -78,6 +78,18 @@ async def explorer(request: Request):
     })
 
 
+@router.get("/stroke-order")
+async def stroke_order(request: Request):
+    """筆順動畫頁：輸入漢字，播放標準筆順動畫"""
+    return templates.TemplateResponse("stroke_order.html", {
+        "request": request,
+        "title": "筆順動畫",
+        "active": "stroke-order",
+        "page_desc": "輸入任一漢字，即時播放標準筆順動畫，幫助書法初學者掌握正確書寫順序。",
+        "page_keywords": "筆順,漢字筆順,書寫順序,書法學習,筆順動畫",
+    })
+
+
 @router.get("/upload")
 async def upload_redirect(request: Request):
     """舊版 /upload 頁面 → 重新導向至 /score（上傳 & 評分）"""

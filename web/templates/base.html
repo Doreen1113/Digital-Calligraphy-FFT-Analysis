@@ -13,23 +13,8 @@
     <meta name="author" content="墨跡習字">
     <meta name="robots" content="index, follow">
 
-    <!-- OpenGraph (社群分享) -->
-    <meta property="og:type"        content="website">
-    <meta property="og:title"       content="{{ title }} - 墨跡習字">
-    <meta property="og:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
-    <meta property="og:locale"      content="zh_TW">
-    <meta property="og:site_name"   content="墨跡習字">
-    <meta property="og:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:title"       content="{{ title }} - 墨跡習字">
-    <meta name="twitter:description" content="{{ page_desc | default('輸入任一中文字，即時比較五位書法大師的筆法差異。') }}">
-    <meta name="twitter:image"       content="{{ og_image | default('/static/images/og-default.png') }}">
-
-    <link rel="icon" href="/favicon.ico" type="image/png">
+<link rel="icon" href="/favicon.ico" type="image/png">
     <link rel="stylesheet" href="/static/css/base.css?v=3">
     {% block head %}{% endblock %}
 
@@ -63,6 +48,7 @@
                 <li><a href="/about"         class="{% if active == 'about'         %}active{% endif %}">關於</a></li>
                 <li><a href="/compare"       class="{% if active == 'compare'       %}active{% endif %}">字庫搜尋</a></li>
                 <li><a href="/explorer"      class="{% if active == 'explorer'      %}active{% endif %}">字元探索</a></li>
+                <li><a href="/stroke-order"  class="{% if active == 'stroke-order'  %}active{% endif %}">筆順動畫</a></li>
                 <li><a href="/analysis"      class="{% if active == 'analysis'      %}active{% endif %}">風格 DNA</a></li>
                 <li><a href="/calligraphers" class="{% if active == 'calligraphers' %}active{% endif %}">認識書法家</a></li>
                 <li><a href="/score"         class="{% if active == 'score'         %}active{% endif %}">練字評分</a></li>
