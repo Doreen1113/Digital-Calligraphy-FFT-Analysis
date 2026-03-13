@@ -24,15 +24,10 @@ async def about(request: Request):
 
 
 @router.get("/")
-async def index(request: Request):
-    """首頁：輸入一個字，看大師怎麼寫"""
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "title": "輸入一個字，看大師怎麼寫",
-        "active": "index",
-        "page_desc": "輸入任一中文字，即時比較智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的筆法差異。",
-        "page_keywords": "書法比對,漢字,毛筆字,楷書,行書,王羲之,顏真卿,書法教學",
-    })
+async def index_redirect():
+    """首頁：重導向至關於頁"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/about", status_code=302)
 
 
 @router.get("/analysis")

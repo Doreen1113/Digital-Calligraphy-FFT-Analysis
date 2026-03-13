@@ -61,11 +61,10 @@
             <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="/about"         class="{% if active == 'about'         %}active{% endif %}">關於</a></li>
-                <li><a href="/"              class="{% if active == 'index'         %}active{% endif %}">單字比對</a></li>
-                <li><a href="/compare"       class="{% if active == 'compare'       %}active{% endif %}">批次比對</a></li>
+                <li><a href="/compare"       class="{% if active == 'compare'       %}active{% endif %}">字庫搜尋</a></li>
+                <li><a href="/explorer"      class="{% if active == 'explorer'      %}active{% endif %}">字元探索</a></li>
                 <li><a href="/analysis"      class="{% if active == 'analysis'      %}active{% endif %}">風格 DNA</a></li>
                 <li><a href="/calligraphers" class="{% if active == 'calligraphers' %}active{% endif %}">認識書法家</a></li>
-                <li><a href="/explorer"      class="{% if active == 'explorer'      %}active{% endif %}">字元探索</a></li>
                 <li><a href="/score"         class="{% if active == 'score'         %}active{% endif %}">練字評分</a></li>
             </ul>
         </div>
@@ -79,7 +78,7 @@
     <!-- 頁尾 -->
     <footer class="site-footer">
         <div class="footer-container">
-            <p>墨跡習字 | 學習書法，感受大師風格</p>
+            <p>墨跡習字 | 以數位科技，量化書法大師的筆法精髓</p>
             <p class="footer-sub" id="footerStats">載入中…</p>
         </div>
     </footer>
@@ -88,8 +87,11 @@
     <div id="imageModal" class="modal" onclick="closeImageModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            <button class="modal-nav modal-prev" id="modalPrev" onclick="navigateModal(-1)" style="display:none" aria-label="上一張">&#8249;</button>
+            <button class="modal-nav modal-next" id="modalNext" onclick="navigateModal(1)"  style="display:none" aria-label="下一張">&#8250;</button>
             <img id="modalImage" src="" alt="放大檢視">
             <p id="modalCaption" class="modal-caption"></p>
+            <p id="modalCounter" class="modal-counter" style="display:none"></p>
         </div>
     </div>
 

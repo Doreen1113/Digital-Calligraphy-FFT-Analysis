@@ -10,7 +10,7 @@
     <!-- 頁面標題 -->
     <header class="score-header">
         <h1 class="score-title">練字評分</h1>
-        <p class="score-subtitle">上傳你的手寫字，與書法大師比一比，立即獲得形態與結構的評分回饋</p>
+        <p class="score-subtitle">上傳你的手寫字，即時看見與大師的筆劃差異</p>
     </header>
 
     <!-- 新手引導 banner -->
@@ -36,8 +36,8 @@
             <span class="guide-arrow" aria-hidden="true">→</span>
             <div class="guide-step">
                 <span class="guide-num">4</span>
-                <strong>查看評分</strong>
-                <p>獲得形態與結構詳細回饋</p>
+                <strong>查看差異</strong>
+                <p>即時看見筆劃差異標示</p>
             </div>
         </div>
         <button class="guide-close" onclick="dismissScoreGuide()" title="關閉提示" aria-label="關閉引導">✕</button>
@@ -109,77 +109,16 @@
         <!-- 分析按鈕 -->
         <button id="analyzeBtn" class="btn-analyze">
             <div class="spinner"></div>
-            <span class="btn-text">開始評分</span>
+            <span class="btn-text">開始分析</span>
         </button>
     </section>
 
     <!-- 結果區（初始隱藏） -->
     <section id="scoreResults" class="score-results">
 
-        <!-- 整體分數 -->
-        <div class="total-score-card">
-            <div class="score-ring-wrap">
-                <div class="score-ring">
-                    <svg width="110" height="110" viewBox="0 0 110 110">
-                        <circle class="score-ring-bg"
-                                cx="55" cy="55" r="46"></circle>
-                        <circle id="ringFill"
-                                class="score-ring-fill"
-                                cx="55" cy="55" r="46"
-                                stroke-dasharray="289.03"
-                                stroke-dashoffset="289.03"></circle>
-                    </svg>
-                    <div class="score-ring-text">
-                        <span id="ringNumber" class="score-number">0</span>
-                        <span class="score-unit">/ 100</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="total-score-info">
-                <p class="total-score-title">綜合評分</p>
-                <p id="feedbackOverall" class="feedback-overall"></p>
-            </div>
-        </div>
-
-        <!-- 細分分數 -->
-        <div class="sub-scores">
-
-            <!-- 形態相似度 -->
-            <div class="sub-score-card">
-                <div class="sub-score-label">
-                    整體形態相似度
-                </div>
-                <div class="sub-score-bar-wrap">
-                    <div id="shapeScoreBar" class="sub-score-bar"></div>
-                </div>
-                <div id="shapeScoreVal" class="sub-score-val">—</div>
-                <div id="shapeFeedback" class="sub-score-feedback"></div>
-            </div>
-
-            <!-- 結構平衡度 -->
-            <div class="sub-score-card">
-                <div class="sub-score-label">
-                    結構平衡度
-                </div>
-                <div class="sub-score-bar-wrap">
-                    <div id="balanceScoreBar" class="sub-score-bar"></div>
-                </div>
-                <div id="balanceScoreVal" class="sub-score-val">—</div>
-                <div id="balanceFeedback" class="sub-score-feedback"></div>
-
-                <!-- 細節 chips -->
-                <div class="balance-detail">
-                    <span class="balance-chip" id="chipLR"></span>
-                    <span class="balance-chip" id="chipTB"></span>
-                    <span class="balance-chip" id="chipCenter"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 圖片比對（評分參照） -->
+        <!-- 字形比對 -->
         <div class="comparison-section">
-            <h3 class="section-title">字形比對（評分參照）</h3>
+            <h3 class="section-title">字形比對</h3>
             <div class="comparison-grid">
                 <div class="comparison-item">
                     <img id="userCompareImg" src="" alt="你的字">
@@ -255,8 +194,8 @@
                 <div><strong>單字裁切</strong><p>圖片盡量只包含要評分的那個字</p></div>
             </div>
         </div>
-        <p class="tips-note">評分僅供練習參考，著重形態與結構，不評筆順。
-            目前字庫收錄 <strong>1,010</strong> 個字元，7 位書法大師。</p>
+        <p class="tips-note">差異標示僅供練習參考，著重形態與筆劃，不評筆順。
+            目前字庫收錄 <strong>1,024</strong> 個字元，7 位書法大師。</p>
     </section>
 
 

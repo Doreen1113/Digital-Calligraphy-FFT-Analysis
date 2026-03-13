@@ -56,31 +56,34 @@ def get_character_images(character: str, selected_calligraphers: Optional[List[s
         if not instances:
             continue
 
-        # 取第一張圖片，處理絕對路徑與相對路徑
-        img_path = instances[0].get('image_path', '')
-        try:
-            from pathlib import Path as _Path
-            rel = _Path(img_path).relative_to(fonts_root).as_posix()
-        except (ValueError, TypeError):
-            # 相對路徑 fallback
-            rel = img_path.replace("\\", "/")
-            if "Fonts/my_fonts/" in rel:
-                rel = rel.split("Fonts/my_fonts/")[1]
+        # 取所有圖片（同一本字帖可能有多張同字，例如九成宮的「九」有兩個版本）
+        for inst in instances:
+            img_path = inst.get('image_path', '')
+            if not img_path:
+                continue
+            try:
+                from pathlib import Path as _Path
+                rel = _Path(img_path).relative_to(fonts_root).as_posix()
+            except (ValueError, TypeError):
+                # 相對路徑 fallback
+                rel = img_path.replace("\\", "/")
+                if "Fonts/my_fonts/" in rel:
+                    rel = rel.split("Fonts/my_fonts/")[1]
 
-        images.append({
-            "calligrapher": font_label,           # "顏真卿·多寶塔碑"
-            "artist":    display_name,
-            "book":      instances[0].get('book', font_label.split('·')[1] if '·' in font_label else ''),
-            "font_id":   instances[0].get('font_id', ''),
-            "image_url": f"/fonts/{rel}",
-            "filename":  instances[0].get('filename', ''),
-        })
+            images.append({
+                "calligrapher": font_label,           # "顏真卿·多寶塔碑"
+                "artist":    display_name,
+                "book":      inst.get('book', font_label.split('·')[1] if '·' in font_label else ''),
+                "font_id":   inst.get('font_id', ''),
+                "image_url": f"/fonts/{rel}",
+                "filename":  inst.get('filename', ''),
+            })
 
     if not images:
         return {"error": f"字元 '{character}' 在選中的書法家中沒有找到"}
 
-    # 計算找到與缺少的書法家（以 display_name 比對）
-    found = [img["calligrapher"] for img in images]
+    # 計算找到與缺少的書法家（以 display_name 比對，去重）
+    found = list(dict.fromkeys(img["calligrapher"] for img in images))
     if selected_calligraphers:
         avail_display_set = {
             fl.split('·')[0] if '·' in fl else fl

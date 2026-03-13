@@ -125,9 +125,16 @@
 }
 
 .section-desc {
-    color: var(--text-muted);
+    color: var(--text-light);
     font-size: 0.88rem;
     margin-bottom: 1rem;
+}
+
+.bar-note {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+    line-height: 1.5;
 }
 
 /* --- 互動式雷達圖 --- */
