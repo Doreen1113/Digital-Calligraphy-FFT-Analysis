@@ -1,0 +1,187 @@
+/* === 筆順動畫頁面樣式 === */
+
+.stroke-section { margin-bottom: 1.5rem; }
+
+/* --- 輸入區 --- */
+.stroke-input-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.stroke-char-input {
+    width: 5rem;
+    font-size: 2rem;
+    text-align: center;
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.6rem;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--primary-dark);
+}
+
+.stroke-char-input:focus { border-color: var(--primary); }
+
+/* --- 快速選字 --- */
+.stroke-quick-chars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.quick-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-right: 0.2rem;
+}
+
+.quick-char-btn {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1rem;
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--primary-dark);
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.quick-char-btn:hover {
+    background: var(--primary-light, #FFF3E0);
+    border-color: var(--primary);
+    transform: scale(1.08);
+}
+
+/* --- 主要顯示卡 --- */
+.stroke-main { margin-bottom: 1.5rem; }
+
+.stroke-display-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 2rem;
+}
+
+.stroke-char-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    font-family: 'Noto Serif TC', 'Microsoft YaHei', serif;
+}
+
+/* --- 畫布容器 --- */
+.stroke-canvas-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#strokeTarget {
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius);
+    background: #FAFAF8;
+    /* 大小由 JS 設定 */
+}
+
+/* --- 控制按鈕 --- */
+.stroke-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+/* --- 速度控制 --- */
+.stroke-speed-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.speed-label { color: var(--text-muted); }
+
+#speedRange {
+    width: 120px;
+    accent-color: var(--primary);
+}
+
+#speedLabel {
+    min-width: 3rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* --- 筆劃步驟按鈕 --- */
+.stroke-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.stroke-progress-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.stroke-step-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.step-btn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg);
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.step-btn:hover { border-color: var(--primary); background: var(--primary-light, #FFF3E0); }
+.step-btn.done  { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+/* --- 提示卡 --- */
+.stroke-hint {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.stroke-hint p { margin: 0 0 0.3rem; }
+.stroke-hint a  { color: var(--primary); text-decoration: underline; }
+
+/* --- 找不到字 --- */
+.stroke-not-found {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.stroke-not-found .text-muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-top: 0.5rem;
+}
+
+/* --- RWD --- */
+@media (max-width: 600px) {
+    .stroke-display-card { padding: 1.2rem 0.8rem; }
+    .stroke-controls { gap: 0.4rem; }
+    .stroke-controls .btn { font-size: 0.85rem; padding: 0.45rem 0.8rem; }
+}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/stroke_order.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="page-title">筆順動畫</h1>
+    <p class="page-subtitle">輸入任一漢字，即時播放標準筆順動畫</p>
+</section>
+
+<section class="stroke-section">
+    <div class="card">
+        <!-- 輸入區 -->
+        <div class="stroke-input-row">
+            <input type="text"
+                   id="strokeInput"
+                   class="stroke-char-input"
+                   placeholder="輸入漢字"
+                   maxlength="1"
+                   autocomplete="off">
+            <button class="btn btn-primary" onclick="loadCharacter()">顯示筆順</button>
+        </div>
+
+        <!-- 快速選字 -->
+        <div class="stroke-quick-chars">
+            <span class="quick-label">常用字：</span>
+            {% set quick_chars = ['永','天','地','人','山','水','火','木','金','土','心','手','日','月','風','雲'] %}
+            {% for ch in quick_chars %}
+            <button class="quick-char-btn" onclick="quickLoad('{{ ch }}')">{{ ch }}</button>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- 動畫主區 -->
+<section class="stroke-main" id="strokeMain" style="display:none">
+    <div class="stroke-display-card card">
+        <div class="stroke-char-title" id="strokeCharTitle"></div>
+
+        <!-- 動畫畫布 -->
+        <div class="stroke-canvas-wrap">
+            <div id="strokeTarget"></div>
+        </div>
+
+        <!-- 控制按鈕 -->
+        <div class="stroke-controls">
+            <button class="btn btn-primary" id="btnAnimate" onclick="animateChar()">▶ 播放筆順</button>
+            <button class="btn btn-outline" onclick="showOutline()">顯示輪廓</button>
+            <button class="btn btn-outline" onclick="hideChar()">清空</button>
+            <button class="btn btn-outline" id="btnQuiz" onclick="startQuiz()">練習模式</button>
+        </div>
+
+        <!-- 速度控制 -->
+        <div class="stroke-speed-row">
+            <label class="speed-label">播放速度</label>
+            <input type="range" id="speedRange" min="0.3" max="3" step="0.1" value="1"
+                   oninput="updateSpeed(this.value)">
+            <span id="speedLabel">1.0x</span>
+        </div>
+
+        <!-- 筆劃進度 -->
+        <div class="stroke-progress-row" id="strokeProgressRow" style="display:none">
+            <span class="stroke-progress-label">筆劃</span>
+            <div class="stroke-step-btns" id="strokeStepBtns"></div>
+        </div>
+    </div>
+
+    <!-- 說明 -->
+    <div class="stroke-hint card">
+        <p>💡 <strong>練習模式</strong>：跟著動畫一筆一筆照順序畫，答對才能繼續下一筆</p>
+        <p>💡 筆順資料來源：<a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a> 開源字庫</p>
+    </div>
+</section>
+
+<!-- 找不到字的提示 -->
+<div class="stroke-not-found card" id="strokeNotFound" style="display:none">
+    <p>找不到「<strong id="notFoundChar"></strong>」的筆順資料</p>
+    <p class="text-muted">目前支援常用漢字約 9,000 字，部分罕見字或異體字可能尚未收錄。</p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="/static/js/stroke_order.js"></script>
+{% endblock %}

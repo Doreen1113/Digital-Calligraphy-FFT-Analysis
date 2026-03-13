@@ -184,6 +184,32 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+// 手機觸控：左右滑動切換圖片
+(function initModalSwipe() {
+    let _touchStartX = 0;
+    let _touchStartY = 0;
+
+    document.addEventListener('touchstart', function(e) {
+        const modal = document.getElementById('imageModal');
+        if (!modal || !modal.classList.contains('show')) return;
+        _touchStartX = e.touches[0].clientX;
+        _touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        const modal = document.getElementById('imageModal');
+        if (!modal || !modal.classList.contains('show')) return;
+        if (!_modalGallery.length || _modalGallery.length < 2) return;
+
+        const dx = e.changedTouches[0].clientX - _touchStartX;
+        const dy = e.changedTouches[0].clientY - _touchStartY;
+        // 水平滑動超過 50px 且主要為水平方向
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            navigateModal(dx < 0 ? 1 : -1);
+        }
+    }, { passive: true });
+})();
+
 // === 導航列手機版選單切換 ===
 function toggleNav() {
     const navLinks = document.getElementById('navLinks');
