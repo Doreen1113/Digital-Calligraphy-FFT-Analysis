@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/analysis.css?v=8">
+<link rel="stylesheet" href="/static/css/analysis.css?v=9">
 <!-- Chart.js for interactive charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -66,24 +66,39 @@
     </div>
 </section>
 
-<!-- 互動式相似度面板 -->
+<!-- 互動式相似度比較 -->
 <section class="analysis-section">
     <div class="card">
         <div class="card-title-row">
             <div>
-                <h3 class="card-title">風格相似度排名</h3>
-                <p class="section-desc">依相似度由高到低排列，點擊任一組合查看詳細比較</p>
+                <h3 class="card-title">風格相似度比較</h3>
+                <p class="section-desc">各選一位書法家，即時查看風格相似度與特徵對比</p>
             </div>
         </div>
-        <div class="similarity-panel" id="similarityPanel">
-            <div class="sim-pair-list" id="similarityGrid">
-                <div class="loading" style="min-height:300px"></div>
-            </div>
-            <div class="similarity-detail" id="similarityDetail">
-                <div class="detail-placeholder">
-                    <span class="placeholder-icon">↑</span>
-                    <p>點擊任一組合查看詳細比較</p>
+        <!-- 選擇器 -->
+        <div class="cal-compare-picker" id="calComparePicker">
+            <div class="cal-pick-col">
+                <div class="cal-pick-label">書法家 A</div>
+                <div class="cal-pick-group" id="calPickA">
+                    <div class="loading" style="min-height:80px"></div>
                 </div>
+            </div>
+            <div class="cal-vs-col">
+                <div class="cal-vs-score" id="calVsScore">—</div>
+                <div class="cal-vs-label">相似度</div>
+            </div>
+            <div class="cal-pick-col">
+                <div class="cal-pick-label">書法家 B</div>
+                <div class="cal-pick-group" id="calPickB">
+                    <div class="loading" style="min-height:80px"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 詳細比較 -->
+        <div class="similarity-detail" id="similarityDetail">
+            <div class="detail-placeholder">
+                <span class="placeholder-icon">👆</span>
+                <p>請各選擇一位書法家進行比較</p>
             </div>
         </div>
     </div>
@@ -113,5 +128,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/analysis.js?v=8"></script>
+<script src="/static/js/analysis.js?v=9"></script>
 {% endblock %}
