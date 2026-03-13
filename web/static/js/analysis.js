@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSelectedCount();
     initRadarChart();
     initBarChart();
-    initSimilarityGrid();
+    initSimilarityPicker();
     initFeatureAccordion();
     initStyleOverview();
 });
@@ -278,68 +278,84 @@ async function loadStaticRadarImage(container) {
     }
 }
 
-// ========== 相似度排名列表 ==========
-function initSimilarityGrid() {
-    const container = document.getElementById('similarityGrid');
-    if (!container) return;
+// ========== 相似度比較選擇器 ==========
+let _pickerA = null, _pickerB = null;
 
+function initSimilarityPicker() {
     const simData = analysisData.similarityData;
-
     if (!simData || !simData.available || !simData.matrix || !simData.calligraphers) {
-        loadStaticSimilarityImage(container);
+        const picker = document.getElementById('calComparePicker');
+        if (picker) loadStaticSimilarityImage(picker);
         return;
     }
 
     const calligraphers = simData.calligraphers;
-    const matrix = simData.matrix;
 
-    // 蒐集所有不重複的 pair（i < j）
-    const pairs = [];
-    for (let i = 0; i < calligraphers.length; i++) {
-        for (let j = i + 1; j < calligraphers.length; j++) {
-            pairs.push({ i, j, cal1: calligraphers[i], cal2: calligraphers[j], sim: matrix[i][j] });
-        }
-    }
-    pairs.sort((a, b) => b.sim - a.sim);   // 由高到低
+    ['A', 'B'].forEach(side => {
+        const group = document.getElementById(`calPick${side}`);
+        if (!group) return;
+        group.innerHTML = '';
 
-    container.innerHTML = '';
-    let activePair = null;
-
-    pairs.forEach((pair, rank) => {
-        const pct = (pair.sim * 100).toFixed(0);
-        let tag, tagClass;
-        if (pair.sim >= 0.7)      { tag = '風格相近'; tagClass = 'sim-tag-high'; }
-        else if (pair.sim >= 0.4) { tag = '有共同特點'; tagClass = 'sim-tag-mid'; }
-        else                       { tag = '風格迥異'; tagClass = 'sim-tag-low'; }
-
-        const c1 = CALLIGRAPHER_COLORS[pair.cal1] || { color: '#8B5A2B' };
-        const c2 = CALLIGRAPHER_COLORS[pair.cal2] || { color: '#8B5A2B' };
-
-        const item = document.createElement('div');
-        item.className = 'sim-pair-item';
-        item.innerHTML = `
-            <span class="sim-rank">${rank + 1}</span>
-            <span class="sim-pair-names">
-                <span style="color:${c1.color};font-weight:600">${escapeHtml(pair.cal1)}</span>
-                <span class="sim-pair-sep">↔</span>
-                <span style="color:${c2.color};font-weight:600">${escapeHtml(pair.cal2)}</span>
-            </span>
-            <div class="sim-pair-bar-wrap">
-                <div class="sim-pair-bar-fill" style="width:${pct}%;background:${getSimColor(pair.sim)}"></div>
-            </div>
-            <span class="sim-pair-pct">${pct}%</span>
-            <span class="sim-pair-tag ${tagClass}">${tag}</span>
-        `;
-
-        item.addEventListener('click', () => {
-            if (activePair) activePair.classList.remove('active');
-            item.classList.add('active');
-            activePair = item;
-            showSimilarityDetail(pair.cal1, pair.cal2, pair.sim, pair.i, pair.j);
+        calligraphers.forEach(cal => {
+            const colors = CALLIGRAPHER_COLORS[cal] || { color: '#8B5A2B', light: '#FFF8E1' };
+            const btn = document.createElement('button');
+            btn.className = 'cal-pick-btn';
+            btn.dataset.cal = cal;
+            btn.style.setProperty('--cal-color', colors.color);
+            btn.style.setProperty('--cal-color-light', colors.light);
+            btn.innerHTML = `<span class="cal-dot"></span>${escapeHtml(cal)}`;
+            btn.addEventListener('click', () => selectCalPicker(side, cal, btn));
+            group.appendChild(btn);
         });
-
-        container.appendChild(item);
     });
+
+    // 預設選第一位 vs 第二位
+    if (calligraphers.length >= 2) {
+        const btnA = document.querySelector('#calPickA .cal-pick-btn');
+        const allBtnsB = document.querySelectorAll('#calPickB .cal-pick-btn');
+        const btnB = allBtnsB[1] || allBtnsB[0];
+        if (btnA) selectCalPicker('A', calligraphers[0], btnA);
+        if (btnB) selectCalPicker('B', calligraphers[1] || calligraphers[0], btnB);
+    }
+}
+
+function selectCalPicker(side, cal, btn) {
+    const group = document.getElementById(`calPick${side}`);
+    if (!group) return;
+    group.querySelectorAll('.cal-pick-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (side === 'A') _pickerA = cal;
+    else _pickerB = cal;
+    updatePickerComparison();
+}
+
+function updatePickerComparison() {
+    if (!_pickerA || !_pickerB) return;
+
+    const simData = analysisData.similarityData;
+    const calligraphers = simData.calligraphers;
+    const matrix = simData.matrix;
+    const i = calligraphers.indexOf(_pickerA);
+    const j = calligraphers.indexOf(_pickerB);
+
+    let sim = 1.0;
+    if (_pickerA !== _pickerB && i !== -1 && j !== -1) {
+        const r = Math.min(i, j), c = Math.max(i, j);
+        sim = matrix[r][c];
+    }
+
+    const scoreEl = document.getElementById('calVsScore');
+    if (scoreEl) {
+        const pct = (sim * 100).toFixed(1);
+        let color;
+        if (sim >= 0.7) color = '#2E7D32';
+        else if (sim >= 0.4) color = '#F57C00';
+        else color = '#C62828';
+        scoreEl.textContent = `${pct}%`;
+        scoreEl.style.color = color;
+    }
+
+    showSimilarityDetail(_pickerA, _pickerB, sim, i, j);
 }
 
 function getSimColor(sim) {
@@ -349,11 +365,6 @@ function getSimColor(sim) {
     if (sim >= 0.4) return '#C8AD72';   // 暖金黃
     if (sim >= 0.2) return '#C08060';   // 暖褐橘
     return '#9E6050';                   // 深磚紅褐
-}
-
-function highlightCell(cell) {
-    document.querySelectorAll('.sim-cell.selected').forEach(c => c.classList.remove('selected'));
-    cell.classList.add('selected');
 }
 
 function showSimilarityDetail(cal1, cal2, similarity, i, j) {
