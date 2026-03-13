@@ -1,57 +1,21 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/index.css?v=6">
+<link rel="stylesheet" href="/static/css/index.css?v=7">
 {% endblock %}
 
 {% block content %}
 <!-- 主視覺區 -->
 <section class="hero">
-    <h1 class="hero-title">輸入一個字，看大師怎麼寫</h1>
-    <p class="hero-subtitle">比較多位書法大師的同一個字</p>
+    <h1 class="hero-title">字庫搜尋</h1>
+    <p class="hero-subtitle">收錄 <span id="charTotalHint">1,024</span> 個字・點擊即可前往批次比對</p>
 </section>
 
-<!-- 操作區 -->
-<section class="compare-section">
-    <div class="card">
-        <!-- 單字比對 -->
-        <div class="compare-controls">
-            <div class="input-area">
-                <div class="char-input-wrapper">
-                    <input type="text"
-                           id="charInput"
-                           class="char-input"
-                           maxlength="1"
-                           placeholder="字"
-                           autocomplete="off">
-                    <button id="compareBtn" class="btn btn-primary btn-lg" onclick="doCompare()">
-                        比對
-                    </button>
-                </div>
-                <p class="input-hint">輸入一個中文字，點擊「比對」或按 Enter
-                    <span class="char-limit-hint">（字庫收錄 <span id="charTotalHint">1,010</span> 字）</span>
-                </p>
-            </div>
-        </div>
-
-        <!-- 書法家選擇 -->
-        <div class="cal-select-horizontal">
-            <div class="select-label-row">
-                <label class="select-label">選擇書法家</label>
-                <button id="selectAllBtn" class="btn-select-all" onclick="toggleSelectAll()">全選</button>
-            </div>
-            <div class="checkbox-group checkbox-group-horizontal" id="calCheckboxes">
-                <div class="loading" style="min-height:60px"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 快速選字區 -->
+<!-- 字庫瀏覽區 -->
 <section class="quick-select">
     <div class="card">
-        <h3 class="card-title">快速選字 <span class="badge badge-count" id="commonCount"></span></h3>
-        <p class="quick-hint">以下是所有書法家都有的字，點擊即可比對</p>
+        <h3 class="card-title">全書法家共有字 <span class="badge badge-count" id="commonCount"></span></h3>
+        <p class="quick-hint">以下是所有書法家都有的字，點擊即可前往比對</p>
         <div class="char-pills" id="commonChars">
             <div class="loading" style="min-height:60px"></div>
         </div>
@@ -66,15 +30,6 @@
             <button class="btn-text-sm" onclick="clearHistory()">清除紀錄</button>
         </div>
         <div class="char-pills" id="historyChars"></div>
-    </div>
-</section>
-
-<!-- 結果區（單字） -->
-<section class="result-section" id="resultSection" style="display:none">
-    <div class="card">
-        <h3 class="card-title">比對結果</h3>
-        <div id="resultArea"></div>
-        <div id="resultInfo" class="result-info"></div>
     </div>
 </section>
 
@@ -110,5 +65,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/index.js?v=6"></script>
+<script src="/static/js/index.js?v=7"></script>
 {% endblock %}

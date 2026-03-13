@@ -243,11 +243,11 @@ function createRadarDatasets() {
             borderColor: colors.color,
             backgroundColor: hexToRgba(colors.color, 0.12),
             borderWidth: 2.5,
-            pointRadius: 5,
+            pointRadius: 3,
             pointBackgroundColor: colors.color,
             pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointHoverRadius: 8
+            pointBorderWidth: 1.5,
+            pointHoverRadius: 5
         });
     });
 
@@ -323,7 +323,8 @@ function initSimilarityGrid() {
 
             const sim = matrix[i][j];
             const pct = (sim * 100).toFixed(0);
-            cell.textContent = `${pct}%`;
+            // 不顯示數字，只用顏色傳達訊息；懸停時 tooltip 顯示數值
+            cell.title = `${pct}%`;
             cell.dataset.sim = sim;
 
             // 設定顏色
@@ -347,11 +348,12 @@ function initSimilarityGrid() {
 }
 
 function getSimColor(sim) {
-    if (sim >= 0.8) return '#1B5E20';
-    if (sim >= 0.6) return '#4CAF50';
-    if (sim >= 0.4) return '#FFB300';
-    if (sim >= 0.2) return '#E65100';
-    return '#B71C1C';
+    // 低飽和度暖色調，與整體 UI 協調
+    if (sim >= 0.8) return '#5C8A60';   // 霧霾草綠
+    if (sim >= 0.6) return '#8FB88F';   // 淡橄欖綠
+    if (sim >= 0.4) return '#C8AD72';   // 暖金黃
+    if (sim >= 0.2) return '#C08060';   // 暖褐橘
+    return '#9E6050';                   // 深磚紅褐
 }
 
 function highlightCell(cell) {
@@ -549,19 +551,7 @@ function initStyleOverview() {
 
         let traitsHtml = desc.traits.map(t => `<span class="style-trait">${escapeHtml(t)}</span>`).join('');
 
-        if (features && analysisData.radarData?.labels) {
-            const vals = Array.isArray(features) ? features : Object.values(features);
-            const labels = analysisData.radarData.labels;
-
-            let maxIdx = 0, minIdx = 0;
-            vals.forEach((v, i) => {
-                if (v > vals[maxIdx]) maxIdx = i;
-                if (v < vals[minIdx]) minIdx = i;
-            });
-
-            traitsHtml += `<span class="style-trait high">${escapeHtml(labels[maxIdx])} ↑</span>`;
-            traitsHtml += `<span class="style-trait low">${escapeHtml(labels[minIdx])} ↓</span>`;
-        }
+        // 不再附加綠/紅 FFT 特徵標籤（數值為相對排名，易造成誤解）
 
         const card = document.createElement('div');
         card.className = 'style-card';
@@ -627,7 +617,7 @@ function initBarChart() {
     controls.innerHTML = labels.map((label, idx) =>
         `<button class="bar-feat-btn ${idx === 0 ? 'active' : ''}"
                  onclick="selectBarFeature(${idx})">${escapeHtml(label)}</button>`
-    ).join('');
+    ).join('') + `<p class="bar-note">📊 數值為各書法家在此特徵的相對位置（0% = 此群體中最低，100% = 最高），反映風格傾向，並非品質評分</p>`;
 
     // 確保 canvas 存在
     if (!wrap.querySelector('canvas')) {

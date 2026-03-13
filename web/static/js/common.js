@@ -96,24 +96,66 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// === 圖片放大模態 ===
+// === 圖片放大模態（支援圖庫切換） ===
+
+/** 圖庫狀態 */
+let _modalGallery = [];
+let _modalIdx     = 0;
 
 /**
- * 打開圖片放大模態
+ * 打開圖片放大模態（單張模式，不顯示左右鍵）
  * @param {string} imageSrc - 圖片 URL
- * @param {string} caption - 圖片標題
+ * @param {string} caption  - 圖片標題
  */
 function openImageModal(imageSrc, caption = '') {
-    const modal = document.getElementById('imageModal');
-    const modalImage = document.getElementById('modalImage');
-    const modalCaption = document.getElementById('modalCaption');
+    openGalleryModal([{ src: imageSrc, caption }], 0);
+}
 
-    if (modal && modalImage && modalCaption) {
-        modalImage.src = imageSrc;
-        modalCaption.textContent = caption;
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';  // 防止背景滾動
+/**
+ * 打開圖庫模態並從指定索引開始
+ * @param {Array<{src:string, caption:string}>} images - 圖庫陣列
+ * @param {number} startIdx - 起始索引
+ */
+function openGalleryModal(images, startIdx = 0) {
+    if (!images || images.length === 0) return;
+    _modalGallery = images;
+    _modalIdx     = Math.max(0, Math.min(startIdx, images.length - 1));
+    _renderModalAt(_modalIdx);
+}
+
+/** 渲染模態至指定索引 */
+function _renderModalAt(idx) {
+    const modal   = document.getElementById('imageModal');
+    const img     = document.getElementById('modalImage');
+    const caption = document.getElementById('modalCaption');
+    const prev    = document.getElementById('modalPrev');
+    const next    = document.getElementById('modalNext');
+    const counter = document.getElementById('modalCounter');
+    if (!modal || !img) return;
+
+    const item   = _modalGallery[idx];
+    img.src      = item.src;
+    if (caption) caption.textContent = item.caption || '';
+
+    const hasNav = _modalGallery.length > 1;
+    if (prev)    prev.style.display    = hasNav ? 'flex' : 'none';
+    if (next)    next.style.display    = hasNav ? 'flex' : 'none';
+    if (counter) {
+        counter.style.display = hasNav ? 'block' : 'none';
+        counter.textContent   = `${idx + 1} / ${_modalGallery.length}`;
     }
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * 切換前 / 後一張（dir = -1 或 +1），循環
+ */
+function navigateModal(dir) {
+    if (!_modalGallery.length) return;
+    _modalIdx = (_modalIdx + dir + _modalGallery.length) % _modalGallery.length;
+    _renderModalAt(_modalIdx);
 }
 
 /**
@@ -121,23 +163,23 @@ function openImageModal(imageSrc, caption = '') {
  * @param {Event} event - 點擊事件（可選）
  */
 function closeImageModal(event) {
-    // 如果是點擊事件且點擊在內容上，則不關閉
-    if (event && event.target.closest('.modal-content')) {
-        return;
-    }
-
+    if (event && event.target.closest('.modal-content')) return;
     const modal = document.getElementById('imageModal');
     if (modal) {
         modal.classList.remove('show');
-        document.body.style.overflow = 'auto';  // 恢復背景滾動
+        document.body.style.overflow = 'auto';
     }
 }
 
-// 按 ESC 鍵關閉模態
+// 鍵盤：← → 切換，ESC 關閉
 document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('imageModal');
+    if (modal && modal.classList.contains('show')) {
+        if (e.key === 'ArrowLeft')  { navigateModal(-1); return; }
+        if (e.key === 'ArrowRight') { navigateModal(1);  return; }
+        if (e.key === 'Escape')     { closeImageModal(); return; }
+    }
     if (e.key === 'Escape') {
-        closeImageModal();
-        // 也關閉字元詳情 popup（如果存在）
         if (typeof closeCharDetail === 'function') closeCharDetail();
     }
 });

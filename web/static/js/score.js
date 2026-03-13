@@ -151,14 +151,25 @@ async function submitAnalysis() {
 
     try {
         const resp = await fetch('/api/score/analyze', { method: 'POST', body: fd });
-        const data = await resp.json();
+        let data;
+        try {
+            data = await resp.json();
+        } catch {
+            // 伺服器回應非 JSON（可能正在冷啟動）
+            if (resp.status === 503 || resp.status === 502) {
+                showError('伺服器啟動中，請稍待 10 秒後再試');
+            } else {
+                showError(`伺服器回應異常（${resp.status}），請稍後再試`);
+            }
+            return;
+        }
         if (!resp.ok) {
             showError(data.detail || '評分失敗，請稍後再試');
             return;
         }
         displayResults(data);
     } catch (e) {
-        showError('網路錯誤，請確認伺服器正常運作');
+        showError('無法連線到伺服器，請確認網路連線正常');
     } finally {
         setBtnLoading(false);
     }
@@ -167,38 +178,9 @@ async function submitAnalysis() {
 // ─── 顯示結果 ──────────────────────────────────────────────────────────────
 
 function displayResults(data) {
-    const totalPct   = Math.round(data.total_score * 100);
-    const shapePct   = Math.round(data.shape_score * 100);
-    const balancePct = Math.round(data.balance_score * 100);
-    const bd = data.balance_detail;
-
-    // 環形分數
-    setRingScore(totalPct);
-
-    // 總分區文字
-    document.getElementById('feedbackOverall').textContent = data.feedback.overall;
-
-    // 形態相似度
-    document.getElementById('shapeScoreVal').textContent  = shapePct + '%';
-    document.getElementById('shapeScoreBar').style.width  = shapePct + '%';
-    document.getElementById('shapeFeedback').textContent  = data.feedback.shape;
-
-    // 結構平衡度
-    document.getElementById('balanceScoreVal').textContent = balancePct + '%';
-    document.getElementById('balanceScoreBar').style.width  = balancePct + '%';
-    document.getElementById('balanceFeedback').textContent  = data.feedback.balance;
-
-    // 平衡細節 chips
-    document.getElementById('chipLR').textContent = `左右 ${Math.round(bd.lr_ratio * 100)}%`;
-    document.getElementById('chipTB').textContent = `上下 ${Math.round(bd.tb_ratio * 100)}%`;
-    const cxDev = Math.abs(bd.centroid_x - 0.5) * 100;
-    const cyDev = Math.abs(bd.centroid_y - 0.5) * 100;
-    document.getElementById('chipCenter').textContent =
-        `重心偏移 ${Math.round(cxDev)}% / ${Math.round(cyDev)}%`;
-
-    // 比對圖
+    // 字形比對圖
     document.getElementById('userCompareImg').src = previewImg.src;
-    const refImg = document.getElementById('refCompareImg');
+    const refImg   = document.getElementById('refCompareImg');
     const refLabel = document.getElementById('refCalLabel');
     if (data.ref_image_url) {
         refImg.src = data.ref_image_url;
@@ -221,7 +203,7 @@ function displayResults(data) {
     // 全部大師版本圖庫
     showMastersGallery(cachedCalligraphers, data.ref_cal_name);
 
-    // 顯示結果
+    // 顯示結果區
     resultsPanel.classList.add('show');
     resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }

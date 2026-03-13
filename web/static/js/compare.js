@@ -1,10 +1,14 @@
 /**
- * 批次比對頁邏輯
- * 支援：依字元排序、依書法家排序、單一字圖片顯示
+ * 字庫搜尋頁邏輯
+ * 支援：依字元排序、依書法家排序、單一字圖片顯示、最近查詢
  */
+
+const COMPARE_HISTORY_KEY = 'calligraphy_history';
+const COMPARE_MAX_HISTORY = 20;
 
 document.addEventListener('DOMContentLoaded', () => {
     loadBatchCalligraphers();
+    renderCompareHistory();
 
     const input = document.getElementById('batchInput');
     input.addEventListener('input', () => {
@@ -13,7 +17,60 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') doBatchCompare();
     });
+
+    // 支援從外部頁面帶入字元（?chars=天）
+    const urlParams = new URLSearchParams(window.location.search);
+    const charsFromUrl = urlParams.get('chars');
+    if (charsFromUrl) {
+        input.value = charsFromUrl.slice(0, 50);
+        document.getElementById('charCount').textContent = input.value.length;
+        setTimeout(() => doBatchCompare(), 600);
+    }
 });
+
+// ── 最近查詢（localStorage）─────────────────────────────────────────────
+
+function getCompareHistory() {
+    try { return JSON.parse(localStorage.getItem(COMPARE_HISTORY_KEY) || '[]'); }
+    catch { return []; }
+}
+
+function addToCompareHistory(chars) {
+    if (!chars) return;
+    let history = getCompareHistory();
+    for (const char of chars) {
+        history = history.filter(c => c !== char);
+        history.unshift(char);
+    }
+    if (history.length > COMPARE_MAX_HISTORY) history = history.slice(0, COMPARE_MAX_HISTORY);
+    localStorage.setItem(COMPARE_HISTORY_KEY, JSON.stringify(history));
+    renderCompareHistory();
+}
+
+function clearCompareHistory() {
+    localStorage.removeItem(COMPARE_HISTORY_KEY);
+    renderCompareHistory();
+}
+
+function renderCompareHistory() {
+    const section   = document.getElementById('compareHistorySection');
+    const container = document.getElementById('compareHistoryChars');
+    if (!section || !container) return;
+    const history = getCompareHistory();
+    if (history.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    container.innerHTML = history.map(char =>
+        `<button class="char-pill" onclick="quickFillAndCompare('${escapeHtml(char)}')"
+                 title="搜尋「${escapeHtml(char)}」">${escapeHtml(char)}</button>`
+    ).join('');
+}
+
+function quickFillAndCompare(char) {
+    const input = document.getElementById('batchInput');
+    input.value = char;
+    document.getElementById('charCount').textContent = char.length;
+    doBatchCompare();
+}
 
 
 /**
@@ -104,6 +161,9 @@ async function doBatchCompare() {
         const results = data.results || [];
         countBadge.textContent = `${data.success_count} / ${data.total}`;
 
+        // 加入最近查詢紀錄（個別字元）
+        addToCompareHistory([...chars]);
+
         // 更新進度
         progressFill.style.width = '100%';
         progressText.textContent = `完成！成功 ${data.success_count} / ${data.total}`;
@@ -113,6 +173,12 @@ async function doBatchCompare() {
             renderByCalligrapher(results, resultsDiv);
         } else {
             renderByCharacter(results, resultsDiv);
+        }
+
+        // 設定圖庫點擊（事件委派，只需設定一次）
+        if (!resultsDiv._galleryReady) {
+            attachGalleryClickHandlers(resultsDiv);
+            resultsDiv._galleryReady = true;
         }
 
     } catch (err) {
@@ -253,12 +319,12 @@ function renderByCalligrapher(results, container) {
 
 
 /**
- * 渲染簡化的圖片卡片（圖片 + 下方書法家·字帖標籤）
- * @param {string} label      - 顯示在圖片下方的標籤（通常為 font_label）
+ * 渲染簡化的圖片卡片（圖片 + 下方標籤），使用 data 屬性儲存圖庫資訊
+ * @param {string} label      - 顯示在圖片下方的標籤
  * @param {string} imageUrl   - 圖片 URL
  * @param {string} character  - 字元（用於 alt 與 modal 標題）
- * @param {string} calligrapher - 書法家名稱（可選，僅用於 modal 標題）
- * @param {string} book       - 字帖名稱（可選，用於 modal 標題）
+ * @param {string} calligrapher - 書法家名稱（可選）
+ * @param {string} book       - 字帖名稱（可選）
  */
 function renderImageCardSimple(label, imageUrl, character, calligrapher = '', book = '') {
     const imgUrlWithCache = imageUrl + '?t=' + Date.now();
@@ -274,12 +340,33 @@ function renderImageCardSimple(label, imageUrl, character, calligrapher = '', bo
     const alt = modalTitle;
 
     return `
-        <div class="char-image-card-simple">
+        <div class="char-image-card-simple"
+             data-img="${escapeHtml(imgUrlWithCache)}"
+             data-caption="${escapeHtml(modalTitle)}">
             <img src="${imgUrlWithCache}"
                  alt="${escapeHtml(alt)}"
-                 loading="lazy"
-                 onclick="openImageModal('${imgUrlWithCache.replace(/'/g, "\\'")}', '${escapeHtml(modalTitle)}')">
+                 loading="lazy">
             <div class="card-label">${escapeHtml(label)}</div>
         </div>
     `;
+}
+
+/**
+ * 為結果容器設定圖庫點擊事件（事件委派）
+ * 點擊群組內任一卡片 → 以整個群組內的圖片建立圖庫並開啟
+ */
+function attachGalleryClickHandlers(container) {
+    container.addEventListener('click', function(e) {
+        const card = e.target.closest('.char-image-card-simple[data-img]');
+        if (!card) return;
+
+        // 找同一 batch-group-content 內的所有卡片
+        const group = card.closest('.batch-group-content');
+        const scope = group || container;
+        const allCards = Array.from(scope.querySelectorAll('.char-image-card-simple[data-img]'));
+        const idx      = allCards.indexOf(card);
+        const images   = allCards.map(c => ({ src: c.dataset.img, caption: c.dataset.caption || '' }));
+
+        openGalleryModal(images, idx >= 0 ? idx : 0);
+    });
 }
