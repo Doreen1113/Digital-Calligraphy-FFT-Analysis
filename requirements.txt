@@ -1,6 +1,6 @@
 # === 核心依賴 ===
 numpy
-opencv-contrib-python  # 需要 cv2.ximgproc（骨架化），比 opencv-python 多包 contrib 模組
+opencv-contrib-python-headless  # 需要 cv2.ximgproc（骨架化）；headless 版不含 GUI 相依，適合伺服器環境
 matplotlib
 pandas
 scipy
