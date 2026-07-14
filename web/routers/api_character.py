@@ -99,6 +99,44 @@ async def character_info(char: str):
     }
 
 
+@router.get("/ink-reveal")
+async def ink_reveal(path: str = Query(..., description="相對 Fonts/my_fonts 的圖片路徑，例如 07/char_0001.png")):
+    """
+    把一張書法家真跡圖片拆成獨立墨跡區塊，回傳可播放漸進浮現動畫的 SVG。
+
+    這不是真正的筆順辨識——連在一起的筆畫會被當成同一塊一起出現，順序也只是
+    由上到下、由左到右的閱讀順序，不保證是實際書寫順序。見 src/core/ink_reveal.py。
+    """
+    import asyncio
+    import hashlib
+    from pathlib import Path
+    from web.dependencies import get_project_root
+
+    root = Path(get_project_root())
+    fonts_dir = (root / "Fonts" / "my_fonts").resolve()
+
+    # 防止路徑穿越：確保解析後的路徑仍在 fonts_dir 底下
+    img_path = (fonts_dir / path).resolve()
+    if fonts_dir not in img_path.parents or not img_path.exists():
+        raise HTTPException(status_code=404, detail="找不到圖片")
+
+    cache_dir = root / "output" / "ink_reveal_cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_key = hashlib.md5(str(img_path).encode("utf-8")).hexdigest()
+    cache_file = cache_dir / f"{cache_key}.svg"
+
+    if cache_file.exists():
+        return {"svg": cache_file.read_text(encoding="utf-8")}
+
+    from src.core.ink_reveal import generate_ink_reveal_svg
+    result = await asyncio.to_thread(generate_ink_reveal_svg, str(img_path))
+    if result is None:
+        raise HTTPException(status_code=500, detail="圖片解析失敗")
+
+    cache_file.write_text(result["svg"], encoding="utf-8")
+    return {"svg": result["svg"], "piece_count": result["piece_count"]}
+
+
 @router.post("/batch")
 async def batch_compare(body: dict):
     """批次比對多個字元 - 返回每個字元的獨立圖片"""

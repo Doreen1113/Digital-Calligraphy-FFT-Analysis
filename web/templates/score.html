@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/score.css">
+<link rel="stylesheet" href="/static/css/score.css?v=7">
 {% endblock %}
 
 {% block content %}
@@ -9,8 +9,8 @@
 
     <!-- 頁面標題 -->
     <header class="score-header">
-        <h1 class="score-title">練字評分</h1>
-        <p class="score-subtitle">上傳你的手寫字，即時看見與大師的筆劃差異</p>
+        <h1 class="score-title">筆劃診斷</h1>
+        <p class="score-subtitle">上傳你的手寫字，看見與大師的筆劃差異，並取得量測數據</p>
     </header>
 
     <!-- 新手引導 banner -->
@@ -24,20 +24,14 @@
             <span class="guide-arrow" aria-hidden="true">→</span>
             <div class="guide-step">
                 <span class="guide-num">2</span>
-                <strong>選書法家</strong>
-                <p>選想和哪位大師比較</p>
-            </div>
-            <span class="guide-arrow" aria-hidden="true">→</span>
-            <div class="guide-step">
-                <span class="guide-num">3</span>
                 <strong>上傳圖片</strong>
                 <p>拍下你寫的字並上傳</p>
             </div>
             <span class="guide-arrow" aria-hidden="true">→</span>
             <div class="guide-step">
-                <span class="guide-num">4</span>
-                <strong>查看差異</strong>
-                <p>即時看見筆劃差異標示</p>
+                <span class="guide-num">3</span>
+                <strong>查看排行</strong>
+                <p>一次跟全部書法家比對，依相似度排序</p>
             </div>
         </div>
         <button class="guide-close" onclick="dismissScoreGuide()" title="關閉提示" aria-label="關閉引導">✕</button>
@@ -57,14 +51,7 @@
                        placeholder="字"
                        autocomplete="off"
                        title="輸入一個中文字">
-            </div>
-
-            <!-- 書法家選擇 -->
-            <div class="form-group cal-select-wrap">
-                <label class="form-label" for="calSelect">對比書法家</label>
-                <select id="calSelect" class="cal-select" disabled>
-                    <option value="">— 請先輸入字元 —</option>
-                </select>
+                <p class="form-hint">上傳一次圖片，會自動跟全部有寫過這個字的書法家分別比對</p>
             </div>
         </div>
 
@@ -76,6 +63,7 @@
                        class="upload-file-input"
                        type="file"
                        accept="image/jpeg,image/png,image/webp,image/bmp"
+                       capture="environment"
                        title="選擇圖片">
 
                 <!-- 上傳提示 -->
@@ -103,6 +91,30 @@
             </div>
         </div>
 
+        <!-- 拍攝小技巧：緊接在上傳區旁邊，使用者要拍照時才看得到，
+             不要放在整頁最下面（原本在結果區之後，等於是拍完照才看到） -->
+        <details class="tips-inline">
+            <summary>📷 拍攝小技巧（點展開）</summary>
+            <div class="tips-list">
+                <div class="tip-row">
+                    <span class="tip-index">01</span>
+                    <div class="tip-body"><strong>充足光線</strong><p>在自然光或明亮室內拍攝，避免陰影</p></div>
+                </div>
+                <div class="tip-row">
+                    <span class="tip-index">02</span>
+                    <div class="tip-body"><strong>正面取景</strong><p>讓相機正對紙張，避免傾斜造成變形</p></div>
+                </div>
+                <div class="tip-row">
+                    <span class="tip-index">03</span>
+                    <div class="tip-body"><strong>高對比度</strong><p>深色筆寫在白紙上效果最佳</p></div>
+                </div>
+                <div class="tip-row">
+                    <span class="tip-index">04</span>
+                    <div class="tip-body"><strong>單字裁切</strong><p>圖片盡量只包含要評分的那個字</p></div>
+                </div>
+            </div>
+        </details>
+
         <!-- 錯誤訊息 -->
         <div id="scoreError" class="score-error"></div>
 
@@ -116,54 +128,107 @@
     <!-- 結果區（初始隱藏） -->
     <section id="scoreResults" class="score-results">
 
-        <!-- 字形比對 -->
-        <div class="comparison-section">
-            <h3 class="section-title">字形比對</h3>
-            <div class="comparison-grid">
-                <div class="comparison-item">
-                    <img id="userCompareImg" src="" alt="你的字">
-                    <span class="comparison-label user-label">你的字</span>
-                </div>
-                <div class="comparison-item">
-                    <img id="refCompareImg" src="" alt="大師版本">
-                    <span id="refCalLabel" class="comparison-label"></span>
-                </div>
-            </div>
+        <!-- 全部書法家排行 -->
+        <div class="ranking-section">
+            <h3 class="section-title">書法家比對排行</h3>
+            <p class="ranking-note">已自動跟全部有寫過這個字的書法家逐一比對，依形態相似度排序。點擊卡片可展開詳細差異圖。</p>
+            <div id="rankingList" class="ranking-list"></div>
         </div>
 
-        <!-- 筆劃差異標示圖 -->
-        <div class="diff-section" id="diffSection" style="display:none">
-            <h3 class="section-title">筆劃差異標示</h3>
-            <div class="diff-body">
-                <img id="diffImg" src="" alt="筆劃差異標示" class="diff-img"
-                     onclick="openImageModal(this.src, '筆劃差異標示（對齊重心後比對）')">
-                <div class="diff-right">
-                    <div class="diff-legend">
-                        <div class="legend-row">
-                            <span class="legend-dot dot-match"></span>
-                            <span>相符筆劃</span>
-                        </div>
-                        <div class="legend-row">
-                            <span class="legend-dot dot-extra"></span>
-                            <span>多寫（紅）— 可適度減少</span>
-                        </div>
-                        <div class="legend-row">
-                            <span class="legend-dot dot-missing"></span>
-                            <span>少寫（藍）— 尚待補強</span>
-                        </div>
+        <!-- 選定書法家的詳細比對（初始隱藏） -->
+        <div class="detail-section" id="detailSection" style="display:none">
+
+            <!-- 字形比對 -->
+            <div class="comparison-section">
+                <h3 class="section-title">字形比對</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <img id="userCompareImg" src="" alt="你的字">
+                        <span class="comparison-label user-label">你的字</span>
                     </div>
-                    <p class="diff-hint">
-                        兩圖已對齊重心後再做比對，<br>
-                        點擊圖片可放大檢視細節。
-                    </p>
+                    <div class="comparison-item">
+                        <img id="refCompareImg" src="" alt="大師版本">
+                        <span id="refCalLabel" class="comparison-label"></span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 全部大師版本 -->
-        <div class="masters-section" id="mastersSection" style="display:none">
-            <h3 class="section-title">全部大師版本</h3>
-            <div class="masters-grid" id="mastersGrid"></div>
+            <!-- 分項量測 -->
+            <div class="metrics-section" id="metricsSection" style="display:none">
+                <h3 class="section-title">分項量測</h3>
+                <p class="metrics-note">兩個維度各自獨立量測，刻意不合成單一總分——形態準確度跟結構平衡是不同面向，沒有客觀的加權方式能代表「寫得好不好」。</p>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-head">
+                            <span class="metric-label">形態相似度<small>（跟這位書法家比對）</small></span>
+                            <span id="shapeScoreValue" class="metric-value">—</span>
+                        </div>
+                        <div class="metric-bar"><div id="shapeScoreBar" class="metric-bar-fill"></div></div>
+                        <p id="shapeFeedback" class="metric-feedback"></p>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-head">
+                            <span class="metric-label">結構平衡度<small>（你的字本身，跟比對對象無關）</small></span>
+                            <span id="balanceScoreValue" class="metric-value">—</span>
+                        </div>
+                        <div class="metric-bar"><div id="balanceScoreBar" class="metric-bar-fill"></div></div>
+                        <p id="balanceFeedback" class="metric-feedback"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筆劃差異標示圖 -->
+            <div class="diff-section" id="diffSection" style="display:none">
+                <h3 class="section-title">筆劃差異標示</h3>
+                <div class="diff-body">
+                    <div class="diff-canvas-wrap">
+                        <canvas id="diffCanvas" width="256" height="256" class="diff-img"></canvas>
+                        <p class="diff-drag-hint">拖曳圖片可微調對齊</p>
+                    </div>
+                    <div class="diff-right">
+                        <div class="diff-legend">
+                            <div class="legend-row">
+                                <span class="legend-dot dot-match"></span>
+                                <span>相符筆劃</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-dot dot-extra"></span>
+                                <span>多寫（紅）— 可適度減少</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-dot dot-missing"></span>
+                                <span>少寫（藍）— 尚待補強</span>
+                            </div>
+                        </div>
+
+                        <!-- 手動對齊：兩張圖預設用重心自動對齊，但不一定準，
+                             這裡讓使用者自己選一層拖曳微調，兩層可以分開移動 -->
+                        <div class="diff-align">
+                            <label class="diff-align-label">手動對齊（重心自動對齊不準時用）</label>
+                            <div class="diff-drag-toggle" id="diffDragToggle">
+                                <button type="button" class="diff-drag-btn active" data-layer="user">拖曳你的字</button>
+                                <button type="button" class="diff-drag-btn" data-layer="ref">拖曳大師字</button>
+                            </div>
+                            <button type="button" class="btn-ghost diff-reset-btn" id="btnResetAlign">重置對齊</button>
+                        </div>
+
+                        <div class="diff-sensitivity">
+                            <label for="diffSensitivity" class="diff-sensitivity-label">
+                                差異敏感度
+                                <span id="diffSensitivityValue">精確比對</span>
+                            </label>
+                            <input type="range" id="diffSensitivity" min="0" max="6" step="1" value="0">
+                            <p class="diff-sensitivity-hint">
+                                往右拉可放寬「相符」的容忍度（筆劃差一兩像素也算相符），
+                                適合手寫難免的小抖動。
+                            </p>
+                        </div>
+                        <p class="diff-hint">
+                            點擊圖片可放大檢視細節。
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 再試一次 -->
@@ -173,35 +238,13 @@
 
     </section>
 
-    <!-- 拍攝技巧 + 使用說明 -->
-    <section class="score-form-card tips-section">
-        <p class="tips-title">拍攝小技巧</p>
-        <div class="tips-grid">
-            <div class="tip-item">
-                <span class="tip-icon">光</span>
-                <div><strong>充足光線</strong><p>在自然光或明亮室內拍攝，避免陰影</p></div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">正</span>
-                <div><strong>正面取景</strong><p>讓相機正對紙張，避免傾斜造成變形</p></div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">墨</span>
-                <div><strong>高對比度</strong><p>深色筆寫在白紙上效果最佳</p></div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">框</span>
-                <div><strong>單字裁切</strong><p>圖片盡量只包含要評分的那個字</p></div>
-            </div>
-        </div>
-        <p class="tips-note">差異標示僅供練習參考，著重形態與筆劃，不評筆順。
-            目前字庫收錄 <strong>1,024</strong> 個字元，7 位書法大師。</p>
-    </section>
-
+    <!-- 使用說明（免責聲明性質，跟拍攝技巧不同——這個放在最後面沒關係） -->
+    <p class="tips-note">診斷結果僅供練習參考，著重形態與筆劃，不評筆順，也不給總分。
+        目前字庫收錄 <strong>1,024</strong> 個字元，7 位書法大師。</p>
 
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/score.js?v=3"></script>
+<script src="/static/js/score.js?v=6"></script>
 {% endblock %}

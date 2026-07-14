@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlCalligrapher = urlParams.get('calligrapher');
     if (urlCalligrapher) {
         currentCalligrapher = urlCalligrapher;
+        // 從別頁帶著書法家篩選跳轉過來時，展開進階篩選讓使用者看到目前套用的條件
+        const advDetails = document.querySelector('.advanced-filters');
+        if (advDetails) advDetails.open = true;
     }
 
     loadFilterButtons();       // 書法家數量篩選按鈕

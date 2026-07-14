@@ -15,7 +15,13 @@
 
 
 <link rel="icon" href="/favicon.ico" type="image/png">
-    <link rel="stylesheet" href="/static/css/base.css?v=3">
+
+    <!-- 字體：標題用 Noto Serif TC（襯線，書卷氣），內文/UI 用 Noto Sans TC（無襯線，易讀） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/base.css?v=7">
     {% block head %}{% endblock %}
 
     <!-- JSON-LD 結構化資料 -->
@@ -24,7 +30,7 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "墨跡習字",
-      "description": "輸入中文字，即時比較多位書法大師的筆法差異，並上傳練習作品獲得評分",
+      "description": "輸入中文字，即時比較多位書法大師的筆法差異，並上傳練習作品取得筆劃差異診斷",
       "url": "{{ request.url.scheme }}://{{ request.url.netloc }}",
       "inLanguage": "zh-TW",
       "potentialAction": {
@@ -49,9 +55,9 @@
                 <li><a href="/compare"       class="{% if active == 'compare'       %}active{% endif %}">字庫搜尋</a></li>
                 <li><a href="/explorer"      class="{% if active == 'explorer'      %}active{% endif %}">字元探索</a></li>
                 <li><a href="/stroke-order"  class="{% if active == 'stroke-order'  %}active{% endif %}">筆順動畫</a></li>
-                <li><a href="/analysis"      class="{% if active == 'analysis'      %}active{% endif %}">風格 DNA</a></li>
+                <li><a href="/analysis"      class="{% if active == 'analysis'      %}active{% endif %}">風格特徵</a></li>
                 <li><a href="/calligraphers" class="{% if active == 'calligraphers' %}active{% endif %}">認識書法家</a></li>
-                <li><a href="/score"         class="{% if active == 'score'         %}active{% endif %}">練字評分</a></li>
+                <li><a href="/score"         class="{% if active == 'score'         %}active{% endif %}">筆劃診斷</a></li>
             </ul>
         </div>
     </nav>
@@ -81,7 +87,7 @@
         </div>
     </div>
 
-    <script src="/static/js/common.js"></script>
+    <script src="/static/js/common.js?v=3"></script>
     {% block scripts %}{% endblock %}
 
     <!-- 頁尾動態統計 -->

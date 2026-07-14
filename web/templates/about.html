@@ -1,119 +1,192 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/about.css">
+<link rel="stylesheet" href="/static/css/about.css?v=2">
 {% endblock %}
 
 {% block content %}
 
-<!-- 開發中提示橫幅 -->
-<div class="dev-banner">
-    🚧 本網站目前仍在持續開發中，部分功能可能尚未完善，歡迎提供建議！
-</div>
-
-<!-- Hero -->
-<section class="about-hero">
-    <div class="about-hero-inner">
-        <img src="/favicon.ico" class="about-logo" alt="墨跡習字" onerror="this.style.display='none'">
-        <h1 class="about-title">墨跡習字</h1>
-        <p class="about-tagline">用數位工具，讓書法學習變得更直觀</p>
+<!-- Hero：左文右圖，打破置中卡片公式 -->
+<section class="hero">
+    <div class="hero-text">
+        <p class="hero-kicker">傅立葉描述子 × 書法風格量化</p>
+        <h1 class="hero-title">墨跡習字</h1>
+        <p class="hero-tagline">輸入一個字，比對七位大師怎麼寫這個字</p>
+        <p class="hero-desc">
+            上傳你的手寫字，看見差在哪裡。
+        </p>
+        <div class="hero-actions">
+            <a href="/score" class="btn btn-accent btn-lg">開始筆劃診斷</a>
+            <a href="/compare" class="btn btn-outline btn-lg">瀏覽字庫搜尋</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-ink-wash"></div>
+        <img src="/fonts/07/char_1062.png" alt="「墨」字，歷代書法家真跡" class="hero-char" id="heroChar">
+        <span class="hero-char-caption" id="heroCharCaption">「墨」・顏真卿《多寶塔碑》</span>
     </div>
 </section>
 
-<!-- 成立初衷 -->
-<section class="about-section">
-    <div class="card">
-        <h2 class="section-heading">✦ 成立初衷</h2>
+<script>
+// 每次載入隨機顯示不同書法家寫的「墨」字，讓首頁 hero 不會每次都一樣
+(function () {
+    const MO_SAMPLES = [
+        { url: "/fonts/00/char_0193.png", caption: "「墨」・智永《真草千字文》" },
+        { url: "/fonts/07/char_1062.png", caption: "「墨」・顏真卿《多寶塔碑》" },
+        { url: "/fonts/08/char_0014.png", caption: "「墨」・沈尹默《題筆陣圖後》" },
+        { url: "/fonts/10/char_0011.png", caption: "「墨」・沈尹默《右軍筆陣圖》" },
+    ];
+    const pick = MO_SAMPLES[Math.floor(Math.random() * MO_SAMPLES.length)];
+    const img = document.getElementById("heroChar");
+    const caption = document.getElementById("heroCharCaption");
+    if (img && caption) {
+        img.src = pick.url;
+        caption.textContent = pick.caption;
+    }
+})();
+</script>
+
+<!-- 開發中提示 -->
+<div class="dev-banner">
+    本網站目前仍在持續開發中，部分功能可能尚未完善，歡迎提供建議
+</div>
+
+<!-- 成立初衷：編輯式引言，不用卡片 -->
+<section class="about-section origin-section reveal">
+    <span class="quote-mark">「</span>
+    <div class="origin-text">
         <p class="about-text">
-            書法是中華文化最美麗的藝術之一，但對許多學習者來說，
+            許多書法學習者常遇到兩個問題：
             「如何知道自己寫得好不好？」「不同書法家同一個字究竟差在哪？」
             這些問題往往沒有直觀的答案。
         </p>
         <p class="about-text">
-            <strong>墨跡習字</strong>希望用現代數位技術——傅立葉描述子（FFT）分析——
-            將書法風格量化，讓任何人都能直觀地比較大師筆法、了解自己與大師之間的差距，
-            讓書法學習更有方向、更有樂趣。
+            <strong>墨跡習字</strong>用傅立葉描述子（FFT）分析將書法風格量化，
+            讓使用者比對大師筆法、檢視自己與大師的筆劃差異。
         </p>
     </div>
 </section>
 
-<!-- 功能介紹 -->
-<section class="about-section">
-    <h2 class="section-heading-outside">✦ 網站功能</h2>
-    <div class="feature-cards">
-        <a href="/compare" class="feature-card">
-            <div class="feature-icon">搜</div>
-            <h3>字庫搜尋</h3>
-            <p>輸入任意中文字，即時展示多位書法大師的寫法，支援批次輸入多字對比</p>
+<!-- 功能介紹：編號列表，取代圖示卡片網格 -->
+<section class="about-section reveal">
+    <h2 class="section-heading-outside">網站功能</h2>
+    <div class="feature-list">
+        <a href="/compare" class="feature-row">
+            <span class="feature-index">01</span>
+            <span class="feature-body">
+                <span class="feature-name">字庫搜尋</span>
+                <span class="feature-desc">輸入任意中文字，即時展示多位書法大師的寫法，支援批次輸入多字對比</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
-        <a href="/score" class="feature-card">
-            <div class="feature-icon">評</div>
-            <h3>練字評分</h3>
-            <p>上傳手寫字照片，與大師版本比對，即時顯示筆劃差異標示</p>
+        <a href="/score" class="feature-row">
+            <span class="feature-index">02</span>
+            <span class="feature-body">
+                <span class="feature-name">筆劃診斷</span>
+                <span class="feature-desc">上傳手寫字照片，與大師版本比對，顯示筆劃差異標示與分項量測數據</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
-        <a href="/stroke-order" class="feature-card">
-            <div class="feature-icon">順</div>
-            <h3>筆順動畫</h3>
-            <p>輸入任一漢字，即時播放標準筆順動畫，幫助初學者掌握正確書寫順序</p>
+        <a href="/stroke-order" class="feature-row">
+            <span class="feature-index">03</span>
+            <span class="feature-body">
+                <span class="feature-name">筆順動畫</span>
+                <span class="feature-desc">輸入任一漢字，即時播放標準筆順動畫，幫助初學者掌握正確書寫順序</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
-        <a href="/analysis" class="feature-card">
-            <div class="feature-icon">DNA</div>
-            <h3>風格 DNA</h3>
-            <p>用 FFT 特徵向量量化書法風格，以雷達圖和相似度排名呈現大師之間的距離</p>
+        <a href="/analysis" class="feature-row">
+            <span class="feature-index">04</span>
+            <span class="feature-body">
+                <span class="feature-name">風格特徵探索</span>
+                <span class="feature-desc">用 FFT 特徵向量量化書法風格，並公開統計檢定結果，誠實標註目前哪些差異可信、哪些仍在雜訊範圍內</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
-        <a href="/calligraphers" class="feature-card">
-            <div class="feature-icon">人</div>
-            <h3>認識書法家</h3>
-            <p>深入了解各位書法大師的生平、字帖背景與藝術特色</p>
+        <a href="/calligraphers" class="feature-row">
+            <span class="feature-index">05</span>
+            <span class="feature-body">
+                <span class="feature-name">認識書法家</span>
+                <span class="feature-desc">深入了解各位書法大師的生平、字帖背景與藝術特色</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
-        <a href="/explorer" class="feature-card">
-            <div class="feature-icon">探</div>
-            <h3>字元探索</h3>
-            <p>瀏覽字庫全部字元，依筆畫、字頻排序，快速找到想要的字</p>
+        <a href="/explorer" class="feature-row">
+            <span class="feature-index">06</span>
+            <span class="feature-body">
+                <span class="feature-name">字元探索</span>
+                <span class="feature-desc">瀏覽字庫全部字元，依筆畫、字頻排序，快速找到想要的字</span>
+            </span>
+            <span class="feature-arrow">→</span>
         </a>
     </div>
 </section>
 
-<!-- 收錄書法家 -->
+<!-- 收錄書法家：真跡縮圖展示條，取代純文字圓角標籤 -->
 <section class="about-section">
-    <div class="card">
-        <h2 class="section-heading">✦ 收錄書法家</h2>
-        <div class="calligrapher-list">
-            <div class="cal-chip">智永 <span>（隋）</span></div>
-            <div class="cal-chip">歐陽詢 <span>（唐）</span></div>
-            <div class="cal-chip">虞世南 <span>（唐）</span></div>
-            <div class="cal-chip">褚遂良 <span>（唐）</span></div>
-            <div class="cal-chip">顏真卿 <span>（唐）</span></div>
-            <div class="cal-chip">柳公權 <span>（唐）</span></div>
-            <div class="cal-chip">趙孟頫 <span>（元）</span></div>
-            <div class="cal-chip">沈尹默 <span>（現代）</span></div>
-        </div>
-        <p class="about-text" style="margin-top:1rem">
-            目前字庫收錄 <strong>1,010+</strong> 個常用漢字，仍持續擴充中。
-        </p>
+    <h2 class="section-heading-outside">收錄書法家</h2>
+    <div class="artist-strip">
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/00/char_0001.png" alt="智永">
+            <span class="artist-name">智永</span>
+            <span class="artist-dynasty">隋</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/03/char_0001.png" alt="歐陽詢">
+            <span class="artist-name">歐陽詢</span>
+            <span class="artist-dynasty">唐</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/06/char_0001.png" alt="虞世南">
+            <span class="artist-name">虞世南</span>
+            <span class="artist-dynasty">唐</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/07/char_0001.png" alt="顏真卿">
+            <span class="artist-name">顏真卿</span>
+            <span class="artist-dynasty">唐</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/02/char_0001.png" alt="柳公權">
+            <span class="artist-name">柳公權</span>
+            <span class="artist-dynasty">唐</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/04/char_0001.png" alt="趙孟頫">
+            <span class="artist-name">趙孟頫</span>
+            <span class="artist-dynasty">元</span>
+        </a>
+        <a href="/calligraphers" class="artist-plate">
+            <img src="/fonts/01/font_00_0001.png" alt="沈尹默">
+            <span class="artist-name">沈尹默</span>
+            <span class="artist-dynasty">現代</span>
+        </a>
     </div>
+    <p class="about-text artist-strip-note">
+        目前字庫收錄 <strong>1,010+</strong> 個常用漢字，仍持續擴充中。
+    </p>
 </section>
 
-<!-- 開發狀態 -->
+<!-- 開發狀態：低調處理，不搶主內容風采 -->
 <section class="about-section">
-    <div class="card dev-status-card">
-        <h2 class="section-heading">🚧 開發狀態</h2>
+    <details class="dev-status-details">
+        <summary>開發狀態</summary>
         <p class="about-text">本網站目前為個人學習專案，仍在積極開發中。以下功能已完成或規劃中：</p>
         <div class="status-list">
-            <div class="status-item done">✅ 字庫搜尋（支援批次多字，最多 50 字）</div>
-            <div class="status-item done">✅ 練字上傳評分（筆劃差異標示）</div>
-            <div class="status-item done">✅ 筆順動畫展示</div>
-            <div class="status-item done">✅ FFT 風格 DNA 分析</div>
-            <div class="status-item done">✅ 書法家介紹頁</div>
-            <div class="status-item wip">🔄 字元探索優化（持續擴充字庫）</div>
+            <span class="status-item done">字庫搜尋（支援批次多字，最多 50 字）</span>
+            <span class="status-item done">練字上傳診斷（筆劃差異標示 + 分項量測）</span>
+            <span class="status-item done">筆順動畫展示</span>
+            <span class="status-item done">FFT 風格特徵分析（含統計可信度檢定）</span>
+            <span class="status-item done">書法家介紹頁</span>
+            <span class="status-item wip">字元探索優化（持續擴充字庫）</span>
         </div>
-    </div>
+    </details>
 </section>
 
 <!-- 聯絡我們 -->
 <section class="about-section">
     <div class="card">
-        <h2 class="section-heading">✦ 聯絡我們</h2>
+        <h2 class="section-heading">聯絡我們</h2>
         <p class="about-text">
             若有任何建議、問題回報，或想一起貢獻字庫，歡迎透過以下方式聯絡：
         </p>

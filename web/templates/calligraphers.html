@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/calligraphers.css">
+<link rel="stylesheet" href="/static/css/calligraphers.css?v=2">
 {% endblock %}
 
 {% block content %}
 <section class="page-header">
     <h1 class="page-title">認識書法家</h1>
-    <p class="page-subtitle" id="pageSubtitle">收錄不同時代的楷書大師，探索他們各自的風格特色</p>
+    <p class="page-subtitle" id="pageSubtitle">收錄隋唐至近代的楷書大師，比對他們的傳世碑帖與筆跡特徵</p>
 </section>
 
 <!-- 時代軸 -->
@@ -15,11 +15,11 @@
     <div class="loading" style="min-height:60px"></div>
 </section>
 
-<section class="cal-grid" id="calGrid">
+<section class="cal-profiles" id="calGrid">
     <div class="loading" style="min-height:300px"></div>
 </section>
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/calligraphers.js"></script>
+<script src="/static/js/calligraphers.js?v=4"></script>
 {% endblock %}

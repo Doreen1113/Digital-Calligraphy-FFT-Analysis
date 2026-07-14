@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/stroke_order.css">
+<link rel="stylesheet" href="/static/css/stroke_order.css?v=6">
 {% endblock %}
 
 {% block content %}
@@ -41,16 +41,29 @@
 
         <!-- 動畫畫布 -->
         <div class="stroke-canvas-wrap">
+            <div class="stroke-ink-wash"></div>
             <div id="strokeTarget"></div>
+            <!-- 墨跡粗糙化濾鏡：用亂數位移把 HanziWriter 畫出來的向量筆畫邊緣「揉」得
+                 不那麼工整，模擬墨水滲進宣紙纖維的效果，取代原本過於平滑的向量線條 -->
+            <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+                <filter id="inkRough" x="-20%" y="-20%" width="140%" height="140%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" result="noise"/>
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+                </filter>
+            </svg>
         </div>
 
-        <!-- 控制按鈕 -->
+        <!-- 控制按鈕：主要操作（播放/輪廓/練習）用 outline/primary，清空是次要動作，弱化處理 -->
         <div class="stroke-controls">
             <button class="btn btn-primary" id="btnAnimate" onclick="animateChar()">▶ 播放筆順</button>
             <button class="btn btn-outline" onclick="showOutline()">顯示輪廓</button>
-            <button class="btn btn-outline" onclick="hideChar()">清空</button>
-            <button class="btn btn-outline" id="btnQuiz" onclick="startQuiz()">練習模式</button>
+            <button class="btn btn-outline" id="btnQuiz" onclick="startQuiz()"
+                    title="跟著動畫一筆一筆照順序畫，答對才能繼續下一筆">練習模式</button>
+            <button class="btn btn-ghost" onclick="hideChar()">清空</button>
         </div>
+        <!-- 練習模式的規則說明緊貼在按鈕下方，而不是放在整區最下面的提示卡——
+             使用者要先知道規則才會點，不是點了才在別處看到說明 -->
+        <p class="stroke-controls-hint">💡 <strong>練習模式</strong>：跟著動畫一筆一筆照順序畫，答對才能繼續下一筆</p>
 
         <!-- 速度控制 -->
         <div class="stroke-speed-row">
@@ -69,8 +82,22 @@
 
     <!-- 說明 -->
     <div class="stroke-hint card">
-        <p>💡 <strong>練習模式</strong>：跟著動畫一筆一筆照順序畫，答對才能繼續下一筆</p>
         <p>💡 筆順資料來源：<a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a> 開源字庫</p>
+    </div>
+
+    <!-- 真跡漸進浮現：用書法家真實筆跡，不是印刷字型 -->
+    <div class="ink-reveal-section card" id="inkRevealSection" style="display:none">
+        <h3 class="section-title">真跡漸進浮現</h3>
+        <p class="section-desc">
+            用這個字在我們字庫裡的真實書法家墨跡（不是印刷字型），依墨跡區塊由上到下、由左到右浮現。
+            提醒：連在一起的筆畫會一起出現，順序是閱讀順序，不是嚴謹的筆順考證。
+        </p>
+        <div class="ink-cal-picker" id="inkCalPicker"></div>
+        <div class="ink-reveal-canvas-wrap" id="inkRevealWrap" style="display:none">
+            <div class="stroke-ink-wash"></div>
+            <div id="inkRevealTarget"></div>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btnReplayInk" onclick="replayInkReveal()" style="display:none">↻ 重播</button>
     </div>
 </section>
 
@@ -84,5 +111,5 @@
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="/static/js/stroke_order.js"></script>
+<script src="/static/js/stroke_order.js?v=3"></script>
 {% endblock %}

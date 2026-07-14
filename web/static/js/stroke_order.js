@@ -27,11 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const params = new URLSearchParams(location.search);
-    const ch = params.get('char');
-    if (ch && ch.length === 1) {
-        input.value = ch;
-        loadCharacter();
-    }
+    const ch = params.get('char') || '永';   // 沒指定字時，預設顯示「永」（永字八法，涵蓋楷書基本筆畫）
+    input.value = ch;
+    loadCharacter();
 });
 
 function trimInput() {
@@ -45,6 +43,12 @@ function quickLoad(ch) {
     loadCharacter();
 }
 
+function highlightQuickChar(ch) {
+    document.querySelectorAll('.quick-char-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === ch);
+    });
+}
+
 function loadCharacter() {
     const input = document.getElementById('strokeInput');
     const ch = input.value.trim();
@@ -52,6 +56,7 @@ function loadCharacter() {
 
     currentChar = ch;
     strokesDone = 0;
+    highlightQuickChar(ch);
 
     const target = document.getElementById('strokeTarget');
     target.innerHTML = '';
@@ -67,7 +72,7 @@ function loadCharacter() {
             height: CANVAS_SIZE,
             padding: 20,
             showOutline: true,
-            strokeColor: '#5B3A29',
+            strokeColor: '#231F1C',   // 濃墨黑（帶一點暖褐），比原本的淺褐色更接近真實墨色
             outlineColor: '#D4C5A0',
             strokeAnimationSpeed: currentSpeed,
             delayBetweenStrokes: 300,
@@ -91,6 +96,81 @@ function loadCharacter() {
         document.getElementById('notFoundChar').textContent = ch;
         document.getElementById('strokeNotFound').style.display = 'block';
     }
+
+    loadInkRevealPickers(ch);
+}
+
+// ─── 真跡漸進浮現：用書法家真實筆跡，不是印刷字型 ──────────────────────────
+let lastInkSvg = null;
+
+async function loadInkRevealPickers(ch) {
+    const section = document.getElementById('inkRevealSection');
+    const picker = document.getElementById('inkCalPicker');
+    const wrap = document.getElementById('inkRevealWrap');
+    const replayBtn = document.getElementById('btnReplayInk');
+    if (!section || !picker) return;
+
+    wrap.style.display = 'none';
+    replayBtn.style.display = 'none';
+    lastInkSvg = null;
+
+    try {
+        const data = await api(`/api/character/info/${encodeURIComponent(ch)}`);
+        const entries = Object.entries(data.calligraphers || {});
+        if (!entries.length) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = 'flex';
+        picker.innerHTML = '';
+        entries.forEach(([label, images], idx) => {
+            if (!images.length) return;
+            const btn = document.createElement('button');
+            btn.className = `ink-cal-btn${idx === 0 ? ' active' : ''}`;
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+                picker.querySelectorAll('.ink-cal-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                showInkReveal(images[0].image_url);
+            });
+            picker.appendChild(btn);
+        });
+
+        // 預設顯示第一位書法家
+        showInkReveal(entries[0][1][0].image_url);
+    } catch (e) {
+        section.style.display = 'none';
+    }
+}
+
+async function showInkReveal(imageUrl) {
+    const wrap = document.getElementById('inkRevealWrap');
+    const target = document.getElementById('inkRevealTarget');
+    const replayBtn = document.getElementById('btnReplayInk');
+    if (!target) return;
+
+    const relPath = imageUrl.replace(/^\/fonts\//, '');
+    try {
+        const data = await api(`/api/character/ink-reveal?path=${encodeURIComponent(relPath)}`);
+        lastInkSvg = data.svg;
+        target.innerHTML = lastInkSvg;
+        wrap.style.display = 'flex';
+        replayBtn.style.display = 'inline-flex';
+    } catch (e) {
+        wrap.style.display = 'none';
+        replayBtn.style.display = 'none';
+    }
+}
+
+function replayInkReveal() {
+    const target = document.getElementById('inkRevealTarget');
+    if (!target || !lastInkSvg) return;
+    // 重新插入同一份 SVG，讓 CSS 動畫從頭開始播放
+    target.innerHTML = '';
+    // 強制 reflow，確保瀏覽器真的把舊的 SVG 移除後才插入新的（否則動畫不會重播）
+    void target.offsetWidth;
+    target.innerHTML = lastInkSvg;
 }
 
 function animateChar() {
@@ -139,7 +219,7 @@ function updateSpeed(val) {
     currentSpeed = parseFloat(val);
     document.getElementById('speedLabel').textContent = currentSpeed.toFixed(1) + 'x';
     if (writer) {
-        writer.updateColor('strokeColor', '#5B3A29');   // 觸發設定更新（workaround）
+        writer.updateColor('strokeColor', '#231F1C');   // 觸發設定更新（workaround）
         // HanziWriter 3.x 可用 setOption（若有）
         try { writer.setOptions({ strokeAnimationSpeed: currentSpeed }); } catch {}
     }
