@@ -61,6 +61,7 @@ QUICK_COMMIT.sh
 # 排除 Web 生成的比對圖片快取
 output/comparison/
 output/upload/
+output/ink_reveal_cache/
 
 # 排除 GUI 相關檔案（如有舊版本）
 gui/

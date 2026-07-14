@@ -2,6 +2,7 @@
 import os
 import sys
 import glob
+import json
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -101,13 +102,53 @@ def plot_style_results(styles_results, out_path, target_len=50):
     print(f"[OK] Chart saved (DPI=150): {out_path}")
 
 
-def _save_analysis_json(styles_results, config):
+def _compute_significance(vecs_by_display, cal_names, n_features):
+    """
+    對每個特徵做單因子 ANOVA（書法家 = 組別），取得 p 值跟效果量 eta^2。
+
+    用逐張圖片的原始特徵值（而非先平均掉的彙總值）做檢定，才能正確反映
+    樣本數對統計檢定力的影響——單純比較「全距 vs 標準差」的土法煉鋼方式，
+    完全沒考慮樣本數多寡，樣本數夠大時再小的差異也會被誤判為雜訊。
+
+    eta^2（效果量）：書法家身份能解釋的變異比例。依 Cohen 慣例，
+    0.01=小、0.06=中、0.14=大——即使 p 值顯著，若 eta^2 很小，
+    代表這個特徵對「風格辨識」的實際貢獻有限，只是統計上測得到而已。
+    """
+    from scipy import stats as scipy_stats
+
+    anova_p = []
+    eta_squared = []
+    for i in range(n_features):
+        groups = [np.array(vecs_by_display[n])[:, i] for n in cal_names]
+        try:
+            _, p = scipy_stats.f_oneway(*groups)
+        except Exception:
+            p = 1.0
+
+        all_vals = np.concatenate(groups)
+        grand_mean = np.mean(all_vals)
+        ss_between = sum(len(g) * (np.mean(g) - grand_mean) ** 2 for g in groups)
+        ss_total = np.sum((all_vals - grand_mean) ** 2)
+        eta_sq = ss_between / ss_total if ss_total > 0 else 0.0
+
+        anova_p.append(float(p))
+        eta_squared.append(float(eta_sq))
+
+    return anova_p, eta_squared
+
+
+def _save_analysis_json(styles_results, config, styles_std=None, vecs_by_display=None,
+                         sample_sizes=None, common_char_count=0):
     """
     將 FFT 分析結果存為 JSON，供 Web 互動圖表使用
 
     輸出:
-      data/index/style_features.json   → 雷達圖數據（原始值 + 正規化值）
+      data/index/style_features.json   → 雷達圖數據（原始值 + 正規化值 + 標準差 + 統計檢定）
       data/index/similarity_matrix.json → 相似度矩陣
+
+    styles_std: 每位書法家每個特徵的標準差（同一人不同字之間的自然變化程度）。
+    vecs_by_display: 每位書法家逐張圖片的原始特徵向量，用來做真正的 ANOVA 統計
+    檢定（見 _compute_significance），比單純比較全距與標準差更嚴謹。
     """
     import json
 
@@ -134,11 +175,19 @@ def _save_analysis_json(styles_results, config):
 
     normalized = {}
     raw_data = {}
+    std_data = {}
     for name in cal_names:
         vec = styles_results[name]
         norm_vec = (vec - min_vals) / ranges
         normalized[name] = [round(float(v), 4) for v in norm_vec]
         raw_data[name] = [round(float(v), 6) for v in vec]
+        if styles_std and name in styles_std:
+            std_data[name] = [round(float(v), 6) for v in styles_std[name]]
+
+    anova_p = []
+    eta_squared = []
+    if vecs_by_display:
+        anova_p, eta_squared = _compute_significance(vecs_by_display, cal_names, len(feature_order))
 
     style_json = {
         "calligraphers": cal_names,
@@ -146,6 +195,11 @@ def _save_analysis_json(styles_results, config):
         "feature_keys": feature_order,
         "data": normalized,
         "raw_data": raw_data,
+        "std_data": std_data,
+        "anova_p": [round(p, 6) for p in anova_p],
+        "eta_squared": [round(e, 4) for e in eta_squared],
+        "sample_sizes": sample_sizes or {},
+        "common_char_count": common_char_count,
     }
 
     style_path = os.path.join(index_dir, "style_features.json")
@@ -172,7 +226,36 @@ def _save_analysis_json(styles_results, config):
         print(f"   [Warning] 相似度 JSON 儲存失敗: {e}")
 
 
-def run_style_analysis(max_samples=None):
+def _load_common_char_paths(root_dir):
+    """
+    讀取 character_index.json 裡「所有書法家都寫過的共同字」清單，
+    回傳 {internal_name: [image_path, ...]}，只包含共同字的圖片路徑。
+
+    用意：現行做法把每位書法家寫過的「所有字」（字數、複雜度都不同）混在
+    一起平均，會把「字本身筆畫多寡造成的差異」跟「書法家個人風格差異」
+    混淆在一起。只用共同字，可以控制掉字本身複雜度的干擾，讓比較更公平。
+    """
+    idx_path = os.path.join(root_dir, "data", "index", "character_index.json")
+    with open(idx_path, encoding="utf-8") as f:
+        idx = json.load(f)
+
+    common_chars = idx["common_characters"]
+    char_map = idx["character_map"]
+    calligraphers = idx["calligraphers"]
+
+    paths_by_cal = {cal: [] for cal in calligraphers}
+    for ch in common_chars:
+        entries = char_map.get(ch, {})
+        for cal in calligraphers:
+            for e in entries.get(cal, []):
+                img_path = os.path.join(root_dir, "Fonts", "my_fonts", e["font_id"], e["filename"])
+                if os.path.exists(img_path):
+                    paths_by_cal[cal].append(img_path)
+
+    return paths_by_cal, common_chars
+
+
+def run_style_analysis(max_samples=None, use_common_chars_only=True):
     """Execute complete calligraphy style analysis workflow"""
     config = get_config()
     loader = FontDataLoader()
@@ -185,6 +268,11 @@ def run_style_analysis(max_samples=None):
     calligraphers_display = {cal['name']: cal['display_name'] for cal in loader.calligraphers}
     TARGET_LEN = config.get('fft', 'target_length', default=50)
 
+    common_char_paths = {}
+    common_chars = []
+    if use_common_chars_only:
+        common_char_paths, common_chars = _load_common_char_paths(os.path.dirname(__file__))
+
     if max_samples is None:
         sample_limit = float('inf')
         sample_note = "All available"
@@ -194,18 +282,30 @@ def run_style_analysis(max_samples=None):
 
     print("\n" + "="*70)
     print(f" Calligraphy Style Fourier Analysis (Samples: {sample_note})")
+    if use_common_chars_only:
+        print(f" 方法：只用 {len(common_chars)} 個所有書法家都寫過的共同字，排除字本身複雜度的干擾")
     print("="*70)
 
     styles_results = {}
+    styles_std = {}
     overall_stats = {}
+    # 同一位書法家可能有多本字帖（例如沈尹默有 4 本），用內部名稱逐一處理，
+    # 但用顯示名稱（中文）彙總——見下方 vecs_by_display，避免後面處理的字帖
+    # 覆蓋掉前面字帖的結果（過去的 bug：直接 styles_results[display_name] = ...
+    # 會讓同一位書法家只剩最後處理的那本字帖，其他本的資料全部被丟棄）
+    vecs_by_display = {}
+    stats_by_display = {}
 
     for name in sorted(calligraphers):
         display_name = calligraphers_display[name]
         print(f"\n 分析: {display_name}")
 
-        info = loader.get_calligrapher_info(name)
-        img_dir = info['image_dir']
-        img_paths = sorted(glob.glob(os.path.join(img_dir, "*.[pj][np]g")))
+        if use_common_chars_only:
+            img_paths = sorted(common_char_paths.get(name, []))
+        else:
+            info = loader.get_calligrapher_info(name)
+            img_dir = info['image_dir']
+            img_paths = sorted(glob.glob(os.path.join(img_dir, "*.[pj][np]g")))
 
         # Limit samples if specified (skip if processing all)
         if max_samples is not None:
@@ -278,20 +378,32 @@ def run_style_analysis(max_samples=None):
                     print(f"   [Warning] {os.path.basename(p)}: {type(e).__name__}")
 
         if all_vecs:
-            avg_vec = np.mean(np.vstack(all_vecs), axis=0)
-            styles_results[display_name] = avg_vec  # 使用中文顯示名稱
-
-            overall_stats[display_name] = {
-                'total_images': len(img_paths),
-                'processed': success_count,
-                'failed': fail_count,
-                'success_rate': success_count / len(img_paths) * 100
-            }
+            # 累加進顯示名稱底下的池子，而不是直接覆蓋——同一位書法家的多本
+            # 字帖，全部圖片的逐張特徵向量會先合併在一起，最後才一次算平均值
+            # 跟標準差，這樣每本字帖依實際圖片數量按比例貢獻，不會有人被蓋掉
+            vecs_by_display.setdefault(display_name, []).extend(all_vecs)
+            s = stats_by_display.setdefault(display_name, {
+                'total_images': 0, 'processed': 0, 'failed': 0, 'books': 0,
+            })
+            s['total_images'] += len(img_paths)
+            s['processed'] += success_count
+            s['failed'] += fail_count
+            s['books'] += 1
 
             print(f"   [OK] 已處理: {success_count}/{len(img_paths)} "
-                  f"(成功率: {overall_stats[display_name]['success_rate']:.1f}%)")
+                  f"(成功率: {success_count / len(img_paths) * 100:.1f}%)")
         else:
             print(f"   [Error] {display_name}: 沒有有效樣本！")
+
+    # 彙總：同一顯示名稱下所有字帖的逐張特徵向量，一次算平均值跟標準差
+    for display_name, vecs in vecs_by_display.items():
+        mat = np.vstack(vecs)
+        styles_results[display_name] = np.mean(mat, axis=0)
+        styles_std[display_name] = np.std(mat, axis=0)
+
+        s = stats_by_display[display_name]
+        s['success_rate'] = s['processed'] / s['total_images'] * 100 if s['total_images'] else 0.0
+        overall_stats[display_name] = s
 
     if not styles_results:
         print("[Error] 無法產生結果！")
@@ -299,7 +411,9 @@ def run_style_analysis(max_samples=None):
 
     # ====== 儲存 JSON 數據（供 Web 互動圖表使用）======
     print("\n 儲存分析數據 (JSON)...")
-    _save_analysis_json(styles_results, config)
+    sample_sizes = {name: s['processed'] for name, s in overall_stats.items()}
+    _save_analysis_json(styles_results, config, styles_std, vecs_by_display,
+                         sample_sizes=sample_sizes, common_char_count=len(common_chars))
 
     # Generate style comparison chart
     print("\n 產生風格比較圖表...")
@@ -341,8 +455,9 @@ def run_style_analysis(max_samples=None):
     max_name_len = max(len(name) for name in overall_stats.keys())
     for name in sorted(overall_stats.keys()):
         stats = overall_stats[name]
+        books_note = f", {stats['books']} 本字帖合併" if stats['books'] > 1 else ""
         print(f"  {name:<{max_name_len}s} : {stats['processed']:3d}/{stats['total_images']:3d} "
-              f"({stats['success_rate']:5.1f}%)")
+              f"({stats['success_rate']:5.1f}%){books_note}")
     print("-" * 70)
 
     print(f"\n 分析完成！")
@@ -368,7 +483,7 @@ if __name__ == "__main__":
             print("範例: py analyze_styles.py 100")
             sys.exit(1)
     else:
-        max_samples = 30
+        max_samples = None  # 預設用共同字方法，樣本數本來就少，不需要再截斷
 
     print("           開始 FFT 風格分析")
     run_style_analysis(max_samples=max_samples)

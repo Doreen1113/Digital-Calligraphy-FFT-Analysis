@@ -76,11 +76,37 @@
     color: var(--text-light);
 }
 
+/* --- 進階篩選：預設收合，避免第一眼就塞滿五種篩選機制 --- */
+.advanced-filters {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-light);
+}
+
+.advanced-filters summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    list-style: none;
+}
+
+.advanced-filters summary::-webkit-details-marker { display: none; }
+.advanced-filters summary::before { content: '▸ '; color: var(--text-muted); }
+.advanced-filters[open] summary::before { content: '▾ '; }
+.advanced-filters[open] summary { margin-bottom: 1rem; color: var(--primary-dark); }
+
 /* --- 第二行控制列 --- */
 .controls-row-secondary {
     margin-top: 1.2rem;
     padding-top: 1rem;
     border-top: 1px dashed var(--border-light);
+}
+
+.controls-row-secondary:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
 }
 
 /* 書法家篩選：帶有彩色 active 背景 */
@@ -250,10 +276,19 @@
     cursor: not-allowed;
 }
 
-/* --- 字元詳情 Popup --- */
+/* --- 字元詳情 Popup ---
+   .modal-content（base.css）本來是給圖片放大燈箱用的，沒有背景色，
+   文字燈箱一般會浮在深色遮罩上。但這個字元詳情彈窗內容是文字為主的
+   卡片（標題、標籤、按鈕），需要自己的卡片背景，不能只靠遮罩顏色。 */
 .char-detail-modal {
     max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
     text-align: center;
+    background: var(--bg-card, #fff);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
 }
 
 .modal-title {

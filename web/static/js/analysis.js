@@ -3,17 +3,8 @@
  * 使用真實 FFT 分析數據（來自 style_features.json）
  */
 
-// 書法家顏色設定
-const CALLIGRAPHER_COLORS = {
-    '智永': { color: '#E63946', light: '#FFE9EA' },
-    '沈尹默': { color: '#457B9D', light: '#E8F1F5' },
-    '顏真卿': { color: '#2A9D8F', light: '#E6F5F3' },
-    '歐陽詢': { color: '#F4A261', light: '#FFF4E8' },
-    '褚遂良': { color: '#9B59B6', light: '#F5EEF8' },
-    '柳公權': { color: '#3498DB', light: '#EBF5FB' },
-    '趙孟頫': { color: '#8B5A2B', light: '#FFF8E1' },
-    '虞世南': { color: '#6A4C93', light: '#F0ECF8' }   // 補齊虞世南（獨立紫色）
-};
+// 書法家識別色：改用 common.js 的 CALLIGRAPHER_COLORS（全站共用單一色盤），
+// 原本這裡自己維護一套顏色，還混進一個不在資料集裡的「褚遂良」
 
 // 特徵圖示（對應 7 個易懂標籤）
 const FEATURE_ICONS = {
@@ -25,6 +16,10 @@ const FEATURE_ICONS = {
     slope: '斜度',
     hf_decay: '衰減'
 };
+
+// 雷達圖預設只顯示 2 位（「顏筋柳骨」是最經典的楷書風格對比），
+// 一次疊 7 條線人眼分不出來，見 docs 討論——由使用者自己勾選要加開幾位
+const DEFAULT_RADAR_CALLIGRAPHERS = ['顏真卿', '柳公權'];
 
 // 全域狀態
 let radarChart = null;
@@ -42,12 +37,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadAllAnalysisData();
     initCalligrapherSelector();
     updateSelectedCount();
+    computeSignalNoiseInfo();
+    renderReliabilityNote();
     initRadarChart();
     initBarChart();
     initSimilarityPicker();
     initFeatureAccordion();
     initStyleOverview();
 });
+
+// ========== 統計顯著性（真正的 ANOVA 檢定，而非土法煉鋼比值）==========
+// p 值：書法家之間的差異是否「真的存在」（不是隨機雜訊）——樣本數夠大時，
+// 即使差異很小也可能達到統計顯著，所以 p 值本身不能說明差異有多大。
+// eta^2（效果量）：書法家身份能解釋多少變異比例，才是衡量差異「有多大」
+// 的指標。兩者要一起看：p 顯著但 eta^2 小，代表差異真實存在、但幅度有限。
+let signalNoiseInfo = [];
+
+function computeSignalNoiseInfo() {
+    signalNoiseInfo = [];
+    const radar = analysisData.radarData;
+    if (!radar || !radar.available || !radar.labels) return;
+    if (!radar.anova_p || !radar.eta_squared) return;
+
+    radar.labels.forEach((label, idx) => {
+        const p = radar.anova_p[idx];
+        const eta2 = radar.eta_squared[idx];
+        signalNoiseInfo.push({
+            label,
+            p,
+            eta2,
+            significant: p < 0.05,
+        });
+    });
+}
+
+function effectSizeTier(eta2) {
+    // Cohen 慣例：0.01 小、0.06 中、0.14 大
+    if (eta2 >= 0.14) return { tier: 'large', text: '大' };
+    if (eta2 >= 0.06) return { tier: 'medium', text: '中' };
+    if (eta2 >= 0.01) return { tier: 'small', text: '小' };
+    return { tier: 'negligible', text: '微乎其微' };
+}
+
+function renderReliabilityNote() {
+    const el = document.getElementById('reliabilityNote');
+    if (!el) return;
+
+    if (signalNoiseInfo.length === 0) {
+        el.innerHTML = '';
+        return;
+    }
+
+    const sigCount = signalNoiseInfo.filter(f => f.significant).length;
+
+    el.innerHTML = `
+        <div class="reliability-header">
+            <span class="reliability-icon">📐</span>
+            <span>統計檢定：${signalNoiseInfo.length} 個特徵中有 <strong>${sigCount}</strong> 個達統計顯著（p&lt;0.05），但效果量都偏小——差異真實存在，幅度有限。
+            <a href="/analysis/methodology" class="inline-link">查看詳細數據 →</a></span>
+        </div>
+    `;
+}
 
 // ========== 資料載入 ==========
 async function loadAllAnalysisData() {
@@ -67,10 +117,14 @@ async function loadAllAnalysisData() {
         // 提取書法家列表
         if (radarRes && radarRes.available && radarRes.calligraphers) {
             analysisData.allCalligraphers = radarRes.calligraphers;
-            analysisData.selectedCalligraphers = [...radarRes.calligraphers];
+            analysisData.selectedCalligraphers = radarRes.calligraphers.filter(c => DEFAULT_RADAR_CALLIGRAPHERS.includes(c));
         } else if (simRes && simRes.available && simRes.calligraphers) {
             analysisData.allCalligraphers = simRes.calligraphers;
-            analysisData.selectedCalligraphers = [...simRes.calligraphers];
+            analysisData.selectedCalligraphers = simRes.calligraphers.filter(c => DEFAULT_RADAR_CALLIGRAPHERS.includes(c));
+        }
+        // 保險：萬一預設名單跟資料對不上（例如資料集之後換了書法家），至少選 2 位，不要空白一片
+        if (analysisData.selectedCalligraphers.length === 0 && analysisData.allCalligraphers.length > 0) {
+            analysisData.selectedCalligraphers = analysisData.allCalligraphers.slice(0, 2);
         }
 
         // 提取特徵資料
@@ -108,8 +162,9 @@ function initCalligrapherSelector() {
     analysisData.allCalligraphers.forEach(cal => {
         const colors = CALLIGRAPHER_COLORS[cal] || { color: '#8B5A2B', light: '#FFF8E1' };
 
+        const isDefaultActive = analysisData.selectedCalligraphers.includes(cal);
         const toggle = document.createElement('label');
-        toggle.className = 'cal-toggle active';
+        toggle.className = isDefaultActive ? 'cal-toggle active' : 'cal-toggle';
         toggle.style.setProperty('--cal-color', colors.color);
         toggle.style.setProperty('--cal-color-light', colors.light);
         toggle.innerHTML = `
@@ -381,6 +436,11 @@ function showSimilarityDetail(cal1, cal2, similarity, i, j) {
     const features2 = analysisData.calligrapherFeatures[cal2];
     const labels = analysisData.radarData?.labels || [];
 
+    const color1 = CALLIGRAPHER_COLORS[cal1]?.color || '#888';
+    const color2 = CALLIGRAPHER_COLORS[cal2]?.color || '#888';
+
+    // 兩條迷你長條堆疊呈現每個特徵——長條本身的長度就是數值，比在一條空軌道上
+    // 放兩個點更直接，也不會有空蕩蕩的灰色軌道；數字固定寬度、靠右對齊，不會參差不齊
     let comparisonHtml = '';
     if (features1 && features2 && labels.length > 0) {
         const vals1 = Array.isArray(features1) ? features1 : Object.values(features1);
@@ -388,22 +448,24 @@ function showSimilarityDetail(cal1, cal2, similarity, i, j) {
 
         comparisonHtml = '<div class="detail-comparison">';
         labels.forEach((label, idx) => {
-            const v1 = vals1[idx] || 0;
-            const v2 = vals2[idx] || 0;
-            const diff = Math.abs(v1 - v2);
-            let diffIcon;
-            if (diff < 0.15) diffIcon = '≈';
-            else if (diff < 0.4) diffIcon = '~';
-            else diffIcon = '≠';
+            const v1 = Math.max(0, Math.min(1, vals1[idx] || 0));
+            const v2 = Math.max(0, Math.min(1, vals2[idx] || 0));
 
             comparisonHtml += `
-                <div class="comparison-item">
-                    <span class="comparison-feature">${escapeHtml(label)}</span>
-                    <span class="comparison-values">
-                        <span class="cmp-bar" style="width:${Math.round(v1*100)}%; background:${CALLIGRAPHER_COLORS[cal1]?.color || '#888'}"></span>
-                        <span class="cmp-bar" style="width:${Math.round(v2*100)}%; background:${CALLIGRAPHER_COLORS[cal2]?.color || '#888'}"></span>
-                    </span>
-                    <span class="comparison-diff">${diffIcon}</span>
+                <div class="comparison-group">
+                    <div class="comparison-feature">${escapeHtml(label)}</div>
+                    <div class="comparison-row">
+                        <span class="comparison-bar-row">
+                            <span class="comparison-bar-fill" style="width:${v1 * 100}%; background:${color1}"></span>
+                        </span>
+                        <span class="comparison-val">${Math.round(v1 * 100)}%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-bar-row">
+                            <span class="comparison-bar-fill" style="width:${v2 * 100}%; background:${color2}"></span>
+                        </span>
+                        <span class="comparison-val">${Math.round(v2 * 100)}%</span>
+                    </div>
                 </div>
             `;
         });
@@ -413,13 +475,12 @@ function showSimilarityDetail(cal1, cal2, similarity, i, j) {
     container.innerHTML = `
         <div class="detail-header">
             <div class="detail-title">${escapeHtml(cal1)} vs ${escapeHtml(cal2)}</div>
-            <div class="detail-similarity ${simClass}">${pct}%</div>
-            <div class="detail-label">${simText}</div>
+            <div class="detail-label ${simClass}">${simText}</div>
         </div>
         ${comparisonHtml}
         <div class="detail-legend">
-            <span style="color:${CALLIGRAPHER_COLORS[cal1]?.color || '#888'}">■ ${escapeHtml(cal1)}</span>
-            <span style="color:${CALLIGRAPHER_COLORS[cal2]?.color || '#888'}">■ ${escapeHtml(cal2)}</span>
+            <span style="color:${color1}">■ ${escapeHtml(cal1)}</span>
+            <span style="color:${color2}">■ ${escapeHtml(cal2)}</span>
         </div>
     `;
 }
@@ -528,11 +589,6 @@ function initStyleOverview() {
             traits: ['結構嚴謹', '筆畫勁健', '法度森嚴'],
             summary: '歐陽詢創「歐體」，以結構嚴謹、筆畫剛勁著稱，是楷書四大家之首。'
         },
-        '褚遂良': {
-            dynasty: '唐代',
-            traits: ['筆勢婉轉', '結構秀麗', '風格清雅'],
-            summary: '褚遂良書法婉媚清麗，筆勢流暢，被譽為「美人嬋娟」。'
-        },
         '柳公權': {
             dynasty: '唐代',
             traits: ['骨力勁健', '結構緊密', '筆畫挺拔'],
@@ -619,11 +675,15 @@ function initBarChart() {
         return;
     }
 
-    // 生成特徵選擇按鈕
-    controls.innerHTML = labels.map((label, idx) =>
-        `<button class="bar-feat-btn ${idx === 0 ? 'active' : ''}"
-                 onclick="selectBarFeature(${idx})">${escapeHtml(label)}</button>`
-    ).join('') + `<p class="bar-note">📊 數值為各書法家在此特徵的相對位置（0% = 此群體中最低，100% = 最高），反映風格傾向，並非品質評分</p>`;
+    // 生成特徵選擇按鈕：每個都標出效果量等級（小/中/大），而不是單純的
+    // 及格/不及格警告——全部特徵都達統計顯著，差別在於效果量大小
+    controls.innerHTML = labels.map((label, idx) => {
+        const info = signalNoiseInfo[idx];
+        const tier = info ? effectSizeTier(info.eta2) : null;
+        const badge = tier ? ` <span class="effect-badge effect-${tier.tier}" title="效果量 η²=${info.eta2.toFixed(3)}">η²${tier.text}</span>` : '';
+        return `<button class="bar-feat-btn ${idx === 0 ? 'active' : ''}"
+                 onclick="selectBarFeature(${idx})">${escapeHtml(label)}${badge}</button>`;
+    }).join('') + `<p class="bar-note">📊 數值為各書法家在此特徵的相對位置（0% = 此群體中最低，100% = 最高），反映風格傾向，並非品質評分。η² 標籤顯示該特徵的統計效果量（書法家身份能解釋多少變異）</p>`;
 
     // 確保 canvas 存在
     if (!wrap.querySelector('canvas')) {
@@ -653,7 +713,10 @@ function drawBarChart(featureIdx) {
     const labels = analysisData.radarData?.labels;
     if (!features || !labels) return;
 
-    const cals = analysisData.selectedCalligraphers.filter(c => features[c]);
+    // 長條圖固定顯示全部書法家（不受雷達圖上方的篩選器影響）——雷達圖疊超過
+    // 3~4 條線人眼會分不出來，所以雷達圖預設只選 2 位，但長條圖是逐一比較
+    // 單一維度，本來就是全部書法家一起看才有意義，兩者的最佳呈現方式不同。
+    const cals = analysisData.allCalligraphers.filter(c => features[c]);
     if (cals.length === 0) return;
 
     const values = cals.map(cal => {

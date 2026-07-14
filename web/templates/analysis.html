@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/analysis.css?v=9">
+<link rel="stylesheet" href="/static/css/analysis.css?v=17">
 <!-- Chart.js for interactive charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
 
 {% block content %}
 <section class="page-header">
-    <h1 class="page-title">書法風格 DNA</h1>
-    <p class="page-subtitle">用數學方式解析筆法差異，量化大師之間的風格距離</p>
+    <h1 class="page-title">書法風格特徵探索</h1>
+    <p class="page-subtitle">用傅立葉描述子量化 7 個頻譜特徵，比較書法家之間經統計檢定的風格差異</p>
 </section>
 
-<!-- 說明卡 -->
+<!-- 說明卡（精簡版，完整方法論另開頁面） -->
 <div class="dna-intro card">
     <div class="dna-intro-icon">🔬</div>
     <div class="dna-intro-text">
-        <strong>什麼是風格 DNA？</strong>
-        透過傅立葉描述子（FFT）提取每位書法家字跡的 7 個特徵維度，
-        包含筆劃密度（低/中/高頻）、重心位置、筆畫比例、傾斜度與衰減率，
-        以數字客觀呈現每位大師的獨特風格指紋。
+        <strong>這是什麼？</strong>
+        用傅立葉描述子（FFT）從每位書法家的共同字裡萃取 7 個頻譜特徵，統計檢定顯示差異真實存在、但幅度不大。
+        <a href="/analysis/methodology" class="inline-link">完整方法論與統計數據 →</a>
     </div>
 </div>
+
+<!-- 統計可信度提醒（精簡版） -->
+<div class="reliability-note" id="reliabilityNote"></div>
 
 <!-- 分析狀態 -->
 <div id="analysisStatus"></div>
@@ -32,6 +34,7 @@
         <h3 class="card-title">選擇書法家 <span class="badge" id="selectedCount">0/0</span></h3>
         <button class="btn btn-sm btn-secondary" id="selectAllToggle" onclick="toggleSelectAllCal()">全選</button>
     </div>
+    <p class="section-desc">用於下方雷達圖——建議一次比較 2~4 位，疊太多條線會看不清楚</p>
     <div class="cal-toggle-group" id="calToggles">
         <div class="loading" style="min-height:50px"></div>
     </div>
@@ -43,7 +46,7 @@
         <div class="card-title-row">
             <div>
                 <h3 class="card-title">風格特徵雷達圖</h3>
-                <p class="section-desc">滑鼠懸停查看詳細數值，點擊圖例可隱藏/顯示書法家</p>
+                <p class="section-desc">預設顯示「顏筋柳骨」的經典對比，可在上方勾選其他書法家加入比較。數值為正規化後的相對排名，非絕對品質評分</p>
             </div>
         </div>
         <div class="radar-container" id="radarContainer">
@@ -56,7 +59,7 @@
 <section class="analysis-section">
     <div class="card">
         <h3 class="card-title">各書法家特徵對比</h3>
-        <p class="section-desc">選擇一個維度，橫向比較各書法家的特徵數值</p>
+        <p class="section-desc">選擇一個維度，橫向比較全部書法家的特徵數值（固定顯示全部，不受上方篩選器影響）</p>
         <div class="bar-controls" id="barControls">
             <div class="loading" style="min-height:40px"></div>
         </div>
@@ -85,7 +88,7 @@
             </div>
             <div class="cal-vs-col">
                 <div class="cal-vs-score" id="calVsScore">—</div>
-                <div class="cal-vs-label">相似度</div>
+                <div class="cal-vs-label">整體相似度</div>
             </div>
             <div class="cal-pick-col">
                 <div class="cal-pick-label">書法家 B</div>
@@ -104,17 +107,6 @@
     </div>
 </section>
 
-<!-- 7 維特徵說明（互動式手風琴） -->
-<section class="analysis-section">
-    <div class="card">
-        <h3 class="card-title">7 維特徵解讀</h3>
-        <p class="section-desc">點擊展開查看每個特徵的詳細說明與書法意義</p>
-        <div class="feature-accordion" id="featureAccordion">
-            <div class="loading" style="min-height:200px"></div>
-        </div>
-    </div>
-</section>
-
 <!-- 書法家風格總覽 -->
 <section class="analysis-section">
     <div class="card">
@@ -128,5 +120,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/analysis.js?v=9"></script>
+<script src="/static/js/analysis.js?v=18"></script>
 {% endblock %}

@@ -2,6 +2,39 @@
  * 書法風格分析系統 - 共用 JavaScript 工具
  */
 
+// === 書法家識別色（全站共用單一色盤，同一位書法家在任何頁面顏色都一致）===
+// 7 色仿國畫顏料命名，經 dataviz 驗證器檢查過色盲安全性（CVD ΔE、明度帶、飽和度下限、
+// 對比度皆通過），固定順序指派給書法家、不循環使用。數值跟 base.css 的 --pigment-1~7
+// 一致，這裡用 JS 常數是因為 Canvas/Chart.js 畫圖時無法直接讀 CSS 變數。
+const CALLIGRAPHER_COLORS = {
+    '智永':   { color: '#C6242E', light: '#FBE7E8' }, // 硃砂紅
+    '歐陽詢': { color: '#A6790A', light: '#F6EDD9' }, // 藤黃
+    '虞世南': { color: '#1F7A4D', light: '#DFF0E7' }, // 石綠
+    '顏真卿': { color: '#0B849E', light: '#DCF0F3' }, // 石青
+    '柳公權': { color: '#2A5FB0', light: '#E1E9F7' }, // 靛藍
+    '趙孟頫': { color: '#9C2E7A', light: '#F3DFED' }, // 紫檀
+    '沈尹默': { color: '#8C4A0A', light: '#F1E2D2' }, // 赭石
+};
+
+// === 捲動淡入（給靜態渲染區塊用，見 base.css .reveal） ===
+document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) {
+        els.forEach(el => el.classList.add('revealed'));
+        return;
+    }
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+    els.forEach(el => io.observe(el));
+});
+
 // === API 請求工具 ===
 
 /**

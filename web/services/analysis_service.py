@@ -71,7 +71,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '衡量字的整體骨架是否端正工整，來自傅立葉低頻能量。',
         'high_meaning': '字形骨架穩固、間架方正',
         'low_meaning': '字形較為自由靈動、不拘一格',
-        'calligraphy_meaning': '歐體、柳體等楷書此項較高；行書草書較低',
+        'calligraphy_meaning': '楷書理論上此項通常較高，但本資料集測得的書法家間差異幅度不大（見統計檢定）',
     },
     'mid_freq': {
         'name': '筆畫變化度',
@@ -79,7 +79,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '衡量筆畫粗細、轉折、提按的豐富程度，來自傅立葉中頻能量。',
         'high_meaning': '提按明顯、筆勢變化豐富',
         'low_meaning': '用筆均勻穩定、變化較少',
-        'calligraphy_meaning': '顏真卿肥瘦對比大此項高；歐陽詢用筆較均勻此項低',
+        'calligraphy_meaning': '肥瘦對比大的筆法理論上此項較高，但本資料集測得的書法家間差異幅度不大',
     },
     'high_freq': {
         'name': '細節豐富度',
@@ -87,7 +87,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '衡量飛白、毛邊、牽絲等細微筆觸的多寡，來自傅立葉高頻能量。',
         'high_meaning': '墨色層次多、有飛白與毛邊效果',
         'low_meaning': '線條光滑乾淨、邊緣整齊',
-        'calligraphy_meaning': '碑帖中保留自然書寫質感的此項較高',
+        'calligraphy_meaning': '這是本次分析中書法家間差異最小的一項特徵',
     },
     'centroid': {
         'name': '細節vs結構',
@@ -95,7 +95,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '頻譜能量重心偏向細節端還是結構端，反映整體風格取向。',
         'high_meaning': '重視細節表現（裝飾性強）',
         'low_meaning': '重視整體結構（骨架為主）',
-        'calligraphy_meaning': '行草書重視細節此項高；楷書重視結構此項低',
+        'calligraphy_meaning': '行草書理論上此項較高、楷書較低，但本資料集全為楷書字帖，差異幅度不大',
     },
     'dc_ratio': {
         'name': '字形完整度',
@@ -103,7 +103,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '衡量字的輪廓是否渾然一體，來自直流分量與基頻之比。',
         'high_meaning': '筆畫連貫、字形渾然天成',
         'low_meaning': '筆畫獨立分明、結構清晰',
-        'calligraphy_meaning': '沈尹默此項最高（筆畫連貫），歐陽詢較低（筆畫分明）',
+        'calligraphy_meaning': '本次分析中書法家間差異最小的特徵之一，數值排序僅供參考',
     },
     'slope': {
         'name': '細節保留度',
@@ -111,7 +111,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '高頻能量衰減的平緩程度，反映書寫細節是否被保留下來。',
         'high_meaning': '細膩筆觸完好保存、質感豐富',
         'low_meaning': '細節簡化明顯、線條概括',
-        'calligraphy_meaning': '顏真卿此項最高（細節豐富），智永較低（線條簡潔）',
+        'calligraphy_meaning': '本次分析中書法家間差異相對較大的特徵之一（仍屬小效果量）',
     },
     'hf_decay': {
         'name': '收筆乾淨度',
@@ -119,7 +119,7 @@ _FEATURE_DESCRIPTIONS = {
         'description': '高頻衰減速率——衡量筆觸收尾是否乾脆。',
         'high_meaning': '收筆果斷、筆觸延伸自然',
         'low_meaning': '收筆較為拘謹、速度較慢',
-        'calligraphy_meaning': '沈尹默此項最高（行氣流暢），歐陽詢較低（收筆嚴謹）',
+        'calligraphy_meaning': '本次分析中書法家間差異相對較大的特徵之一（仍屬小效果量）',
     },
 }
 

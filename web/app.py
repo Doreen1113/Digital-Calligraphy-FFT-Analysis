@@ -57,14 +57,18 @@ if fonts_dir.exists():
 # === 訪客統計中介軟體 ===
 _SKIP_PREFIXES = ('/api', '/static', '/fonts', '/output', '/docs', '/redoc', '/openapi', '/favicon',
                   '/robots.txt', '/sitemap.xml')
+_BOT_UA_KEYWORDS = ('bot', 'crawl', 'spider', 'cron-job', 'uptimerobot', 'pingdom',
+                    'monitor', 'wget', 'curl', 'python-requests', 'go-http', 'axios', 'libwww')
 
 @app.middleware("http")
 async def stats_middleware(request: Request, call_next):
     """自動記錄 HTML 頁面瀏覽次數與唯一訪客"""
     response = await call_next(request)
     path = request.url.path
-    # 只統計 HTML 頁面請求
-    if not any(path.startswith(p) for p in _SKIP_PREFIXES):
+    ua = request.headers.get("user-agent", "").lower()
+    is_bot = any(k in ua for k in _BOT_UA_KEYWORDS)
+    # 只統計真實使用者的 HTML 頁面請求
+    if not is_bot and not any(path.startswith(p) for p in _SKIP_PREFIXES):
         try:
             from web.services.stats_service import record_page_view, record_visitor
             record_page_view(path)
@@ -88,7 +92,7 @@ async def stats_middleware(request: Request, call_next):
 # === Favicon ===
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    icon_path = PROJECT_ROOT / "icon.png"
+    icon_path = PROJECT_ROOT / "icon_2.png"
     if icon_path.exists():
         return FileResponse(str(icon_path), media_type="image/png")
     return Response(status_code=204)

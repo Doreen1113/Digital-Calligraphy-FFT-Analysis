@@ -58,6 +58,12 @@
     transform: scale(1.08);
 }
 
+.quick-char-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
 /* --- 主要顯示卡 --- */
 .stroke-main { margin-bottom: 1.5rem; }
 
@@ -78,12 +84,96 @@
 
 /* --- 畫布容器 --- */
 .stroke-canvas-wrap {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.stroke-ink-wash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 130%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(91,58,41,0.09) 0%, rgba(198,40,40,0.05) 55%, transparent 75%);
+    filter: blur(4px);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+/* 筆畫粗糙化：套用 inkRough 濾鏡（見 stroke_order.html 內的 SVG filter 定義），
+   把向量筆畫邊緣揉粗糙，看起來比較像墨水滲進紙裡，而不是印刷體般過於工整的線條 */
+#strokeTarget svg,
+#inkRevealTarget svg {
+    filter: url(#inkRough);
+}
+
+/* --- 真跡漸進浮現 --- */
+.ink-reveal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.ink-cal-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.ink-cal-btn {
+    padding: 0.35rem 0.8rem;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.ink-cal-btn:hover {
+    border-color: var(--primary);
+}
+
+.ink-cal-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.ink-reveal-canvas-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#inkRevealTarget svg {
+    width: 220px;
+    height: 220px;
+    background: #FAFAF8;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius);
+}
+
+.ink-piece {
+    fill: #231F1C;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: inkPieceReveal 0.5s ease forwards;
+}
+
+@keyframes inkPieceReveal {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
 #strokeTarget {
+    position: relative;
     border: 2px solid var(--border-light);
     border-radius: var(--radius);
     background: #FAFAF8;
@@ -96,6 +186,13 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.6rem;
+}
+
+.stroke-controls-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: -0.3rem;
 }
 
 /* --- 速度控制 --- */

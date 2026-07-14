@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/explorer.css?v=4">
+<link rel="stylesheet" href="/static/css/explorer.css?v=6">
 {% endblock %}
 
 {% block content %}
@@ -37,35 +37,38 @@
             </div>
         </div>
 
-        <!-- 第二行：依書法家篩選 + 排序 -->
-        <div class="controls-row controls-row-secondary">
-            <div class="filter-group">
-                <label>依書法家篩選</label>
-                <div class="filter-btns cal-filter-btns" id="calFilterBtns">
-                    <!-- 動態加載 -->
+        <!-- 進階篩選（依書法家、排序、部首）：預設收合，避免一次塞太多控制項 -->
+        <details class="advanced-filters">
+            <summary>進階篩選：依書法家、排序方式、部首</summary>
+
+            <div class="controls-row controls-row-secondary">
+                <div class="filter-group">
+                    <label>依書法家篩選</label>
+                    <div class="filter-btns cal-filter-btns" id="calFilterBtns">
+                        <!-- 動態加載 -->
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>排序方式</label>
+                    <div class="filter-btns sort-btns" id="sortBtns">
+                        <button class="filter-btn active" onclick="setSortOrder(this, 'default')">預設</button>
+                        <button class="filter-btn" onclick="setSortOrder(this, 'freq')">字頻序 ↓</button>
+                        <button class="filter-btn" onclick="setSortOrder(this, 'strokes_asc')">筆畫少→多</button>
+                        <button class="filter-btn" onclick="setSortOrder(this, 'strokes_desc')">筆畫多→少</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="filter-group">
-                <label>排序方式</label>
-                <div class="filter-btns sort-btns" id="sortBtns">
-                    <button class="filter-btn active" onclick="setSortOrder(this, 'default')">預設</button>
-                    <button class="filter-btn" onclick="setSortOrder(this, 'freq')">字頻序 ↓</button>
-                    <button class="filter-btn" onclick="setSortOrder(this, 'strokes_asc')">筆畫少→多</button>
-                    <button class="filter-btn" onclick="setSortOrder(this, 'strokes_desc')">筆畫多→少</button>
+            <div class="controls-row controls-row-secondary">
+                <div class="filter-group radical-filter-group">
+                    <label>依部首篩選 <span class="radical-count-badge" id="radicalCountBadge"></span></label>
+                    <div class="filter-btns radical-filter-btns" id="radicalFilterBtns">
+                        <!-- 動態加載 -->
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- 第三行：依部首篩選 -->
-        <div class="controls-row controls-row-secondary">
-            <div class="filter-group radical-filter-group">
-                <label>依部首篩選 <span class="radical-count-badge" id="radicalCountBadge"></span></label>
-                <div class="filter-btns radical-filter-btns" id="radicalFilterBtns">
-                    <!-- 動態加載 -->
-                </div>
-            </div>
-        </div>
+        </details>
 
         <!-- 統計 -->
         <div class="stats-bar" id="statsBar">
@@ -100,5 +103,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/explorer.js?v=3"></script>
+<script src="/static/js/explorer.js?v=4"></script>
 {% endblock %}

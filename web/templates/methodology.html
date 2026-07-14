@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/analysis.css?v=17">
+<link rel="stylesheet" href="/static/css/methodology.css?v=1">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <a href="/analysis" class="back-link">← 回到風格特徵探索</a>
+    <h1 class="page-title">分析方法與統計檢定</h1>
+    <p class="page-subtitle">「書法風格特徵探索」頁面背後的完整方法論，給想深入了解數字怎麼算出來的人看</p>
+</section>
+
+<!-- 資料與方法 -->
+<section class="analysis-section">
+    <div class="card">
+        <h3 class="card-title">資料與方法</h3>
+        <p class="about-text">
+            每個字先經過 Otsu 二值化，取出筆畫輪廓，再對每一筆畫做傅立葉描述子（FFT）轉換，
+            從頻譜中萃取 7 個特徵維度（低/中/高頻能量、頻譜重心、直流分量比例、頻譜斜率、高頻衰減率）。
+            一個字通常有多筆畫，取所有筆畫特徵的平均值代表這個字。
+        </p>
+        <p class="about-text">
+            <strong>為什麼只用共同字？</strong>
+            不同字本身的筆畫多寡、結構複雜度差異很大，如果把每位書法家寫過的「所有字」直接混在一起平均，
+            會把「字的差異」跟「書法家個人風格的差異」混淆在一起。
+            因此改用 <strong id="commonCharCount">30</strong> 個所有書法家都寫過的共同字，
+            只比較同樣的字、不同人寫的版本，才能真正反映風格差異，而非字本身的差異。
+        </p>
+        <div id="sampleSizeTable" class="sample-table">
+            <div class="loading" style="min-height:80px"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 統計檢定結果 -->
+<section class="analysis-section">
+    <div class="card">
+        <h3 class="card-title">統計檢定結果（ANOVA）</h3>
+        <p class="section-desc">
+            對每個特徵做單因子 ANOVA（分組依據＝書法家），檢定書法家之間的差異是否為真實訊號而非隨機雜訊。
+        </p>
+        <div id="statsTable" class="stats-table-wrap">
+            <div class="loading" style="min-height:120px"></div>
+        </div>
+        <p class="about-text stats-explain">
+            <strong>p 值</strong>：差異是否「真的存在」，不是隨機雜訊——樣本數夠大時，即使差異很小也可能達到統計顯著，
+            所以 p 值本身無法說明差異「有多大」。<br>
+            <strong>效果量 η²（eta squared）</strong>：書法家身份能解釋多少變異比例，才是衡量差異大小的指標。
+            依 Cohen 慣例：0.01 = 小、0.06 = 中、0.14 = 大。<br>
+            兩者要一起看：本頁 7 個特徵全部達統計顯著，但效果量都偏小——代表差異是真實的，但幅度有限，
+            書法家身份大約只能解釋每個特徵 2%～4% 的變化。
+        </p>
+    </div>
+</section>
+
+<!-- 7 維特徵解讀 -->
+<section class="analysis-section">
+    <div class="card">
+        <h3 class="card-title">7 維特徵解讀</h3>
+        <p class="section-desc">點擊展開查看每個特徵的技術定義與書法意義</p>
+        <div class="feature-accordion" id="featureAccordion">
+            <div class="loading" style="min-height:200px"></div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/methodology.js?v=1"></script>
+{% endblock %}

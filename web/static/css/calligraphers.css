@@ -66,97 +66,98 @@
     margin-top: 0.15rem;
 }
 
-/* --- 書法家卡片網格 --- */
-.cal-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+/* --- 書法家介紹（編輯式版面：大圖 + 文字，單雙數交錯左右） --- */
+.cal-profiles {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
     margin-bottom: 2rem;
 }
 
-.cal-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+.cal-profile {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.cal-profile:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.cal-profile.reverse {
+    flex-direction: row-reverse;
+}
+
+/* --- 視覺區：大圖 + 縮圖列 --- */
+.cal-profile-visual {
+    flex: 0 0 320px;
+}
+
+.cal-profile-hero {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
-    overflow: hidden;
     box-shadow: var(--shadow);
+    cursor: pointer;
     transition: var(--transition);
 }
 
-.cal-card:hover {
+.cal-profile-hero:hover {
     box-shadow: var(--shadow-hover);
-    transform: translateY(-2px);
 }
 
-/* --- 卡片頭部（書法家名稱區） --- */
-.cal-card-header {
-    color: #fff;
-    padding: 1.25rem 1.5rem;
+.cal-profile-thumbs {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
 }
 
-.cal-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    font-weight: 700;
-    font-family: "Noto Serif TC", serif;
-    flex-shrink: 0;
-    border: 2px solid rgba(255,255,255,0.4);
+.cal-sample-img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-light);
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.cal-header-info {
+.cal-sample-img:hover {
+    border-color: var(--cal-accent, var(--primary));
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* --- 文字區 --- */
+.cal-profile-text {
     flex: 1;
     min-width: 0;
+    border-top: 3px solid var(--cal-accent, var(--primary));
+    padding-top: 1rem;
 }
 
-.cal-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.15rem;
-}
-
-.cal-life {
-    display: block;
+.cal-profile-eyebrow {
     font-size: 0.8rem;
-    opacity: 0.85;
+    font-weight: 600;
+    color: var(--cal-accent, var(--primary));
+    letter-spacing: 0.03em;
     margin-bottom: 0.3rem;
 }
 
-.cal-badges {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-dynasty {
-    background: rgba(255,255,255,0.25);
-    color: #fff;
-}
-
-.badge-style {
-    background: rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.9);
-}
-
-/* --- 卡片主體 --- */
-.cal-card-body {
-    padding: 1.25rem 1.5rem;
+.cal-profile-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-family: "Noto Serif TC", serif;
+    margin-bottom: 0.7rem;
 }
 
 /* 風格標籤 */
@@ -178,83 +179,43 @@
     border: 1px solid var(--border-light);
 }
 
-.cal-trait.fft-high {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-color: #c8e6c9;
-}
-
-.cal-trait.fft-low {
-    background: #fff3e0;
-    color: #e65100;
-    border-color: #ffe0b2;
-}
-
 /* 傳記文字 */
 .cal-description {
     color: var(--text-light);
-    margin-bottom: 0.75rem;
-    line-height: 1.7;
-    font-size: 0.92rem;
+    margin-bottom: 0.9rem;
+    line-height: 1.75;
+    font-size: 0.94rem;
 }
 
-/* 代表作/影響 */
-.cal-info-grid {
-    margin-bottom: 0.75rem;
-}
-
-.cal-info-item {
-    display: flex;
-    gap: 0.5rem;
-    align-items: baseline;
-    padding: 0.35rem 0;
+/* 代表作/影響/字帖/收錄 */
+.cal-facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 0.9rem;
+    margin: 0 0 0.9rem;
     font-size: 0.88rem;
-    line-height: 1.5;
-    border-bottom: 1px dashed var(--border-light);
 }
 
-.cal-info-item:last-child {
-    border-bottom: none;
-}
-
-.cal-info-label {
+.cal-facts dt {
     flex-shrink: 0;
     font-weight: 600;
     color: var(--primary-dark);
     font-size: 0.82rem;
     background: var(--bg-light);
-    padding: 0.1rem 0.45rem;
+    padding: 0.1rem 0.5rem;
     border-radius: 4px;
+    height: fit-content;
 }
 
-/* 統計數字 */
-.cal-stats {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-    padding: 0.75rem 0;
-    border-top: 1px solid var(--border-light);
-    border-bottom: 1px solid var(--border-light);
+.cal-facts dd {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text);
 }
 
-.cal-stat {
-    text-align: center;
-}
-
-.cal-stat-num {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--cal-accent, var(--primary));
-}
-
-.cal-stat-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-/* --- FFT 風格指紋（迷你條形圖） --- */
+/* --- FFT 風格指紋（收合在 details 裡，技術細節不搶版面） --- */
 .cal-fft-section {
-    margin: 1rem 0;
+    margin: 0.75rem 0;
     padding: 0.75rem;
     background: var(--bg-light);
     border-radius: var(--radius);
@@ -262,10 +223,19 @@
 }
 
 .cal-fft-title {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
-    color: var(--primary-dark);
-    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    list-style: none;
+}
+
+.cal-fft-title::-webkit-details-marker { display: none; }
+.cal-fft-title::before { content: '▸ '; }
+.cal-fft-section[open] .cal-fft-title::before { content: '▾ '; }
+
+.cal-fft-bars {
+    margin-top: 0.6rem;
 }
 
 .cal-fft-bars {
@@ -329,29 +299,7 @@
     gap: 0.35rem;
 }
 
-.cal-sample-img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid var(--border-light);
-    background: #f9f9f9;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.cal-sample-img:hover {
-    border-color: var(--cal-accent, var(--primary));
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
 /* --- 操作按鈕 --- */
-.cal-actions {
-    margin-top: 0.75rem;
-    text-align: right;
-}
-
 .cal-action-btn {
     display: inline-block;
     padding: 0.45rem 1rem;
@@ -372,12 +320,15 @@
 
 /* --- 響應式 --- */
 @media (max-width: 900px) {
-    .cal-grid {
-        grid-template-columns: 1fr;
+    .cal-profile,
+    .cal-profile.reverse {
+        flex-direction: column;
     }
 
-    .cal-samples {
-        grid-template-columns: repeat(6, 1fr);
+    .cal-profile-visual {
+        flex: none;
+        width: 100%;
+        max-width: 280px;
     }
 
     .fft-bar-label {
@@ -387,19 +338,6 @@
 }
 
 @media (max-width: 600px) {
-    .cal-card-header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .cal-badges {
-        justify-content: center;
-    }
-
-    .cal-samples {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
     .timeline-track {
         gap: 0;
     }
@@ -414,16 +352,8 @@
 }
 
 @media (max-width: 480px) {
-    .cal-name {
-        font-size: 1.2rem;
-    }
-
-    .cal-stats {
-        gap: 0.75rem;
-    }
-
-    .cal-stat-num {
-        font-size: 1.1rem;
+    .cal-profile-name {
+        font-size: 1.4rem;
     }
 
     .timeline-node {

@@ -7,16 +7,8 @@
  * - 連結到 explorer 頁
  */
 
-// 書法家顏色
-const CAL_COLORS = {
-    '智永':   '#E63946',
-    '沈尹默': '#457B9D',
-    '顏真卿': '#2A9D8F',
-    '歐陽詢': '#F4A261',
-    '趙孟頫': '#8B5A2B',
-    '虞世南': '#6A4C93',
-    '柳公權': '#3498DB'
-};
+// 書法家識別色：改用 common.js 的 CALLIGRAPHER_COLORS（全站共用單一色盤），
+// 避免這個檔案自己維護一套跟其他頁面不一致的顏色
 
 // 書法家詳細傳記（擴充版）
 const CAL_BIO = {
@@ -116,7 +108,7 @@ async function loadCalligraphers() {
         if (subtitle) {
             const numMap = {1:'一',2:'二',3:'三',4:'四',5:'五',6:'六',7:'七',8:'八',9:'九',10:'十'};
             const count = numMap[uniqueCals.length] || uniqueCals.length;
-            subtitle.textContent = `收錄${count}位不同時代的楷書大師，透過 FFT 分析探索他們的風格特色`;
+            subtitle.textContent = `收錄${count}位跨越隋唐至近代的楷書大師，比對他們的傳世碑帖與筆跡數據`;
         }
 
         // 建立時代軸（去重後）
@@ -124,12 +116,12 @@ async function loadCalligraphers() {
 
         // 建立書法家卡片
         grid.innerHTML = '';
-        for (const cal of uniqueCals) {
-            const card = buildCalCard(cal);
+        uniqueCals.forEach((cal, idx) => {
+            const card = buildCalCard(cal, idx);
             grid.appendChild(card);
             // 載入所有字帖的範例圖片
             loadSampleImagesMulti(cal.bookIds, cal.id);
-        }
+        });
 
     } catch (err) {
         grid.innerHTML = `<div class="error-msg">載入失敗: ${escapeHtml(err.message)}</div>`;
@@ -178,37 +170,30 @@ function buildDynastyTimeline(cals) {
 }
 
 /**
- * 建立書法家卡片
+ * 建立書法家介紹區塊（編輯式排版：大圖 + 文字，單雙數交錯左右）
  */
-function buildCalCard(cal) {
-    const card = document.createElement('div');
-    card.className = 'cal-card';
+function buildCalCard(cal, idx) {
+    const card = document.createElement('article');
+    card.className = `cal-profile${idx % 2 === 1 ? ' reverse' : ''}`;
     card.id = `cal-${cal.id}`;
 
-    const color = CAL_COLORS[cal.display_name] || '#8B5A2B';
+    const color = (CALLIGRAPHER_COLORS[cal.display_name] || {}).color || '#8B5A2B';
     card.style.setProperty('--cal-accent', color);
 
     const bio = CAL_BIO[cal.display_name] || {};
     const traits = bio.traits || [];
     const sf = cal.style_features || null;
 
-    // 風格標籤 HTML
-    let traitsHtml = traits.map(t =>
+    const traitsHtml = traits.map(t =>
         `<span class="cal-trait">${escapeHtml(t)}</span>`
     ).join('');
 
-    // FFT 最強/最弱標籤
-    if (sf) {
-        traitsHtml += `<span class="cal-trait fft-high" title="FFT 最高特徵">▲ ${escapeHtml(sf.strongest.label)}</span>`;
-        traitsHtml += `<span class="cal-trait fft-low" title="FFT 最低特徵">▼ ${escapeHtml(sf.weakest.label)}</span>`;
-    }
-
-    // FFT 風格指紋（迷你條形圖）
+    // FFT 風格指紋（收合在 <details> 裡，避免技術細節搶走傳記內容的版面）
     let fftHtml = '';
     if (sf && sf.feature_labels && sf.feature_values) {
         fftHtml = `
-            <div class="cal-fft-section">
-                <div class="cal-fft-title">FFT 風格指紋</div>
+            <details class="cal-fft-section">
+                <summary class="cal-fft-title">FFT 風格指紋（技術數據）</summary>
                 <div class="cal-fft-bars">
                     ${sf.feature_labels.map((label, i) => {
                         const val = sf.feature_values[i];
@@ -224,65 +209,43 @@ function buildCalCard(cal) {
                         `;
                     }).join('')}
                 </div>
-            </div>
+            </details>
         `;
     }
 
-    // 傳記資訊
-    const birthDeath = bio.birth_death ? `<span class="cal-life">${escapeHtml(bio.birth_death)}</span>` : '';
+    const birthDeath = bio.birth_death || '';
     const bioText = bio.bio || cal.description || '';
-    const masterpiece = bio.masterpiece ? `<div class="cal-info-item"><span class="cal-info-label">代表作</span><span>${escapeHtml(bio.masterpiece)}</span></div>` : '';
-    const influence = bio.influence ? `<div class="cal-info-item"><span class="cal-info-label">影響</span><span>${escapeHtml(bio.influence)}</span></div>` : '';
+    const masterpiece = bio.masterpiece ? `<dt>代表作</dt><dd>${escapeHtml(bio.masterpiece)}</dd>` : '';
+    const influence = bio.influence ? `<dt>影響</dt><dd>${escapeHtml(bio.influence)}</dd>` : '';
 
-    // 字帖標籤（單本或多本）
     const bookNames = cal.bookNames || (cal.book ? [cal.book] : []);
     const booksLabel = bookNames.length > 1
         ? `${bookNames.join('、')}（共 ${bookNames.length} 本）`
         : (bookNames[0] || '');
-    const booksHtml = booksLabel
-        ? `<div class="cal-info-item"><span class="cal-info-label">字帖</span><span>${escapeHtml(booksLabel)}</span></div>`
-        : '';
+    const booksHtml = booksLabel ? `<dt>字帖</dt><dd>${escapeHtml(booksLabel)}</dd>` : '';
+
+    const statsHtml = `<dt>收錄</dt><dd>${cal.total_images || cal.total_chars || '-'} 張圖片・${cal.unique_characters || '-'} 個字</dd>`;
 
     card.innerHTML = `
-        <div class="cal-card-header" style="background:${color}">
-            <div class="cal-avatar">${cal.display_name.charAt(0)}</div>
-            <div class="cal-header-info">
-                <div class="cal-name">${escapeHtml(cal.display_name)}</div>
-                ${birthDeath}
-                <div class="cal-badges">
-                    <span class="badge badge-dynasty">${escapeHtml(cal.dynasty)}</span>
-                    <span class="badge badge-style">${escapeHtml(cal.style)}</span>
-                </div>
-            </div>
+        <div class="cal-profile-visual">
+            <img class="cal-profile-hero" id="hero-${cal.id}" alt="${escapeHtml(cal.display_name)}" loading="lazy">
+            <div class="cal-profile-thumbs" id="samples-${cal.id}"></div>
         </div>
-        <div class="cal-card-body">
+        <div class="cal-profile-text">
+            <div class="cal-profile-eyebrow">${escapeHtml(cal.dynasty)} · ${escapeHtml(cal.style)}${birthDeath ? ' · ' + escapeHtml(birthDeath) : ''}</div>
+            <h3 class="cal-profile-name">${escapeHtml(cal.display_name)}</h3>
             <div class="cal-traits">${traitsHtml}</div>
             <p class="cal-description">${escapeHtml(bioText)}</p>
-            <div class="cal-info-grid">
+            <dl class="cal-facts">
                 ${booksHtml}
                 ${masterpiece}
                 ${influence}
-            </div>
-            <div class="cal-stats">
-                <div class="cal-stat">
-                    <div class="cal-stat-num">${cal.total_images || cal.total_chars || '-'}</div>
-                    <div class="cal-stat-label">圖片數</div>
-                </div>
-                <div class="cal-stat">
-                    <div class="cal-stat-num">${cal.unique_characters || '-'}</div>
-                    <div class="cal-stat-label">字元數</div>
-                </div>
-            </div>
+                ${statsHtml}
+            </dl>
             ${fftHtml}
-            <div class="cal-samples-title">範例字帖</div>
-            <div class="cal-samples" id="samples-${cal.id}">
-                <span style="color:var(--text-muted);font-size:0.85rem">載入中...</span>
-            </div>
-            <div class="cal-actions">
-                <a href="/explorer?calligrapher=${encodeURIComponent(cal.display_name)}" class="cal-action-btn">
-                    探索此書法家的字 →
-                </a>
-            </div>
+            <a href="/explorer?calligrapher=${encodeURIComponent(cal.display_name)}" class="cal-action-btn">
+                探索此書法家的字 →
+            </a>
         </div>
     `;
 
@@ -290,23 +253,33 @@ function buildCalCard(cal) {
 }
 
 /**
- * 載入多本字帖的範例圖片（合併顯示到同一個容器）
+ * 載入多本字帖的範例圖片：第一張放大做視覺主圖（hero），其餘做縮圖列
  * @param {string[]} bookIds   - 字帖 id 列表（可能只有一個）
- * @param {string}   primaryId - 卡片主 id（對應 container id samples-primaryId）
+ * @param {string}   primaryId - 卡片主 id（對應 container id samples-primaryId / hero-primaryId）
  */
 async function loadSampleImagesMulti(bookIds, primaryId) {
+    const hero = document.getElementById(`hero-${primaryId}`);
     const container = document.getElementById(`samples-${primaryId}`);
     if (!container) return;
 
     container.innerHTML = '';
-    const perBook = Math.max(2, Math.ceil(8 / bookIds.length));
+    const perBook = Math.max(2, Math.ceil(9 / bookIds.length));
+    let heroSet = false;
 
     for (const id of bookIds) {
         try {
             const data = await api(`/api/calligrapher/${id}`);
             const samples = (data.sample_images || []).slice(0, perBook);
             const bookLabel = data.book ? `《${data.book}》` : '書法範例';
+
             samples.forEach(url => {
+                if (!heroSet && hero) {
+                    hero.src = url;
+                    hero.title = bookLabel;
+                    hero.onclick = () => openImageModal(url, bookLabel);
+                    heroSet = true;
+                    return;
+                }
                 const img = document.createElement('img');
                 img.src       = url;
                 img.className = 'cal-sample-img';
@@ -320,7 +293,8 @@ async function loadSampleImagesMulti(bookIds, primaryId) {
         } catch (_) { /* 靜默 */ }
     }
 
+    if (hero && !heroSet) hero.style.display = 'none';
     if (!container.hasChildNodes()) {
-        container.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem">暫無範例</span>';
+        container.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem">暫無更多範例</span>';
     }
 }
