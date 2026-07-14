@@ -374,13 +374,24 @@ function initSimilarityPicker() {
     }
 }
 
+// A、B 兩邊不能選同一位書法家——對方已選的那個人，這一邊要停用（變淺灰、不能點）
+function updatePickerDisabled() {
+    document.querySelectorAll('#calPickA .cal-pick-btn').forEach(b => {
+        b.disabled = !!_pickerB && b.dataset.cal === _pickerB;
+    });
+    document.querySelectorAll('#calPickB .cal-pick-btn').forEach(b => {
+        b.disabled = !!_pickerA && b.dataset.cal === _pickerA;
+    });
+}
+
 function selectCalPicker(side, cal, btn) {
     const group = document.getElementById(`calPick${side}`);
-    if (!group) return;
+    if (!group || btn.disabled) return;
     group.querySelectorAll('.cal-pick-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     if (side === 'A') _pickerA = cal;
     else _pickerB = cal;
+    updatePickerDisabled();
     updatePickerComparison();
 }
 
@@ -446,25 +457,17 @@ function showSimilarityDetail(cal1, cal2, similarity, i, j) {
         const vals1 = Array.isArray(features1) ? features1 : Object.values(features1);
         const vals2 = Array.isArray(features2) ? features2 : Object.values(features2);
 
-        comparisonHtml = '<div class="detail-comparison">';
+        comparisonHtml = '<div class="detail-comparison comparison-ring-grid">';
         labels.forEach((label, idx) => {
             const v1 = Math.max(0, Math.min(1, vals1[idx] || 0));
             const v2 = Math.max(0, Math.min(1, vals2[idx] || 0));
 
             comparisonHtml += `
-                <div class="comparison-group">
+                <div class="comparison-tile">
                     <div class="comparison-feature">${escapeHtml(label)}</div>
-                    <div class="comparison-row">
-                        <span class="comparison-bar-row">
-                            <span class="comparison-bar-fill" style="width:${v1 * 100}%; background:${color1}"></span>
-                        </span>
-                        <span class="comparison-val">${Math.round(v1 * 100)}%</span>
-                    </div>
-                    <div class="comparison-row">
-                        <span class="comparison-bar-row">
-                            <span class="comparison-bar-fill" style="width:${v2 * 100}%; background:${color2}"></span>
-                        </span>
-                        <span class="comparison-val">${Math.round(v2 * 100)}%</span>
+                    <div class="comparison-rings">
+                        ${ringSvg(v1, color1)}
+                        ${ringSvg(v2, color2)}
                     </div>
                 </div>
             `;
@@ -635,6 +638,25 @@ function initStyleOverview() {
 }
 
 // ========== 工具函式 ==========
+// 空心圓環（donut）取代長條圖——同樣的資訊，佔用空間小很多，7 個特徵可以排成
+// 一個網格而不是一長串直向列表
+function ringSvg(value, color) {
+    const pct = Math.round(value * 100);
+    const r = 20;
+    const circumference = 2 * Math.PI * r;
+    const arc = Math.max(0, Math.min(1, value)) * circumference;
+    return `
+        <svg class="ring-svg" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--border-light)" stroke-width="5"/>
+            <circle cx="24" cy="24" r="${r}" fill="none" stroke="${color}" stroke-width="5"
+                    stroke-linecap="round"
+                    stroke-dasharray="${arc} ${circumference}"
+                    transform="rotate(-90 24 24)"/>
+            <text x="24" y="25" text-anchor="middle" dominant-baseline="middle">${pct}%</text>
+        </svg>
+    `;
+}
+
 function hexToRgba(hex, alpha) {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
