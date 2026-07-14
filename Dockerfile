@@ -9,22 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# 安裝 Python 依賴
-# 使用 headless 版 OpenCV（不需要 GUI 依賴）
-RUN pip install --no-cache-dir \
-    numpy \
-    opencv-python-headless \
-    matplotlib \
-    pandas \
-    scipy \
-    seaborn \
-    pyyaml \
-    pypinyin \
-    "Pillow>=10.0.0" \
-    fastapi \
-    "uvicorn[standard]" \
-    jinja2 \
-    python-multipart
+# 安裝 Python 依賴：直接用 requirements.txt，不要維護第二份清單——
+# 之前這裡手動列了一份跟 requirements.txt 不同步的套件清單（少了 contrib/ximgproc 需要
+# 的骨架化模組），導致 requirements.txt 改了但正式站沒真的裝到新版本，線上一直是舊行為。
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 複製專案檔案
 COPY . .
