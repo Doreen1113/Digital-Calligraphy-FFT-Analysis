@@ -297,6 +297,24 @@
     font-weight: 600;
 }
 
+/* 對面已經選了這位書法家——這一邊停用，避免 A、B 選到同一個人 */
+.cal-pick-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: var(--bg-dark);
+    border-color: var(--border-light);
+    color: var(--text-muted);
+}
+
+.cal-pick-btn:disabled:hover {
+    border-color: var(--border-light);
+    background: var(--bg-dark);
+}
+
+.cal-pick-btn:disabled .cal-dot {
+    opacity: 0.5;
+}
+
 .cal-pick-btn .cal-dot {
     width: 10px;
     height: 10px;
@@ -399,57 +417,44 @@
     margin-top: 0.2rem;
 }
 
-/* 每個特徵是一個獨立群組：標題 + 兩行「長條＋數值」，每一行都有正常的行高，
-   數值緊貼在自己的長條後面，不會有兩個數字疊在一起分不清楚的問題 */
-.comparison-group {
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--border-light);
+/* 空心圓環網格：取代長條圖，同樣的資訊佔用空間小很多——7 個特徵排成
+   一個可換行的網格，而不是一長串要一直往下滑的直向列表 */
+.comparison-ring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.2rem 0.6rem;
 }
 
-.comparison-group:last-child {
-    border-bottom: none;
+.comparison-tile {
+    text-align: center;
 }
 
 .comparison-feature {
     color: var(--text-light);
-    font-size: 0.82rem;
-    margin-bottom: 0.4rem;
-}
-
-.comparison-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    height: 18px;
-}
-
-.comparison-row + .comparison-row {
-    margin-top: 0.3rem;
-}
-
-.comparison-bar-row {
-    flex: 1;
-    height: 10px;
-    background: var(--border-light);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.comparison-bar-fill {
-    display: block;
-    height: 100%;
-    border-radius: 999px;
-    min-width: 3px;
-}
-
-/* 數值固定寬度、靠右對齊、等寬數字——避免 100% 跟 26% 這種位數不同的數字
-   讓整欄看起來參差不齊；文字一律用文字色，不跟著書法家顏色走，身份交給長條本身 */
-.comparison-val {
-    width: 2.6rem;
-    flex-shrink: 0;
-    text-align: right;
     font-size: 0.78rem;
-    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.comparison-rings {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.ring-svg {
+    width: 56px;
+    height: 56px;
+}
+
+.ring-svg circle {
+    transition: stroke-dasharray 0.5s ease;
+}
+
+.ring-svg text {
+    font-size: 9.5px;
+    font-weight: 600;
+    fill: var(--text);
     font-variant-numeric: tabular-nums;
 }
 
