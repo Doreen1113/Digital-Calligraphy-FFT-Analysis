@@ -24,6 +24,7 @@ output/
 test*.py
 TEST_*.py
 *.txt
+!requirements.txt
 *.md
 CHANGELOG*
 CHANGES*
