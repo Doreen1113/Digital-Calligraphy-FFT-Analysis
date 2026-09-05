@@ -57,6 +57,9 @@ project_restructure_plan.md
 test*.py
 QUICK_COMMIT.sh
 *.md
+!README.md
+!report/report.md
+!experiments/README.md
 
 # 排除 Web 生成的比對圖片快取
 output/comparison/
@@ -68,3 +71,8 @@ gui/
 
 # 排除臨時字體快取
 Fonts/temp/
+# 衍生資料與實驗快取
+data/paired/
+experiments/cache/
+kaggle_source/data/
+experiments/generated/*.png

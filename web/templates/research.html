@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .rs-wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .rs-hero { text-align: center; margin: 1.5rem 0 2.5rem; }
+  .rs-hero h1 { font-size: 1.7rem; margin-bottom: .6rem; }
+  .rs-hero .sub { color: #666; line-height: 1.7; max-width: 640px; margin: 0 auto; }
+  .rs-stats { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center; margin: 1.6rem 0; }
+  .rs-stat { background: #faf7f2; border: 1px solid #e8e0d3; border-radius: 10px;
+             padding: .7rem 1.1rem; text-align: center; min-width: 108px; }
+  .rs-stat b { display: block; font-size: 1.25rem; }
+  .rs-stat span { font-size: .78rem; color: #877; }
+  .rs-finding { display: flex; gap: 1rem; align-items: flex-start;
+                border: 1px solid #e8e0d3; border-radius: 12px;
+                padding: 1.1rem 1.2rem; margin-bottom: 1rem; background: #fff; }
+  .rs-num { flex: 0 0 auto; width: 2rem; height: 2rem; border-radius: 50%;
+            background: #2b2b2b; color: #fff; display: flex; align-items: center;
+            justify-content: center; font-weight: 700; }
+  .rs-finding h3 { margin: 0 0 .35rem; font-size: 1.02rem; }
+  .rs-finding p { margin: 0; color: #555; font-size: .92rem; line-height: 1.7; }
+  .rs-finding .metric { color: #a5372c; font-weight: 700; white-space: nowrap; margin-left: auto;
+                        flex: 0 0 auto; font-size: .95rem; align-self: center; }
+  .rs-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.6rem 0; }
+  .rs-figs figure { margin: 0; border: 1px solid #e8e0d3; border-radius: 10px; overflow: hidden; background:#fff; }
+  .rs-figs img { width: 100%; display: block; }
+  .rs-figs figcaption { font-size: .8rem; color: #777; padding: .5rem .7rem; }
+  .rs-links { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center; margin-top: 2rem; }
+  .rs-links a { border: 1.5px solid #2b2b2b; border-radius: 8px; padding: .55rem 1.1rem;
+                text-decoration: none; color: #2b2b2b; font-weight: 600; font-size: .9rem; }
+  .rs-links a.primary { background: #2b2b2b; color: #fff; }
+  .rs-method { font-size: .85rem; color: #877; background: #faf7f2; border-radius: 10px;
+               padding: .9rem 1.1rem; margin-top: 1.6rem; line-height: 1.7; }
+  @media (max-width: 640px) { .rs-figs { grid-template-columns: 1fr; }
+    .rs-finding { flex-wrap: wrap; } .rs-finding .metric { margin-left: 3rem; } }
+</style>
+
+<div class="rs-wrap">
+  <div class="rs-hero">
+    <h1>書法風格住在哪個頻段？</h1>
+    <p class="sub">
+      本平台背後是一項可解釋性研究：以頻域分析與電腦視覺，量化七位書法大師的風格訊號。
+      所有實驗採 character-disjoint 評估——測試的「字」在訓練時從未出現，模型只能靠風格泛化，不能靠認字。
+    </p>
+    <div class="rs-stats">
+      <div class="rs-stat"><b>7,449</b><span>單字影像</span></div>
+      <div class="rs-stat"><b>7 位</b><span>書法家</span></div>
+      <div class="rs-stat"><b>10 本</b><span>字帖</span></div>
+      <div class="rs-stat"><b>1,057</b><span>獨特字</span></div>
+      <div class="rs-stat"><b>3,600+</b><span>同字跨家配對</span></div>
+    </div>
+  </div>
+
+  <div class="rs-finding">
+    <div class="rs-num">1</div>
+    <div>
+      <h3>書法家的身份，95% 寫在「間架結構」裡</h3>
+      <p>把字圖低通濾波到只剩 10% 的空間頻率——粗略的筆畫佈局、沒有任何筆鋒細節——CNN 仍能以 95% 準確率認出書法家。傳統書論「結構為本、筆法為末」有了量化證據。</p>
+    </div>
+    <div class="metric">10% 頻寬 → 95%</div>
+  </div>
+
+  <div class="rs-finding">
+    <div class="rs-num">2</div>
+    <div>
+      <h3>風格可以跨「字」也跨「字帖」泛化</h3>
+      <p>同字配對驗證：給兩張同一個字，判斷是否同一人寫。在完全沒看過的字上 AUC 0.998；把正例限制在「不同字帖」仍有 0.989——模型學到的是風格，不是在認字帖。</p>
+    </div>
+    <div class="metric">AUC 0.989</div>
+  </div>
+
+  <div class="rs-finding">
+    <div class="rs-num">3</div>
+    <div>
+      <h3>可解釋的頻域特徵，承載約一半訊號</h3>
+      <p>正規化輪廓傅立葉描述子＋Hu 矩＋頻譜統計合計 49.4%（多數類 25.7%、ResNet-18 98.7%），且訊號分散於整個諧波頻譜。可解釋與高準確率之間的差距，本身就是研究對象。</p>
+    </div>
+    <div class="metric">49.4% vs 98.7%</div>
+  </div>
+
+  <div class="rs-finding">
+    <div class="rs-num">4</div>
+    <div>
+      <h3>跨資料集，才是真正的戰場</h3>
+      <p>在獨立蒐集的 40,152 張外部資料上，準確率塌縮到 32%；骨架化＋固定寬度重繪後部分恢復（顏真卿 16%→75%）。within-source 容易、cross-source 是開放問題——我們量化了差距的確切來源。</p>
+    </div>
+    <div class="metric">32% → 42%</div>
+  </div>
+
+  <div class="rs-finding">
+    <div class="rs-num">5</div>
+    <div>
+      <h3>用「同字真跡」評估風格生成</h3>
+      <p>以 diffusion 模型（FontDiffuser）zero-shot 生成 210 個字，用本資料集獨有的同字真跡 ground truth 量化：內容忠實（SSIM 0.53）、但書法家個人風格不足（style match 22.9%，真跡上限 74.8%）——fine-tuning 進行中。</p>
+    </div>
+    <div class="metric">SSIM 0.53</div>
+  </div>
+
+  <div class="rs-figs">
+    <figure><img src="/static/img/research/fig3_lowpass.png" alt="低通濾波準確率曲線" loading="lazy">
+      <figcaption>圖 1｜CNN 需要多少空間頻率？10% 就到 95%。</figcaption></figure>
+    <figure><img src="/static/img/research/fig1_classification.png" alt="分類準確率總覽" loading="lazy">
+      <figcaption>圖 2｜手工特徵 vs 深度學習（character-disjoint，5 seeds）。</figcaption></figure>
+    <figure><img src="/static/img/research/fig2_fd_sweep.png" alt="諧波數量掃描" loading="lazy">
+      <figcaption>圖 3｜風格訊號分散在整個輪廓頻譜。</figcaption></figure>
+    <figure><img src="/static/img/research/fig4_pairverify.png" alt="同字配對驗證" loading="lazy">
+      <figcaption>圖 4｜同字配對驗證：未見過的字上的表現。</figcaption></figure>
+  </div>
+
+  <div class="rs-links">
+    <a class="primary" href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis/blob/main/report/report.md" target="_blank" rel="noopener">閱讀技術報告</a>
+    <a href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis" target="_blank" rel="noopener">GitHub（程式碼＋實驗）</a>
+    <a href="/score">體驗研究的應用：筆劃診斷</a>
+  </div>
+
+  <div class="rs-method">
+    <b>方法備註：</b>資料蒐集自公開碑帖翻攝並自行清理、逐字標注與索引；
+    評估使用 character-disjoint 切分（訓練/測試的字完全不重疊）並報告多 seed 平均；
+    另做字帖簽名、留一字帖、跨字帖 AUC 拆解等混淆檢查，誠實界定結論的適用範圍。
+    診斷功能的回饋順序（結構優先、細節其次）即依據發現 1 設計。
+  </div>
+</div>
+{% endblock %}

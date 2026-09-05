@@ -24,9 +24,31 @@ async def about(request: Request):
 
 @router.get("/")
 async def index_redirect():
-    """首頁：重導向至關於頁"""
+    """首頁：重導向至筆劃診斷（產品核心功能）"""
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/about", status_code=302)
+    return RedirectResponse(url="/score", status_code=302)
+
+
+
+
+@router.get("/research")
+async def research(request: Request):
+    """研究頁：資料集、實驗發現、技術報告連結"""
+    return templates.TemplateResponse(request, "research.html", {
+        "title": "研究｜書法風格住在哪個頻段？",
+        "active": "research",
+        "page_desc": "以頻域分析量化七位書法大師的風格：7,449 張單字影像、character-disjoint 實驗、可解釋性發現與技術報告。",
+    })
+
+
+@router.get("/generate")
+async def generate_page(request: Request):
+    """求字：生成書法家沒寫過的字"""
+    return templates.TemplateResponse(request, "generate.html", {
+        "title": "求字｜墨跡習字",
+        "active": "generate",
+        "page_desc": "輸入一個字、選一位書法家，AI 依其筆意生成——補足字帖裡沒有的字。",
+    })
 
 
 @router.get("/analysis")

@@ -1,0 +1,6 @@
+metric,value
+style_match_reranked,0.3380952380952381
+style_match_oracle_upper,0.35714285714285715
+ssim_reranked,0.5599517709160835
+n_items,210.0
+k_candidates,5.0

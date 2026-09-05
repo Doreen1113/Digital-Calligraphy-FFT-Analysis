@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>書法風格住在哪個頻段？</title>
+<meta name="description" content="以頻域分析與電腦視覺量化書法風格：7,449 張單字資料集、character-disjoint 實驗、跨資料集驗證與頻率導引生成。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #191714; --paper: #f7f4ee; --sub: #7a7164; --line: #e2dccf;
+    --accent: #a03d2c; --accent-soft: #f2e6e2; --card: #fffdf9;
+    --mono: "JetBrains Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Noto Serif TC", Georgia, serif; background: var(--paper);
+         color: var(--ink); line-height: 1.9; font-size: 16.5px; }
+  .sans { font-family: "Noto Sans TC", system-ui, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.4rem; }
+  .narrow { max-width: 780px; margin-left: auto; margin-right: auto; }
+
+  /* ── Hero ── */
+  .hero { padding: 5.5rem 0 3rem; text-align: center; position: relative; overflow: hidden; }
+  .hero .zhang { position: absolute; right: 6%; top: 3.2rem; width: 74px; height: 74px;
+    border-radius: 10px; background: var(--accent); color: #fff; display: flex;
+    align-items: center; justify-content: center; font-size: 2rem; font-weight: 900;
+    transform: rotate(6deg); box-shadow: 0 4px 14px rgba(160,61,44,.28); opacity: .92; }
+  .hero .kicker { font-family: var(--mono); font-size: .78rem; letter-spacing: .28em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 1.1rem; }
+  .hero h1 { font-size: clamp(1.9rem, 5.4vw, 3.1rem); font-weight: 900; letter-spacing: .05em; line-height: 1.35; }
+  .hero .en { color: var(--sub); font-size: 1.02rem; margin-top: .8rem; font-style: italic; }
+  .hero .byline { margin-top: 1.6rem; font-size: .95rem; color: var(--sub); }
+  .hero .byline b { color: var(--ink); font-weight: 700; }
+  .btns { margin-top: 1.8rem; display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+  .btns a { display: inline-flex; align-items: center; gap: .5rem; border: 1.6px solid var(--ink);
+    padding: .55rem 1.35rem; border-radius: 999px; text-decoration: none; color: var(--ink);
+    font-size: .88rem; font-weight: 500; transition: all .18s; }
+  .btns a.fill { background: var(--ink); color: var(--paper); }
+  .btns a:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+  .btns a.fill:hover { background: var(--accent); color: #fff; }
+
+  /* ── Teaser ── */
+  .teaser { padding: 1.6rem 0 0; }
+  .teaser .frame { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.6rem 1.6rem 1.1rem; box-shadow: 0 10px 34px rgba(25,23,20,.06); }
+  .teaser img { width: 100%; display: block; }
+  .teaser .cap { text-align: center; font-size: .85rem; color: var(--sub); margin-top: .9rem; }
+  .teaser .cap b { color: var(--accent); }
+
+  /* ── Sections ── */
+  section { padding: 4rem 0 0; }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.6rem; }
+  .sec-num { font-family: var(--mono); color: var(--accent); font-size: .85rem; font-weight: 600; }
+  h2 { font-size: 1.55rem; font-weight: 900; letter-spacing: .08em; }
+  .sec-sub { color: var(--sub); font-size: .92rem; margin-top: -1.1rem; margin-bottom: 1.6rem;
+    font-family: "Noto Sans TC", sans-serif; }
+  p.body { margin-bottom: 1rem; }
+  b.hl { background: linear-gradient(transparent 62%, var(--accent-soft) 62%); padding: 0 .1em; }
+
+  /* ── Pipeline SVG ── */
+  .pipeline { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.4rem; overflow-x: auto; }
+  .pipeline svg { min-width: 820px; width: 100%; height: auto; display: block; }
+
+  /* ── Stats ── */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: .8rem; margin: 1.8rem 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: .9rem .6rem; text-align: center; }
+  .stat b { display: block; font-size: 1.45rem; font-weight: 900; font-family: var(--mono); }
+  .stat span { font-size: .74rem; color: var(--sub); }
+  @media (max-width: 640px) { .stats { grid-template-columns: repeat(3, 1fr); } }
+
+  /* ── Figures ── */
+  .figframe { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; margin-top: 1.4rem; }
+  .figframe img { width: 100%; display: block; padding: 1rem; }
+  .figframe figcaption { font-size: .84rem; color: var(--sub); padding: .8rem 1.2rem 1rem;
+    border-top: 1px dashed var(--line); font-family: "Noto Sans TC", sans-serif; }
+  .figframe figcaption b { color: var(--ink); }
+
+  /* ── Findings ── */
+  .finding-row { display: grid; grid-template-columns: 5fr 4fr; gap: 1.6rem; align-items: center;
+    margin-top: 2.2rem; }
+  .finding-row.flip { grid-template-columns: 4fr 5fr; }
+  .finding-row.flip .txt { order: 2; }
+  @media (max-width: 720px) { .finding-row, .finding-row.flip { grid-template-columns: 1fr; }
+    .finding-row.flip .txt { order: 0; } }
+  .finding-row .tag { font-family: var(--mono); font-size: .74rem; color: var(--accent);
+    letter-spacing: .12em; margin-bottom: .4rem; }
+  .finding-row h3 { font-size: 1.18rem; font-weight: 700; margin-bottom: .55rem; }
+  .finding-row p { font-size: .93rem; color: #4c463c; }
+  .finding-row .big { font-family: var(--mono); font-size: 2rem; font-weight: 600;
+    color: var(--accent); display: block; margin-top: .7rem; }
+  .finding-row .figframe { margin-top: 0; }
+  .finding-row .figframe img { padding: .7rem; }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; margin-top: 1.3rem; font-size: .89rem;
+    background: var(--card); font-family: "Noto Sans TC", sans-serif; }
+  th, td { border-bottom: 1px solid var(--line); padding: .65rem .8rem; text-align: left; }
+  th { font-size: .78rem; letter-spacing: .06em; color: var(--sub); font-weight: 700;
+    border-bottom: 2px solid var(--ink); }
+  td.num { text-align: right; font-family: var(--mono); font-size: .85rem; }
+  tr.ours td { background: var(--accent-soft); font-weight: 700; }
+  .tnote { font-size: .8rem; color: var(--sub); margin-top: .5rem; font-family: "Noto Sans TC", sans-serif; }
+
+  /* ── Honest ── */
+  .honest { background: #efe9dc; border-radius: 12px; padding: 1.3rem 1.5rem; margin-top: 2rem;
+    font-size: .88rem; color: #5a5342; font-family: "Noto Sans TC", sans-serif; }
+  .honest b { color: var(--ink); }
+
+  footer { margin-top: 5rem; padding: 2.6rem 0 3.4rem; border-top: 1px solid var(--line);
+    text-align: center; color: var(--sub); font-size: .86rem; }
+  footer a { color: var(--sub); }
+  .seal { display: inline-flex; width: 40px; height: 40px; border-radius: 7px; background: var(--accent);
+    color: #fff; align-items: center; justify-content: center; font-weight: 900; margin-bottom: .8rem;
+    transform: rotate(-4deg); }
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <div class="zhang" aria-hidden="true">頻</div>
+  <div class="kicker sans">Calligraphy × Frequency Analysis</div>
+  <h1>書法風格<br>住在哪個頻段？</h1>
+  <div class="en">Where Does Calligraphic Style Live in the Frequency Domain?</div>
+  <div class="byline sans"><b>林沁瑩 Doreen Lin</b>・國立清華大學 資訊工程學系｜輔系 科技藝術</div>
+  <div class="btns sans">
+    <a class="fill" href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis/blob/main/report/report.md">📄 技術報告</a>
+    <a href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis">⌨ 程式碼與實驗</a>
+    <a href="https://calligraphy-analyzer.onrender.com">🖌 墨跡習字平台</a>
+  </div>
+</header>
+
+<div class="teaser wrap">
+  <div class="frame">
+    <img src="img/fig0_reconstruction.png" alt="傅立葉漸進重建：以 1 到 64 個諧波重建顏真卿的敬字">
+    <div class="cap">以前 n 個傅立葉諧波重建顏真卿的「敬」——<b>n = 4 時字已可辨，n = 16 後補回的只是筆鋒。</b>
+      字的身份，住在最前面的幾個頻率裡。本研究把這句話變成可量化、可檢驗、可應用的科學。</div>
+  </div>
+</div>
+
+<section class="wrap narrow">
+  <div class="sec-head"><span class="sec-num">01</span><h2>為什麼做這個</h2></div>
+  <p class="body">
+    我練書法十年。臨帖時有兩個一直沒有答案的問題：老師說「你的字缺了顏體的厚重」——
+    <b class="hl">「厚重」到底是什麼？量得出來嗎？</b>
+    還有，想練某個字時，常發現那位書法家根本沒寫過它——
+    <b class="hl">缺的字，補得出來嗎？</b>
+    這個專案是我用資訊工程的方法，回答自己這兩個問題的完整過程：
+    從自建資料集、可解釋分析、嚴格的泛化實驗，到頻率導引的風格生成。
+  </p>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">02</span><h2>方法總覽</h2></div>
+  <div class="pipeline">
+    <svg viewBox="0 0 940 330" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC',sans-serif">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#7a7164"/>
+        </marker>
+      </defs>
+      <!-- 資料 -->
+      <rect x="14" y="96" width="158" height="128" rx="12" fill="#fffdf9" stroke="#191714" stroke-width="1.6"/>
+      <text x="93" y="126" text-anchor="middle" font-size="14.5" font-weight="700" fill="#191714">策展資料集</text>
+      <text x="93" y="150" text-anchor="middle" font-size="11.5" fill="#7a7164">7 位書法家・10 本字帖</text>
+      <text x="93" y="169" text-anchor="middle" font-size="11.5" fill="#7a7164">7,449 張・1,057 字</text>
+      <text x="93" y="194" text-anchor="middle" font-size="11.5" font-weight="700" fill="#a03d2c">3,600+ 同字跨家配對</text>
+      <line x1="172" y1="160" x2="220" y2="160" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 前處理 -->
+      <rect x="222" y="112" width="128" height="96" rx="12" fill="#fffdf9" stroke="#191714" stroke-width="1.6"/>
+      <text x="286" y="146" text-anchor="middle" font-size="13.5" font-weight="700" fill="#191714">統一前處理</text>
+      <text x="286" y="168" text-anchor="middle" font-size="11" fill="#7a7164">二值化・置中</text>
+      <text x="286" y="186" text-anchor="middle" font-size="11" fill="#7a7164">（去除紙紋/載體）</text>
+      <line x1="350" y1="136" x2="404" y2="94" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <line x1="350" y1="184" x2="404" y2="226" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 兩個分支 -->
+      <rect x="406" y="42" width="170" height="102" rx="12" fill="#f2e6e2" stroke="#a03d2c" stroke-width="1.6"/>
+      <text x="491" y="72" text-anchor="middle" font-size="13.5" font-weight="700" fill="#a03d2c">可解釋頻域特徵</text>
+      <text x="491" y="94" text-anchor="middle" font-size="11" fill="#7a7164">正規化輪廓傅立葉描述子</text>
+      <text x="491" y="112" text-anchor="middle" font-size="11" fill="#7a7164">頻譜統計・Hu 矩</text>
+      <text x="491" y="130" text-anchor="middle" font-size="11" fill="#7a7164">＋ SVM / LogReg</text>
+      <rect x="406" y="180" width="170" height="92" rx="12" fill="#fffdf9" stroke="#191714" stroke-width="1.6"/>
+      <text x="491" y="212" text-anchor="middle" font-size="13.5" font-weight="700" fill="#191714">深度風格表徵</text>
+      <text x="491" y="234" text-anchor="middle" font-size="11" fill="#7a7164">ResNet-18 分類器</text>
+      <text x="491" y="252" text-anchor="middle" font-size="11" fill="#7a7164">512-d style embedding</text>
+      <line x1="576" y1="93" x2="628" y2="130" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <line x1="576" y1="226" x2="628" y2="190" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 實驗 -->
+      <rect x="630" y="104" width="146" height="112" rx="12" fill="#fffdf9" stroke="#191714" stroke-width="1.6"/>
+      <text x="703" y="130" text-anchor="middle" font-size="13.5" font-weight="700" fill="#191714">泛化實驗</text>
+      <text x="703" y="152" text-anchor="middle" font-size="10.8" fill="#7a7164">character-disjoint 分類</text>
+      <text x="703" y="169" text-anchor="middle" font-size="10.8" fill="#7a7164">頻帶消融・配對驗證</text>
+      <text x="703" y="186" text-anchor="middle" font-size="10.8" fill="#7a7164">留一字帖・跨資料集</text>
+      <text x="703" y="203" text-anchor="middle" font-size="10.8" fill="#7a7164">（40,152 張外部驗證）</text>
+      <line x1="776" y1="132" x2="828" y2="94" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <line x1="776" y1="188" x2="828" y2="226" stroke="#7a7164" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 應用 -->
+      <rect x="830" y="46" width="100" height="94" rx="12" fill="#f2e6e2" stroke="#a03d2c" stroke-width="1.6"/>
+      <text x="880" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#a03d2c">頻率導引</text>
+      <text x="880" y="94" text-anchor="middle" font-size="12.5" font-weight="700" fill="#a03d2c">風格生成</text>
+      <text x="880" y="116" text-anchor="middle" font-size="10.5" fill="#7a7164">diffusion＋</text>
+      <text x="880" y="131" text-anchor="middle" font-size="10.5" fill="#7a7164">頻域結構損失</text>
+      <rect x="830" y="182" width="100" height="86" rx="12" fill="#fffdf9" stroke="#191714" stroke-width="1.6"/>
+      <text x="880" y="212" text-anchor="middle" font-size="12.5" font-weight="700" fill="#191714">墨跡習字</text>
+      <text x="880" y="233" text-anchor="middle" font-size="10.5" fill="#7a7164">臨帖診斷平台</text>
+      <text x="880" y="250" text-anchor="middle" font-size="10.5" fill="#7a7164">（已部署上線）</text>
+      <!-- 底部發現註記 -->
+      <text x="470" y="315" text-anchor="middle" font-size="11.5" fill="#a03d2c" font-weight="700">
+        核心發現「風格 95% 住在低頻」貫穿兩端：決定診斷回饋的順序，也定義生成的損失函數
+      </text>
+    </svg>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">03</span><h2>資料集：同一個字，七種人格</h2></div>
+  <p class="body narrow" style="margin-left:0">
+    公開書法資料集是一張圖一個標籤。我們的資料多了一層結構：<b class="hl">每個字連結到所有寫過它的書法家</b>——
+    這讓我們能把「字形內容」變因徹底控制掉，只留「風格」。所有實驗採 character-disjoint 切分：
+    測試的字在訓練時從未出現，模型只能學風格、不能背字。
+  </p>
+  <div class="stats sans">
+    <div class="stat"><b>7,449</b><span>單字影像</span></div>
+    <div class="stat"><b>7</b><span>位書法家</span></div>
+    <div class="stat"><b>10</b><span>本字帖</span></div>
+    <div class="stat"><b>1,057</b><span>獨特字</span></div>
+    <div class="stat"><b>3,600+</b><span>同字配對</span></div>
+  </div>
+  <figure class="figframe">
+    <img src="img/same_char_grid.png" alt="道、人、月、學四個字在七位書法家筆下的樣貌" loading="lazy">
+    <figcaption><b>同字跨家對照。</b>由左至右依年代排列：智永（隋）→ 沈尹默（近代）。
+      同一個「道」，七種間架、七種性格——這正是我們要量化的東西。資料蒐集自公開碑帖翻攝，自行清理、逐字標注與索引。</figcaption>
+  </figure>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">04</span><h2>四個發現</h2></div>
+
+  <div class="finding-row">
+    <div class="txt">
+      <div class="tag">FINDING 1 / SPATIAL FREQUENCY ABLATION</div>
+      <h3>書法家的身份，95% 寫在間架結構裡</h3>
+      <p>把字圖低通濾波到只剩 10% 空間頻率——只有粗略佈局、沒有任何筆鋒細節——重新訓練的 CNN
+         仍以 95% 準確率認出書法家。書論「結構為本、筆法為末」，第一次有了數字。
+         這與開頭的傅立葉重建圖互為印證：眼睛看到的，量化也成立。</p>
+      <span class="big">10% 頻寬 → 94.7%</span>
+    </div>
+    <figure class="figframe"><img src="img/fig3_lowpass.png" alt="低通濾波截止頻率與辨識準確率" loading="lazy"></figure>
+  </div>
+
+  <div class="finding-row flip">
+    <figure class="figframe"><img src="img/fig4_pairverify.png" alt="同字配對驗證 ROC-AUC" loading="lazy"></figure>
+    <div class="txt">
+      <div class="tag">FINDING 2 / PAIR VERIFICATION</div>
+      <h3>風格可以跨「字」也跨「字帖」泛化</h3>
+      <p>同字配對驗證：給兩張同一個字，判斷是否同一人寫。在完全沒看過的字上 AUC 0.998；
+         把正例限制在「不同字帖」仍有 0.989——模型學到的是風格本身，不是在認字帖。
+         這種 text-dependent 設計，單張標籤的公開資料集做不到。</p>
+      <span class="big">AUC 0.989</span>
+    </div>
+  </div>
+
+  <div class="finding-row">
+    <div class="txt">
+      <div class="tag">FINDING 3 / INTERPRETABLE FEATURES</div>
+      <h3>可解釋的頻域特徵，承載約一半訊號</h3>
+      <p>正規化輪廓傅立葉描述子＋Hu 矩＋頻譜統計，合計 49.4%（多數類 25.7%、ResNet-18 98.7%），
+         且訊號分散於整個諧波頻譜、無低頻捷徑。「可解釋」與「高準確率」之間的差距不是失敗——
+         它本身就是研究對象。</p>
+      <span class="big">49.4% ↔ 98.7%</span>
+    </div>
+    <figure class="figframe"><img src="img/fig1_classification.png" alt="各特徵組分類準確率比較" loading="lazy"></figure>
+  </div>
+
+  <div class="finding-row flip">
+    <figure class="figframe"><img src="img/fig2_fd_sweep.png" alt="諧波數量與 SVM 準確率" loading="lazy"></figure>
+    <div class="txt">
+      <div class="tag">FINDING 4 / CROSS-DATASET REALITY CHECK</div>
+      <h3>跨資料集，才是真正的戰場</h3>
+      <p>在獨立蒐集的 40,152 張外部資料上，準確率塌縮到 32%；把兩邊都骨架化、固定寬度重繪後部分恢復
+        （顏真卿 16%→75%）。我們沒有把 98.7% 掛在門口——我們自己設計混淆檢查（字帖簽名、留一字帖、AUC 拆解）
+        找出它灌水的部分，並量化差距的確切來源。</p>
+      <span class="big">32% → 42%</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><span class="sec-num">05</span><h2>頻率導引的風格生成</h2></div>
+  <p class="sec-sub">進行中——發現 1 的直接應用：風格住在低頻，生成就該明確監督低頻結構。</p>
+  <p class="body narrow" style="margin-left:0">
+    用 diffusion 字體生成（FontDiffuser）在本資料集上微調，並加入<b class="hl">頻域結構損失</b>作為我們的方法。
+    評估用的是本資料集獨有的武器：<b class="hl">同字真跡 ground truth</b>——生成「這位書法家沒寫過的字」之後，
+    直接跟他真的寫過的字比。一般字體生成研究沒有這種對照可用。
+  </p>
+  <figure class="figframe">
+    <img src="img/gen_qualitative.png" alt="生成定性對比：標準字、風格參考、生成結果、真跡" loading="lazy">
+    <figcaption><b>Zero-shot 定性結果（微調前）。</b>內容忠實、有書法味，但書法家的個人風格不足——
+      這正是頻域結構損失要解決的問題。微調與對比實驗完成後本表更新。</figcaption>
+  </figure>
+  <table>
+    <tr><th>設定（凍結評估器，真跡上限 91.9%）</th><th style="text-align:right">Style match ↑</th><th style="text-align:right">SSIM ↑</th></tr>
+    <tr><td>FontDiffuser zero-shot</td><td class="num">20.0%</td><td class="num">0.531</td></tr>
+    <tr><td>＋本資料集 fine-tune（15k 步）</td><td class="num">32.4%</td><td class="num">0.556</td></tr>
+    <tr><td>＋guidance 調校＋驗證導引重排（K=5）</td><td class="num">34.3%</td><td class="num">0.557</td></tr>
+    <tr><td>頻域損失（0.1／2.0 兩種劑量）、類別平衡</td><td class="num" colspan="2">皆未突破（消融詳見報告）</td></tr>
+  </table>
+  <figure class="figframe">
+    <img src="img/diagnose_dead_classes.png" alt="診斷：生成字保留標楷體骨架而非書法家間架" loading="lazy">
+    <figcaption><b>診斷發現：結構鴻溝（the structure gap）。</b>生成的字保留了標楷體的骨架、只轉移筆觸外觀——
+      對結構最獨特的書法家（柳公權），生成結果與標楷體的相似度（0.552）甚至高於與真跡（0.540）。
+      這與發現 1 互鎖：身份住在結構，而 one-shot diffusion 恰恰不改結構。
+      六種受控介入全部止步於 ~34%，證明這是架構級限制——「骨架級監督的風格生成」因此成為明確的開放問題，也是我想在研究所繼續解的題目。</figcaption>
+  </figure>
+  <div class="tnote">所有設定：相同訓練資料、相同 held-out 同字真跡、同一顆凍結風格評估器。完整消融表見技術報告 §5.6。</div>
+</section>
+
+<section class="wrap narrow">
+  <div class="sec-head"><span class="sec-num">06</span><h2>落地：墨跡習字</h2></div>
+  <p class="body">
+    研究不是終點。這些發現落地成一個真實部署的學習平台：上傳習字照片，得到與大師逐像素的差異疊合圖
+    （紅＝多寫、藍＝少寫）與結構均衡分析。而回饋的順序——<b class="hl">結構優先、細節其次</b>——
+    正是發現 1 告訴我們的。<a href="https://calligraphy-analyzer.onrender.com" style="color:var(--accent)">體驗平台 →</a>
+  </p>
+  <p class="body">
+    生成研究也落地了：<b class="hl">「求字」</b>——輸入任一字、選一位大師，系統生成 5 個候選（各用不同參考真跡）、
+    由獨立的風格辨識器挑出最像的一個，並依 held-out 評估結果<b>誠實標示每位書法家的可靠度</b>
+    （虞世南／沈尹默高、智永中、唐楷諸家低——正是結構鴻溝所在）。輸入一句話則進入<b>集字模式</b>——效法唐代懷仁《集王聖教序》：有真跡的字用真跡、沒有的字由 AI 補上，
+    每個字標明來源，排成一幅可下載的作品。
+  </p>
+  <div class="honest">
+    <b>研究誠實聲明。</b>資料為策展而非原創拍攝；in-dataset 高準確率部分來自字帖來源訊號（發現 4、報告 §5.4–5.5）；
+    生成評估分類器上限 74.8% 係處理域差異所致，相對比較不受影響；平台診斷指標之專家評分驗證規劃中。
+    我們相信：把限制講清楚，結論才值得被相信。
+  </div>
+</section>
+
+<footer class="wrap sans">
+  <div class="seal">沁</div><br>
+  林沁瑩 Doreen Lin・NTHU CS × 科技藝術<br>
+  <a href="https://github.com/Doreen1113">GitHub</a>・
+  <a href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis/blob/main/report/report.md">Technical Report</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+metric,value
+style_match_generated,0.319047619047619
+style_match_ground_truth,0.919047619047619
+style_match_content(下限),0.14285714285714285
+ssim_gen_vs_gt,0.5611244818307574
+fd_cosine_gen_vs_gt,0.9873405915827386
+fd_cosine_gen_vs_other,0.9548126392908557

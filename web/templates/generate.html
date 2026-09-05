@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .gq { max-width: 980px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
+  .gq-intro { text-align: center; margin-bottom: 1.4rem; }
+  .gq-intro h1 { font-size: 1.55rem; margin-bottom: .45rem; }
+  .gq-intro p { color: #666; font-size: .92rem; max-width: 620px; margin: 0 auto; line-height: 1.8; }
+  .gq-form { display: flex; gap: .7rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: .6rem; }
+  .gq-form input[type=text] { width: 16rem; font-size: 1.35rem; letter-spacing: .15em; padding: .45rem .7rem;
+    border: 1.5px solid #d8cfc0; border-radius: 10px; font-family: "Noto Serif TC", serif; }
+  .gq-form select, .gq-form label.tog { font-size: .95rem; padding: .5rem .7rem; border: 1.5px solid #d8cfc0;
+    border-radius: 10px; background: #fff; }
+  .gq-form label.tog { display: inline-flex; gap: .35rem; align-items: center; cursor: pointer; }
+  .gq-form button { padding: .6rem 1.5rem; border-radius: 999px; border: 1.5px solid #191714;
+    background: #191714; color: #fff; font-size: .95rem; cursor: pointer; }
+  .gq-form button:disabled { opacity: .5; cursor: wait; }
+  .gq-hint { text-align: center; font-size: .8rem; color: #998; min-height: 1.3em; margin-bottom: 1rem; }
+  .gq-off { text-align: center; color: #a03d2c; font-size: .9rem; padding: .6rem; display: none; }
+
+  .gq-stage { display: grid; grid-template-columns: 1fr 300px; gap: 1.2rem; align-items: start; }
+  @media (max-width: 760px) { .gq-stage { grid-template-columns: 1fr; } }
+  .paper { background: #fbf8f1; border: 1px solid #e4dccd; border-radius: 6px; padding: 1.6rem;
+    box-shadow: inset 0 0 60px rgba(120,90,40,.06), 0 8px 24px rgba(0,0,0,.06); min-height: 320px;
+    display: flex; justify-content: center; align-items: flex-start; position: relative; }
+  .paper .seal { position: absolute; right: 1.1rem; bottom: 1rem; width: 30px; height: 30px; border-radius: 5px;
+    background: #a03d2c; color: #fff; font-size: .8rem; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; transform: rotate(-6deg); opacity: .85; }
+  .cols { display: flex; flex-direction: row-reverse; gap: .6rem; }
+  .cols.horiz { flex-direction: column; }
+  .col { display: flex; flex-direction: column; gap: .35rem; }
+  .cols.horiz .col { flex-direction: row; }
+  .cell { width: 108px; height: 108px; background: #fff; border: 1px solid #e8e0d3; border-radius: 6px;
+    position: relative; cursor: pointer; overflow: hidden; transition: box-shadow .15s; }
+  .cell:hover { box-shadow: 0 0 0 2px #a03d2c55; }
+  .cell.sel { box-shadow: 0 0 0 2px #a03d2c; }
+  .cell img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .cell .tag { position: absolute; left: 4px; bottom: 4px; font-size: .62rem; padding: .05rem .38rem; border-radius: 999px;
+    font-family: "Noto Sans TC", sans-serif; }
+  .t-real { background: #e3f1e6; color: #2e7d4f; }
+  .t-高 { background: #e3f1e6; color: #2e7d4f; } .t-中 { background: #fbf0d9; color: #9a6b00; } .t-低 { background: #f8e3df; color: #a03d2c; }
+  .cell.loading::after { content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, #f3eee4 0 8px, #faf7f1 8px 16px); animation: sh 1s linear infinite; }
+  @keyframes sh { to { background-position: 32px 0; } }
+  .cell .ch { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: #d8cfc0; font-family: "Noto Serif TC", serif; }
+
+  .side { background: #fff; border: 1px solid #e8e0d3; border-radius: 12px; padding: 1rem; }
+  .side h3 { font-size: .95rem; margin-bottom: .5rem; }
+  .side .meta { font-size: .8rem; color: #776; line-height: 1.7; margin-bottom: .6rem; }
+  .cands { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+  .cands img { width: 100%; aspect-ratio: 1; object-fit: contain; border: 1px solid #e8e0d3; border-radius: 6px;
+    background: #fff; cursor: pointer; }
+  .cands img:hover, .cands img.on { border-color: #a03d2c; box-shadow: 0 0 0 1px #a03d2c; }
+  .cands .c { text-align: center; font-size: .66rem; color: #998; }
+  .side .acts { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .7rem; }
+  .side .acts button { font-size: .78rem; padding: .35rem .7rem; border-radius: 999px; border: 1px solid #d8cfc0; background: #fff; cursor: pointer; }
+  .side .acts button:hover { border-color: #a03d2c; color: #a03d2c; }
+  .gq-bar { display: flex; gap: .6rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  .gq-bar button { padding: .5rem 1.2rem; border-radius: 999px; border: 1.5px solid #191714; background: #fff; cursor: pointer; font-size: .88rem; }
+  .gq-bar button.fill { background: #191714; color: #fff; }
+  .gq-note { background: #faf7f2; border-radius: 10px; padding: .9rem 1.1rem; font-size: .8rem; color: #776; line-height: 1.7; margin-top: 1.1rem; }
+</style>
+
+<div class="gq">
+  <div class="gq-intro">
+    <h1>求字・集字</h1>
+    <p>輸入一句話、選一位大師。<b>有真跡的字用真跡，沒有的字由 AI 補上</b>——效法唐代懷仁《集王聖教序》的集字傳統。
+       每個字標明來源，點任一字可換候選，完成後下載成一幅作品。</p>
+  </div>
+
+  <form class="gq-form" onsubmit="return false">
+    <input type="text" id="txt" maxlength="12" placeholder="上善若水" autocomplete="off">
+    <select id="cal">
+      <option>顏真卿</option><option>柳公權</option><option>歐陽詢</option>
+      <option>虞世南</option><option>智永</option><option>趙孟頫</option><option>沈尹默</option>
+    </select>
+    <label class="tog"><input type="checkbox" id="real" checked> 集字（真跡優先）</label>
+    <label class="tog"><input type="checkbox" id="vert" checked> 直書</label>
+    <button id="go">求字</button>
+  </form>
+  <div class="gq-hint" id="hint">最多 12 個字・AI 生成每字約 10 秒，逐字顯示</div>
+  <div class="gq-off" id="off">生成服務目前離線——AI 補字需要 GPU，僅在研究工作站上提供；集字模式仍可用真跡。</div>
+
+  <div class="gq-stage" id="stage" style="display:none">
+    <div>
+      <div class="paper"><div class="cols" id="cols"></div><div class="seal">沁</div></div>
+      <div class="gq-bar">
+        <button class="fill" id="dl">下載作品 PNG</button>
+        <button id="reroll">全部換一批（新種子）</button>
+      </div>
+      <div class="gq-note" id="note"></div>
+    </div>
+    <div class="side" id="side"><h3>點選作品中的字</h3><div class="meta">可查看候選、替換、或改用 AI／真跡。</div></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const txt = $('txt'), cal = $('cal'), realTog = $('real'), vertTog = $('vert'), go = $('go');
+  const hint = $('hint'), stage = $('stage'), cols = $('cols'), side = $('side'), note = $('note');
+  let online = true, cells = [], seed = 0, selected = -1;
+  const EXPL = { '高': '結構最接近標準字，AI 補字可靠度高（held-out 評估 style match ≥ 85%）',
+                 '中': 'AI 補字有一定可信度，細節可能偏離（約 70%）',
+                 '低': '此家間架與標準字差異大，AI 目前主要轉移筆觸、結構仍偏標準字——僅供參考（結構鴻溝）' };
+
+  fetch('/api/generate/status').then(r => r.json()).then(j => { online = !!j.online; if (!online) $('off').style.display = 'block'; });
+
+  function hashSeed(s) { let h = 7; for (const c of s) h = (h * 31 + c.codePointAt(0)) % 1000003; return h; }
+  function cjk(s) { return [...s].filter(c => /\p{Script=Han}/u.test(c)); }
+
+  function layout() {
+    cols.className = 'cols' + (vertTog.checked ? '' : ' horiz');
+    cols.innerHTML = '';
+    const per = vertTog.checked ? 5 : 6;
+    for (let i = 0; i < cells.length; i += per) {
+      const col = document.createElement('div'); col.className = 'col';
+      cells.slice(i, i + per).forEach(c => col.appendChild(c.el));
+      cols.appendChild(col);
+    }
+  }
+  function tagFor(c) {
+    if (c.src === 'real') return ['t-real', '真跡'];
+    return ['t-' + c.rel, 'AI・' + c.rel];
+  }
+  function render(c) {
+    const el = c.el; el.classList.remove('loading'); el.innerHTML = '';
+    if (!c.img) { el.innerHTML = `<div class="ch">${c.char}</div>`; el.classList.add('loading'); return; }
+    const im = document.createElement('img'); im.src = c.img; el.appendChild(im);
+    const [cls, label] = tagFor(c); const t = document.createElement('span'); t.className = 'tag ' + cls; t.textContent = label; el.appendChild(t);
+  }
+  async function fetchChar(c, preferReal) {
+    const q = new URLSearchParams({ char: c.char, name: cal.value, k: 5, seed, prefer_real: preferReal });
+    const r = await fetch('/api/generate/char?' + q);
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.detail || r.status); }
+    return r.json();
+  }
+  function apply(c, j) {
+    c.data = j; c.rel = j.reliability; c.src = j.source;
+    if (j.source === 'real') { c.img = j.real_glyphs[0]; c.pick = 0; }
+    else { c.img = 'data:image/png;base64,' + j.best.png; c.pick = 0; }
+    render(c);
+  }
+  async function loadCell(c, preferReal) {
+    c.img = null; render(c);
+    try { apply(c, await fetchChar(c, preferReal)); }
+    catch (e) { c.el.classList.remove('loading'); c.el.innerHTML = `<div class="ch" style="color:#a03d2c;font-size:.8rem">${e.message}</div>`; }
+  }
+  async function run() {
+    const chars = cjk(txt.value).slice(0, 12);
+    if (!chars.length) { txt.focus(); return; }
+    seed = hashSeed(chars.join('') + cal.value);
+    cells = chars.map(ch => { const el = document.createElement('div'); el.className = 'cell';
+      const c = { char: ch, el, img: null, data: null }; el.onclick = () => select(c); return c; });
+    layout(); stage.style.display = ''; selected = -1;
+    side.innerHTML = '<h3>點選作品中的字</h3><div class="meta">可查看候選、替換、或改用 AI／真跡。</div>';
+    go.disabled = true; hint.textContent = '集字中…';
+    await Promise.all(cells.map(c => loadCell(c, realTog.checked)));
+    go.disabled = false;
+    const nReal = cells.filter(c => c.src === 'real').length, nAI = cells.length - nReal;
+    hint.textContent = `完成：${nReal} 字真跡、${nAI} 字 AI 補字`;
+    note.innerHTML = `<b>${cal.value}</b>・可靠度「${cells[0]?.rel || ''}」：${EXPL[cells[0]?.rel] || ''}。<br>
+      真跡取自本站字庫；AI 補字＝FontDiffuser 於本資料集微調（15k 步）＋guidance 12＋5 候選由獨立風格辨識器重排，整句共用同一組參考真跡以維持風格一致。AI 生成僅供臨帖參考。`;
+  }
+  function select(c) {
+    cells.forEach(x => x.el.classList.remove('sel')); c.el.classList.add('sel'); selected = cells.indexOf(c);
+    const j = c.data; if (!j) return;
+    let html = `<h3>「${c.char}」・${cal.value}</h3>`;
+    if (c.src === 'real') {
+      html += `<div class="meta">真跡・字庫有 ${j.real_glyphs.length} 個寫法</div><div class="cands">` +
+        j.real_glyphs.map((u, i) => `<div><img src="${u}" data-i="${i}" class="${i === c.pick ? 'on' : ''}"><div class="c">寫法 ${i + 1}</div></div>`).join('') + '</div>';
+      html += `<div class="acts">${online ? '<button data-act="ai">改用 AI 生成看看</button>' : ''}</div>`;
+    } else {
+      html += `<div class="meta">AI 補字・可靠度 ${c.rel}${j.real_glyphs.length ? '（其實有真跡）' : '（無真跡，這正是求字要補的）'}<br>` +
+        `標準字來源：${j.content_source === 'edukai' ? '教育部標準楷書' : '訓練字庫'}</div><div class="cands">` +
+        j.candidates.map((x, i) => `<div><img src="data:image/png;base64,${x.png}" data-i="${i}" class="${i === c.pick ? 'on' : ''}"><div class="c">候選 ${i + 1}・${(x.score * 100).toFixed(0)}%</div></div>`).join('') + '</div>';
+      html += `<div class="acts"><button data-act="re">換一批候選</button>${j.real_glyphs.length ? '<button data-act="real">改用真跡</button>' : ''}</div>`;
+    }
+    side.innerHTML = html;
+    side.querySelectorAll('.cands img').forEach(im => im.onclick = () => {
+      const i = +im.dataset.i; c.pick = i;
+      c.img = c.src === 'real' ? j.real_glyphs[i] : 'data:image/png;base64,' + j.candidates[i].png;
+      render(c); select(c);
+    });
+    side.querySelectorAll('[data-act]').forEach(b => b.onclick = async () => {
+      const act = b.dataset.act;
+      if (act === 'ai') { await loadCell(c, false); }
+      else if (act === 'real') { await loadCell(c, true); }
+      else if (act === 're') { seed += 1; await loadCell(c, false); }
+      select(c);
+    });
+  }
+  function download() {
+    const vert = vertTog.checked, per = vert ? 5 : 6, S = 200, P = 14, M = 60;
+    const n = cells.length, groups = Math.ceil(n / per), inner = Math.min(n, per);
+    const W = vert ? groups * (S + P) + 2 * M : inner * (S + P) + 2 * M;
+    const H = vert ? inner * (S + P) + 2 * M : groups * (S + P) + 2 * M;
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    g.fillStyle = '#fbf8f1'; g.fillRect(0, 0, W, H);
+    let done = 0;
+    cells.forEach((c, i) => {
+      const gi = Math.floor(i / per), ii = i % per;
+      const x = vert ? W - M - (gi + 1) * (S + P) + P : M + ii * (S + P);
+      const y = vert ? M + ii * (S + P) : M + gi * (S + P);
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = () => { g.drawImage(im, x, y, S, S); if (++done === n) finish(); };
+      im.onerror = () => { if (++done === n) finish(); };
+      im.src = c.img;
+    });
+    function finish() {
+      g.fillStyle = '#a03d2c'; g.fillRect(W - M - 26, H - M - 26, 26, 26);
+      g.fillStyle = '#fff'; g.font = 'bold 15px "Noto Serif TC", serif'; g.fillText('沁', W - M - 21, H - M - 7);
+      g.fillStyle = '#998'; g.font = '11px "Noto Sans TC", sans-serif';
+      g.fillText(`${cal.value}集字・真跡與 AI 補字・墨跡習字`, M, H - 22);
+      const a = document.createElement('a'); a.download = `${cal.value}_${cells.map(c => c.char).join('')}.png`;
+      a.href = cv.toDataURL('image/png'); a.click();
+    }
+  }
+  go.onclick = run;
+  txt.addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+  vertTog.onchange = () => cells.length && layout();
+  $('dl').onclick = download;
+  $('reroll').onclick = async () => { seed += 1; go.disabled = true; await Promise.all(cells.filter(c => c.src !== 'real').map(c => loadCell(c, false))); go.disabled = false; };
+})();
+</script>
+{% endblock %}
