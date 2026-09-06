@@ -24,9 +24,9 @@ async def about(request: Request):
 
 @router.get("/")
 async def index_redirect():
-    """首頁：重導向至筆劃診斷（產品核心功能）"""
+    """首頁：重導向至集字（最具識別度的核心功能）"""
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/score", status_code=302)
+    return RedirectResponse(url="/generate", status_code=302)
 
 
 
@@ -43,9 +43,9 @@ async def research(request: Request):
 
 @router.get("/generate")
 async def generate_page(request: Request):
-    """求字：生成書法家沒寫過的字"""
+    """集字：生成書法家沒寫過的字"""
     return templates.TemplateResponse(request, "generate.html", {
-        "title": "求字｜墨跡習字",
+        "title": "集字｜墨跡習字",
         "active": "generate",
         "page_desc": "輸入一個字、選一位書法家，AI 依其筆意生成——補足字帖裡沒有的字。",
     })
@@ -79,7 +79,7 @@ async def calligraphers(request: Request):
     return templates.TemplateResponse(request, "calligraphers.html", {
         "title": "認識書法家",
         "active": "calligraphers",
-        "page_desc": "深入了解智永、沈尹默、顏真卿、趙孟頫、歐陽詢五位書法大師的生平與風格特色。",
+        "page_desc": "深入了解智永、歐陽詢、虞世南、顏真卿、柳公權、趙孟頫、沈尹默七位書法大師的生平與風格特色。",
         "page_keywords": "書法家介紹,智永,顏真卿,歐陽詢,趙孟頫,王羲之,書法大師,書法歷史",
     })
 
@@ -90,7 +90,7 @@ async def compare(request: Request):
     return templates.TemplateResponse(request, "compare.html", {
         "title": "批次比對",
         "active": "compare",
-        "page_desc": "一次輸入多個文字，批次產生五位書法大師的對照圖，方便教學與研究使用。",
+        "page_desc": "一次輸入多個文字，批次產生七位書法大師的對照圖，方便教學與研究使用。",
         "page_keywords": "批次書法比對,漢字對照,書法教學,毛筆字練習,書法範本",
     })
 

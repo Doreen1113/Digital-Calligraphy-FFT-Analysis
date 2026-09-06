@@ -20,7 +20,7 @@ from features import binarize, contours_of
 ROOT = Path(__file__).parent.parent
 FIG = Path(__file__).parent / "figures"
 
-# 顏真卿的「敬」（char_0041 是多寶塔碑裡結構漂亮的字）
+# 柳公權《玄秘塔碑》的「敬」（font_id 02，結構鮮明適合展示重建過程）
 SRC = ROOT / "Fonts" / "my_fonts" / "02" / "char_0041.png"
 NS = [1, 2, 4, 8, 16, 64]
 
@@ -63,7 +63,7 @@ def main():
         axes[j].set_title(f"n = {n}", fontsize=11)
 
     axes[-1].imshow(ink, cmap="gray_r")
-    axes[-1].set_title("原字・顏真卿", fontsize=11, fontproperties=cjk)
+    axes[-1].set_title("原字・柳公權", fontsize=11, fontproperties=cjk)
     fig.tight_layout()
     fig.savefig(FIG / "fig0_reconstruction.png", dpi=170, bbox_inches="tight", facecolor="white")
     print("saved", FIG / "fig0_reconstruction.png")

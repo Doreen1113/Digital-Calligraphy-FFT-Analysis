@@ -202,7 +202,24 @@
     border-radius: var(--radius);
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
 }
+
+.char-image-card-simple .card-jizi-link {
+    display: none;
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(139, 90, 43, 0.92);
+    color: #fff;
+    font-size: 0.62rem;
+    text-align: center;
+    padding: 0.2rem 0.15rem;
+    text-decoration: none;
+    white-space: normal;
+    line-height: 1.3;
+}
+.char-image-card-simple .card-jizi-link:hover { background: var(--accent); }
+.char-image-card-simple:hover .card-jizi-link { display: block; }
 
 .char-image-card-simple:hover {
     transform: scale(1.05);

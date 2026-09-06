@@ -35,6 +35,7 @@ GUIDANCE = 12.0
 sys.path.insert(0, str(FD))
 sys.path.insert(0, str(CALLI / "experiments"))
 from features import binarize  # noqa: E402
+from fontTools.ttLib import TTFont  # noqa: E402
 
 LABELS = ["liu_gongquan", "ouyang_xun", "shen_yinmo", "yan_zhenqing",
           "yu_shinan", "zhao_mengfu", "zhiyong"]          # 與訓練協定相同的字母序
@@ -76,6 +77,10 @@ def _load():
     _state["by_label"] = {l: g["path"].tolist() for l, g in m.groupby("label")}
     _state["written"] = {l: set(g["char"]) for l, g in m.groupby("label")}
     _state["font"] = ImageFont.truetype(str(EDUKAI), 200)
+    # PIL 對字型沒有的字仍會畫出一個非空的佔位符方塊（tofu），
+    # 不能用「畫出來的寬高是否為 0」判斷是否支援——必須直接查字型的 cmap 表。
+    _tt = TTFont(str(EDUKAI))
+    _state["font_cmap"] = set(_tt.getBestCmap().keys())
     print("gen_server ready", flush=True)
 
 
@@ -89,13 +94,13 @@ def content_image(char: str) -> tuple[Image.Image, str]:
     p = KAIU_DIR / f"{ord(char):05X}.png"
     if p.exists():
         return Image.open(p).convert("RGB"), "kaiu"
+    if ord(char) not in _state["font_cmap"]:
+        raise HTTPException(400, f"「{char}」過於罕見，教育部標準楷書字型未收錄此字，暫時無法生成")
     img = Image.new("L", (256, 256), 255)
     d = ImageDraw.Draw(img)
     f = _state["font"]
     bb = d.textbbox((0, 0), char, font=f)
     w, h = bb[2] - bb[0], bb[3] - bb[1]
-    if w == 0 or h == 0:
-        raise HTTPException(400, "這個字型沒有這個字")
     d.text(((256 - w) // 2 - bb[0], (256 - h) // 2 - bb[1]), char, fill=0, font=f)
     return img.convert("RGB"), "edukai"
 

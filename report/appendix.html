@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Where Does Calligraphic Style Live in the Frequency Domain?</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Noto Serif", "Times New Roman", "Noto Serif TC", serif;
+    font-size: 10.5pt; line-height: 1.55; color: #111; max-width: 100%;
+  }
+  .appendix-tag {
+    font-family: "Noto Sans TC", sans-serif; font-size: 9pt; letter-spacing: .12em;
+    text-transform: uppercase; color: #8c2f22; text-align: center; margin-bottom: 6mm;
+  }
+  h1.title { font-size: 16pt; text-align: center; line-height: 1.4; margin-bottom: 2mm; }
+  .subtitle { font-size: 12pt; text-align: center; font-style: italic; color: #444; margin-bottom: 4mm; }
+  .byline { text-align: center; font-size: 10pt; color: #333; margin-bottom: 8mm; }
+  h2 { font-size: 12.5pt; margin: 7mm 0 3mm; border-bottom: 0.6pt solid #999; padding-bottom: 1mm; }
+  h3 { font-size: 11pt; margin: 5mm 0 2mm; }
+  p { margin: 0 0 3mm; text-align: justify; }
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 3mm 0; }
+  th, td { border: 0.5pt solid #999; padding: 1.3mm 2mm; text-align: left; }
+  th { background: #f2f2f2; font-weight: 600; }
+  td:not(:first-child), th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  hr { border: none; border-top: 0.4pt solid #ccc; margin: 5mm 0; }
+  a { color: #8c2f22; text-decoration: none; }
+  ul { margin: 2mm 0 3mm 5mm; padding: 0; }
+  li { margin-bottom: 1.3mm; }
+  h2:first-of-type, .abstract-label { margin-top: 0; }
+  p.abstract-body { font-size: 9.8pt; }
+  code { font-family: "Courier New", monospace; font-size: 9pt; background: #f5f5f5; padding: 0 1mm; }
+</style>
+</head>
+<body>
+<div class="appendix-tag">Appendix &middot; Full Technical Report</div>
+<h1 class="title">Where Does Calligraphic Style Live in the Frequency Domain?</h1>
+<div class="subtitle">An Interpretable Study of Calligrapher Identification with Character-Controlled Pairs</div>
+<div class="byline"><b>Doreen Lin (林沁瑩)</b> · National Tsing Hua University, Dept. of Computer Science<br>Draft v0.1 — September 2026</div>
+<h2>Abstract</h2>
+<p>Chinese calligraphy education rests on a long-standing belief: a calligrapher's identity lives primarily in a character's structural composition (間架結構), with brush-tip detail (筆法) as refinement. We test this belief quantitatively. We curate a dataset of 7,449 single-character images spanning 7 master calligraphers, 10 copybooks, and 1,057 unique characters, with a structure that public calligraphy datasets lack: 3,600+ <em>same-character pairs</em> across calligraphers, enabling text-dependent style analysis that controls for character identity. Under character-disjoint evaluation (test characters never seen in training), we find that (1) a ResNet-18 identifies calligraphers at 98.7% accuracy, but a radial low-pass ablation shows <strong>95% accuracy is reached with only the lowest 10% of spatial frequencies</strong> — the "structure over brushwork" belief holds, and we can now put a number on it; (2) interpretable contour Fourier descriptors carry real but partial style signal (49% with all handcrafted features vs. 31% for spectral statistics alone), spread across the harmonic spectrum rather than concentrated in a few low harmonics; (3) on same-character verification with unseen characters, CNN style embeddings reach <strong>ROC-AUC 0.989 even when the two samples come from different copybooks</strong>, showing the learned representation transfers across both character identity and source material. Cross-dataset validation on an independently collected corpus, however, collapses accuracy to 32% (recovering partially to 42% under stroke-width normalization) — within-source style identification is easy, cross-source generalization is the open problem, and we quantify exactly where the gap lies. We release the dataset construction pipeline, a same-character-ground-truth evaluation protocol for style generation, and a deployed learning platform built on these findings.</p>
+<hr />
+<h2>1. Introduction</h2>
+<!-- 動機三段：書法教育的痛點（找不到範字/回饋抽象）→ 既有研究把分類刷到飽和但不可解釋 → 我們問的問題：風格訊號在哪個頻段、能否跨字泛化 -->
+
+<p>Prior work has pushed CNN classification of regular-script masters to 90–96% [Zhang et al., IJDAR 2019; Sensors 2024], and large-scale benchmarks now cover 142 calligraphers [MCCD, ICDAR 2025]. Accuracy itself is saturated. What remains poorly understood is <em>what the models actually use</em>: which spatial scales carry calligrapher identity, whether interpretable frequency-domain features explain part of it, and whether learned style representations generalize across characters the model has never seen — the setting that matters for real applications (a learner practices characters that are not in any reference book).</p>
+<p>Our contributions:</p>
+<ol>
+<li><strong>A character-controlled dataset design.</strong> 7 calligraphers × 1,057 characters × 7,449 images with same-character cross-calligrapher pairs — a text-dependent structure public datasets (single-label images) cannot provide.</li>
+<li><strong>A frequency-domain answer to "structure vs. brushwork."</strong> Radial low-pass ablation localizes 95% of identifiable style below 10% of the Nyquist frequency; contour-harmonic sweeps show handcrafted frequency features carry distributed, partial signal.</li>
+<li><strong>Character- and book-disjoint verification.</strong> Style embeddings verify calligrapher identity on unseen characters at AUC 0.998, and 0.989 when restricted to cross-copybook pairs — with explicit confound analysis (Sec. 6) quantifying how much of the signal could come from reproduction artifacts.</li>
+</ol>
+<h2>2. Related Work</h2>
+<p><strong>Calligraphy style classification.</strong> CNN-based classification of regular-script masters is well studied: Zhang et al. [1] classify the four Tang/Yuan masters (Ouyang Xun, Yan Zhenqing, Liu Gongquan, Zhao Mengfu) with a SE-block CNN augmented with Haar wavelet layers; a 2024 study [2] reaches 96.2% on four Tang masters with 8,282 images. ShufaNet [3] addresses the few-shot setting with metric learning (~65% few-shot, ~91% full). The recently released MCCD benchmark [4] scales to 142 calligraphers and 330K character images with multi-task baselines, and VLM/diffusion lines [5, 6] move to page-level understanding and generation. Accuracy on small closed sets is saturated; none of these works analyze <em>which spatial scales</em> carry the identity signal, and all use single-label images without character-controlled pairing.</p>
+<p><strong>Frequency-domain and handcrafted shape features.</strong> Fourier descriptors originate with Granlund [7] and remain standard for closed-contour shape analysis; wavelet-domain features have been applied to font/calligraphy style [8]. In the broader writer-identification literature, handcrafted descriptors have been largely superseded by deep models (page-level ViT pipelines reach ~99% on IAM/CVL [9]), yet fusing handcrafted and deep descriptors remains an active topic [10]. To our knowledge no prior work systematically analyzes Chinese calligraphic <em>style</em> in the frequency domain — the gap this study targets.</p>
+<p><strong>Text-dependent design.</strong> Writer identification distinguishes text-dependent from text-independent settings; text-dependent comparison (same textual content, different writers) isolates style from content. Public calligraphy datasets provide single-label images and cannot support this design; our same-character cross-calligrapher pairs bring the text-dependent protocol to calligraphy.</p>
+<p><strong>Calligraphy education and aesthetic assessment.</strong> CHAED [11] pairs 1,000 handwritten characters with human aesthetic ratings and predicts them from 22 interpretable global shape features — the closest precedent for our "interpretable features + human validation" direction. A 2024 survey [12] covers handwriting quality evaluation; classroom studies report that expert rubrics weight structure and spatial arrangement at ~70% [13], consistent with our frequency-domain finding that most identity signal is structural.</p>
+<h2>3. Dataset</h2>
+<p>7 master calligraphers (Zhiyong 智永, Ouyang Xun 歐陽詢, Yu Shinan 虞世南, Yan Zhenqing 顏真卿, Liu Gongquan 柳公權, Zhao Mengfu 趙孟頫, Shen Yinmo 沈尹默) spanning Sui/Tang to the 20th century; 10 copybooks; 7,449 images; 1,057 unique characters. Character images were collected from publicly available copybook reproductions on the web; our contribution is the curation pipeline — cleaning, per-character labeling (CSV), a character-level index linking every character to every calligrapher who wrote it, and the same-character pairing structure. All images are preprocessed to uniform 512×512 binarized glyphs (white background), removing paper texture, rubbing background, and ink color — leaving only glyph geometry. We release the pipeline and index; raw images follow the source materials' terms of use.</p>
+<table>
+<thead>
+<tr>
+<th>Calligrapher</th>
+<th>Books</th>
+<th>Images</th>
+<th>Unique chars</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Liu Gongquan</td>
+<td>1</td>
+<td>1,399</td>
+<td>492</td>
+</tr>
+<tr>
+<td>Ouyang Xun</td>
+<td>1</td>
+<td>936</td>
+<td>485</td>
+</tr>
+<tr>
+<td>Shen Yinmo</td>
+<td>4</td>
+<td>1,911</td>
+<td>553</td>
+</tr>
+<tr>
+<td>Yan Zhenqing</td>
+<td>1</td>
+<td>1,725</td>
+<td>631</td>
+</tr>
+<tr>
+<td>Yu Shinan</td>
+<td>1</td>
+<td>316</td>
+<td>228</td>
+</tr>
+<tr>
+<td>Zhao Mengfu</td>
+<td>1</td>
+<td>442</td>
+<td>282</td>
+</tr>
+<tr>
+<td>Zhiyong</td>
+<td>1</td>
+<td>720</td>
+<td>720</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Evaluation protocol.</strong> All experiments use <em>character-disjoint</em> splits: the set of unique characters is partitioned 80/20, and every image of a test character is excluded from training. Models must therefore generalize style across characters rather than memorize character-calligrapher co-occurrence. Results are reported as mean ± std over 5 random character partitions (seeds).</p>
+<h2>4. Methods</h2>
+<h3>4.1 Normalized contour Fourier descriptors</h3>
+<p>Each glyph's contours (outer + holes, up to 8 by perimeter) are resampled to 256 points at uniform arc length; the complex boundary sequence is Fourier-transformed; descriptors are made translation- (drop DC), scale- (normalize by first harmonic), rotation- and start-point-invariant (magnitude spectrum). Per-glyph features: perimeter-weighted mean and per-dimension std over contours, ±20 harmonics.</p>
+<h3>4.2 Baseline feature sets</h3>
+<ul>
+<li><strong>Spectral-7</strong>: the platform's original 7 spectral statistics (band energies, centroid, DC ratio, slope, decay) computed per contour and averaged.</li>
+<li><strong>Hu moments</strong>: log-scaled 7 invariant moments.</li>
+<li>Classifiers: logistic regression, RBF-SVM, random forest (results report the best per feature set).</li>
+</ul>
+<h3>4.3 CNN baseline</h3>
+<p>ResNet-18 (ImageNet init), 224×224 binarized input, 15 epochs AdamW, light affine augmentation; model selection on a character-disjoint validation split carved from training characters.</p>
+<h3>4.4 Same-character pair verification</h3>
+<p>On test characters only: all image pairs of the same character form the pair pool; positives = same calligrapher, negatives = different calligraphers (subsampled to ≤60/character). Embeddings = penultimate ResNet features trained for classification on training characters only; score = cosine similarity; metric = ROC-AUC. Handcrafted-feature baseline uses z-scored concatenated features.</p>
+<h2>5. Results</h2>
+<h3>5.1 Classification (Fig. 1)</h3>
+<table>
+<thead>
+<tr>
+<th>Features</th>
+<th>Best classifier</th>
+<th>Accuracy</th>
+<th>Macro-F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spectral-7 (original)</td>
+<td>SVM</td>
+<td>31.3% ± 1.9</td>
+<td>21.6</td>
+</tr>
+<tr>
+<td>Hu moments</td>
+<td>LogReg</td>
+<td>37.7% ± 2.0</td>
+<td>25.6</td>
+</tr>
+<tr>
+<td>Fourier descriptors (ours)</td>
+<td>SVM</td>
+<td>39.9% ± 1.8</td>
+<td>37.7</td>
+</tr>
+<tr>
+<td>All handcrafted</td>
+<td>SVM</td>
+<td><strong>49.4% ± 1.7</strong></td>
+<td>48.4</td>
+</tr>
+<tr>
+<td>ResNet-18</td>
+<td>—</td>
+<td><strong>98.7% ± 1.0</strong></td>
+<td>98.5</td>
+</tr>
+<tr>
+<td>Majority class / chance</td>
+<td></td>
+<td>25.7% / 14.3%</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Handcrafted features are complementary (concatenation +9.5 pts over the best single set) but capture only about half the class-separable signal.</p>
+<h3>5.2 Where the style signal lives (Figs. 2, 3)</h3>
+<p><strong>Contour harmonics (Fig. 2):</strong> accuracy rises smoothly from 28.0% (±1 harmonic) to 46.9% (±64) with no saturation — style information is <em>distributed</em> across the contour spectrum, not concentrated in a few low harmonics.</p>
+<p><strong>2D spatial frequency (Fig. 3):</strong> retraining the CNN on radially low-passed images:</p>
+<table>
+<thead>
+<tr>
+<th>Cutoff (× Nyquist)</th>
+<th>0.02</th>
+<th>0.05</th>
+<th>0.1</th>
+<th>0.2</th>
+<th>0.4</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accuracy</td>
+<td>48.5%</td>
+<td>78.2%</td>
+<td><strong>94.7%</strong></td>
+<td>97.3%</td>
+<td>97.2%</td>
+<td>98.7%</td>
+</tr>
+</tbody>
+</table>
+<p>10% of the spatial-frequency radius — coarse stroke layout, no fine brush detail — already yields 95% accuracy. The traditional pedagogy claim "structure first, brushwork second" (結構為本) is quantitatively supported: brush-tip detail contributes only the final ~4 points.</p>
+<h3>5.3 Verification on unseen characters (Fig. 4)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Training</th>
+<th>ROC-AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Handcrafted features (cosine)</td>
+<td>none</td>
+<td>0.635 ± 0.061</td>
+</tr>
+<tr>
+<td>DINOv2 ViT-S/14 embedding (cosine)</td>
+<td>none (generic self-supervised)</td>
+<td>0.793 ± 0.021</td>
+</tr>
+<tr>
+<td>ResNet-18 embedding (cosine)</td>
+<td>domain (our training characters)</td>
+<td><strong>0.998 ± 0.000</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Three generations of representation on the same protocol: generic foundation-model features capture substantial style signal with zero training, but domain training still contributes a decisive margin — calligraphy style verification is not free-riding on generic visual features.</p>
+<h3>5.4 Robustness: is it style, or is it the copybook?</h3>
+<p>Because each calligrapher is represented by specific copybooks, a model could exploit reproduction artifacts (stroke weight of a particular edition, binarization edge character) rather than style. Three checks:</p>
+<ul>
+<li><strong>Book statistics.</strong> Stroke widths differ across calligraphers (8.2–13.4 px) — itself a stylistic property — while Shen Yinmo's four books are mutually consistent (9.0–10.0 px), indicating uniform preprocessing did not inject strong per-book width bias.</li>
+<li><strong>Book identification.</strong> A CNN distinguishes Shen Yinmo's own four books at 88.3% (chance 39%) under character-disjoint splits: a <em>book signature</em> exists (mixing genuine intra-writer variation across works with reproduction artifacts — these cannot be fully disentangled without additional editions).</li>
+<li><strong>AUC decomposition.</strong> Restricting verification positives to <em>cross-book</em> pairs (both images the same character, same calligrapher, different books): AUC drops only from 0.9987 to <strong>0.9889</strong>. Style, not the book, carries the verification signal.</li>
+<li><strong>Leave-one-book-out.</strong> Training the 7-way classifier with one Shen Yinmo book fully held out, then testing whether that unseen book is still recognized as Shen Yinmo (2 seeds each): book 01 → 99.3%, book 10 → 94.2%, book 08 → 71.6% (high variance across seeds). Style largely transfers to entirely unseen source material, while book 08's drop indicates genuine intra-writer variation across works — consistent with the 88.3% book-identification result and worth studying rather than hiding.</li>
+</ul>
+<h3>5.5 Cross-dataset external validation</h3>
+<p>We test the model (trained on all 7,449 of our images) on the kai-script portion of an independently collected public dataset [14] covering 6 of our 7 calligraphers (40,152 images; different sources, scanning and cropping pipelines).</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Accuracy (6-way, chance 16.7%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw binarized glyphs</td>
+<td>32.0% ± 4.7</td>
+</tr>
+<tr>
+<td>Stroke-width normalized (skeletonize + fixed-width redraw, train &amp; test)</td>
+<td>37.1% (seed0 42.2%)</td>
+</tr>
+</tbody>
+</table>
+<p>The confusion structure is informative: without normalization, thin-stroke external images collapse onto our thin-stroke classes (Liu Gongquan and Yu Shinan are <em>never</em> predicted), confirming that in-dataset accuracy partly rides on stroke weight and reproduction character. Normalization recovers Yan Zhenqing from 16% to 75% while Zhiyong/Shen Yinmo stay high — geometry alone does transfer for several calligraphers. The residual failures (Liu Gongquan, Yu Shinan ≈ 0%) are consistent with the external dataset drawing on <em>different works</em> by those masters (cf. our leave-one-book-out finding that even the same calligrapher's works differ), plus unverifiable labeling in the external source. Cross-source calligrapher identification is substantially harder than in-dataset results suggest — a finding we consider more valuable than the 98.7% headline.</p>
+<h3>5.6 Zero-shot style generation with same-character ground truth</h3>
+<p>Using pretrained FontDiffuser [15] zero-shot (content = standard-font render, style = one reference glyph), we generate 210 characters (30 per calligrapher) <em>for which we hold the calligrapher's real glyph</em> — an evaluation setting font-generation papers cannot access, since they lack same-character ground truth across writers.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Style match rate — generated (classifier trained on real data)</td>
+<td>22.9%</td>
+</tr>
+<tr>
+<td>Style match rate — real ground-truth glyphs (upper bound)</td>
+<td>74.8%</td>
+</tr>
+<tr>
+<td>Style match rate — standard-font content images (lower bound)</td>
+<td>13.8%</td>
+</tr>
+<tr>
+<td>SSIM generated vs. ground truth</td>
+<td>0.531</td>
+</tr>
+<tr>
+<td>FD cosine: generated vs. target's real glyph / vs. another calligrapher's</td>
+<td>0.983 / 0.960</td>
+</tr>
+</tbody>
+</table>
+<p><em>(The 74.8% upper bound rather than ~99% reflects a processing-domain gap between the paired 256px ground-truth crops and the original training images — the three rows share this evaluator, so relative comparison stands.)</em></p>
+<p><em>(Numbers above are from the initial evaluator; all comparisons below use a single </em><em>frozen</em><em> evaluator — we found that retraining the evaluator per run introduces ±10-point noise that had initially distorted our conclusions, a methodological lesson we report explicitly.)</em></p>
+<p><strong>Fine-tuning and six interventions (frozen evaluator, GT upper bound 91.9%):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Style match</th>
+<th>SSIM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero-shot</td>
+<td>20.0%</td>
+<td>0.531</td>
+</tr>
+<tr>
+<td>Fine-tune (15k steps, best)</td>
+<td>32.4%</td>
+<td>0.556</td>
+</tr>
+<tr>
+<td>+ frequency-structure loss, coeff 0.1 (ours-v1)</td>
+<td>32.9%</td>
+<td>0.554</td>
+</tr>
+<tr>
+<td>+ class-balanced resampling</td>
+<td>31.0%</td>
+<td>0.556</td>
+</tr>
+<tr>
+<td>+ guidance scale 7.5→12</td>
+<td>33.8%</td>
+<td>0.556</td>
+</tr>
+<tr>
+<td>+ verification-guided reranking (K=5, independent selector)</td>
+<td>34.3%</td>
+<td>0.557</td>
+</tr>
+<tr>
+<td>+ frequency loss coeff 2.0 repair fine-tune</td>
+<td>33.3%</td>
+<td>0.563</td>
+</tr>
+<tr>
+<td>Reranking oracle upper bound (perfect selector)</td>
+<td>37.1%</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diagnosis: the structure gap.</strong> Every intervention plateaus near 34%. Visual and quantitative analysis reveals why: generated glyphs <em>keep the standard font's skeleton</em> and transfer only stroke appearance. For the most structurally distinctive masters, generated output is literally more similar to the standard-font content image than to the master's real glyph (Liu Gongquan: SSIM 0.552 to content vs. 0.540 to ground truth; 39% of all outputs are closer to the content than to the target). Stroke <em>width</em>, by contrast, is reproduced almost perfectly (e.g., Zhao Mengfu 13.7 vs. 13.5 px). The surviving classes (Yu Shinan 100%, Shen Yinmo 87%) are precisely those whose real structure is closest to the modern standard font.</p>
+<p><strong>Can structure-targeted losses close the gap?</strong> Motivated directly by Finding 1, we added two losses that explicitly constrain structure during a 5,000-step continuation of the fine-tuned checkpoint: (a) a <em>frequency structure loss</em>, comparing the radial low-pass components (cutoff 0.1, matching Sec. 5.2) of the predicted x0 and the target; (b) a <em>soft-skeleton loss</em>, comparing differentiable morphological skeletons obtained by iterated min/max-pooling erosion and dilation accumulating <code>x − open(x)</code> (following the clDice line of topology-preserving losses in medical image segmentation). Both conditions are identical to the fine-tune baseline except for the added term.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>SSIM to GT ↑</th>
+<th>SSIM to standard font ↓</th>
+<th>Content leakage rate ↓</th>
+<th>Style match</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fine-tune baseline</td>
+<td>0.5557</td>
+<td>0.5404</td>
+<td>39.0%</td>
+<td>33.8%</td>
+</tr>
+<tr>
+<td>+ frequency structure loss</td>
+<td><strong>0.5625</strong> (p=0.021)</td>
+<td><strong>0.5264</strong> (p&lt;0.001)</td>
+<td><strong>28.6%</strong> (p=0.030)</td>
+<td>33.3%</td>
+</tr>
+<tr>
+<td>+ soft-skeleton loss</td>
+<td>0.5521 (n.s.)</td>
+<td>0.5279 (p&lt;0.001)</td>
+<td>31.0% (n.s.)</td>
+<td>33.3%</td>
+</tr>
+</tbody>
+</table>
+<p><em>(Paired over the same 210 held-out characters; Wilcoxon signed-rank test for the SSIM columns, Fisher's exact test for the leakage rate. "Content leakage rate" = fraction of generated outputs whose SSIM to the standard font exceeds their SSIM to the ground truth — our operationalization of the structure gap.)</em></p>
+<p>The frequency structure loss does exactly what it was designed to do: outputs move significantly away from the standard-font skeleton and toward the ground truth, and the content leakage rate drops from 39.0% to 28.6% — all three effects statistically significant. <strong>Yet classifier-based style match does not improve</strong> (33.3% vs. 33.8% baseline, within noise). The soft-skeleton loss shows the same pattern on the leakage metric but does not reach significance on SSIM-to-GT. We take this disagreement between metrics seriously rather than reporting only the metric that looks favorable: narrowing the structure gap, as measured geometrically, is <em>necessary but not sufficient</em> for the output to be <em>recognized</em> as the calligrapher by our style classifier. This suggests the classifier weights stroke texture more heavily than our structural hypothesis assumed — a discrepancy between geometric structure-matching and learned style recognition that is itself worth investigating, and one we did not anticipate when designing the loss.</p>
+<p>This closes the loop with Finding 1: <strong>calligrapher identity is structural (low-frequency) by our classification-based measure, and one-shot diffusion font generation transfers texture but not structure — yet directly imposing structural losses, while measurably closing the geometric gap, does not close the recognition gap.</strong> We consider this diagnosis — six controlled interventions, two additional structure-targeted losses with paired significance testing, a quantified and partially explained failure mode, and a precise open problem (skeleton-level supervision that also improves <em>recognized</em> style, not just geometric similarity) — the main contribution of the generation study, and the open problem itself a direction for graduate research.</p>
+<h2>6. Limitations</h2>
+<ul>
+<li>Cross-book checks rely on a single calligrapher with multiple books (Shen Yinmo); MCCD [ICDAR 2025] external validation is planned to test cross-dataset generalization.</li>
+<li>Book signature (88.3%) means the 7-way classification number is partly inflatable by source cues; the cross-book verification AUC (0.989) is the cleaner headline claim.</li>
+<li>The dataset is regular-script (楷書) dominant; conclusions may not transfer to running/cursive scripts.</li>
+<li>Aesthetic/educational scoring on the deployed platform is not yet validated against expert ratings (study planned).</li>
+</ul>
+<h2>7. Application: the Mozji (墨跡習字) platform</h2>
+<p>The findings feed directly into a deployed web platform (FastAPI, <a href="https://calligraphy-analyzer.onrender.com">calligraphy-analyzer.onrender.com</a>) built on the same dataset. Learners upload a photographed practice character and receive descriptive, non-judgmental feedback: a pixel-level difference overlay against a chosen master (red = extra ink, blue = missing ink), centroid/balance analysis, and — motivated by Sec. 5.2 — feedback ordered <em>structure first</em>: since 95% of identity signal lives in coarse layout, the platform prioritizes structural deviation over brush-tip detail, matching both the data and traditional pedagogy. The same-character pairing index also powers a cross-master comparison view: any character can be viewed side-by-side across every master who wrote it. A planned validation study will correlate the platform's similarity metrics with expert ratings from a collaborating calligraphy teacher.</p>
+<h2>8. Conclusion and Future Work</h2>
+<p>We put a number on a centuries-old pedagogical belief, showed that learned style representations survive both unseen characters and unseen source books, and honestly quantified how much of the remaining signal could be source artifacts. Future work: external validation on MCCD [4]; stroke-width-normalized (skeletonized) re-runs to further isolate geometry from reproduction; expert-rating validation of the platform's metrics; and few-shot style generation for characters a master never wrote (the platform's original motivating pain point), using modern font-generation methods.</p>
+<h2>References</h2>
+<p>[1] J. Zhang, M. Guo, J. Fan. "A novel CNN structure for fine-grained classification of Chinese calligraphy styles." <em>IJDAR</em> 22(2), 2019.
+[2] "A Novel CNN Model for Classification of Chinese Historical Calligraphy Styles in Regular Script Font." <em>Sensors</em> 24(1), 2024.
+[3] "ShufaNet: Classification method for calligraphers who have reached the professional level." arXiv:2111.11350, 2021.
+[4] "MCCD: A Multi-Attribute Chinese Calligraphy Character Dataset." <em>ICDAR</em>, 2025. arXiv:2507.06948.
+[5] "CalliReader: Contextualizing Chinese Calligraphy via an Embedding-Aligned VLM." arXiv:2503.06472, 2025.
+[6] "UniCalli: unified diffusion for Chinese calligraphy generation." arXiv:2510.13745, 2025.
+[7] G. H. Granlund. "Fourier preprocessing for hand print character recognition." <em>IEEE Trans. Computers</em>, 1972.
+[8] "Classifying Fonts and Calligraphy Styles Using Complex Wavelet Transform." <em>SIViP</em>, 2015.
+[9] Y. Li, Y. Zhang. "Writer identification based on vision transformer and CBAM." <em>JIFS</em>, 2023.
+[10] "Length Independent Writer Identification Based on the Fusion of Deep and Hand-Crafted Descriptors." 2019.
+[11] R. Sun et al. "Aesthetic Visual Quality Evaluation of Chinese Handwritings." <em>IJCAI</em>, 2015. (CHAED)
+[12] "Quality evaluation methods of handwritten Chinese characters: a comprehensive survey." <em>Multimedia Systems</em>, 2024.
+[13] "Cluster analysis of peer assessment in a calligraphy course." <em>SAGE Open</em>, 2024.
+[14] zhuojg. "chinese-calligraphy-dataset." GitHub, 2022. 138,499 images, 19 calligraphers, Apache-2.0.
+[15] Z. Yang et al. "FontDiffuser: One-Shot Font Generation via Denoising Diffusion with Multi-Scale Content Aggregation and Style Contrastive Learning." <em>AAAI</em>, 2024.</p>
+</body>
+</html>

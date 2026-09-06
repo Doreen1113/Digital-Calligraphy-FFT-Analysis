@@ -339,6 +339,12 @@ function renderImageCardSimple(label, imageUrl, character, calligrapher = '', bo
     }
     const alt = modalTitle;
 
+    // 用這位書法家的風格去集字（帶入這個字，方便延伸成一句話）
+    const jizuLink = calligrapher
+        ? `<a class="card-jizi-link" href="/generate?text=${encodeURIComponent(character)}&name=${encodeURIComponent(calligrapher)}"
+             onclick="event.stopPropagation()" title="用${escapeHtml(calligrapher)}的風格集字">用此風格集字 →</a>`
+        : '';
+
     return `
         <div class="char-image-card-simple"
              data-img="${escapeHtml(imgUrlWithCache)}"
@@ -347,6 +353,7 @@ function renderImageCardSimple(label, imageUrl, character, calligrapher = '', bo
                  alt="${escapeHtml(alt)}"
                  loading="lazy">
             <div class="card-label">${escapeHtml(label)}</div>
+            ${jizuLink}
         </div>
     `;
 }

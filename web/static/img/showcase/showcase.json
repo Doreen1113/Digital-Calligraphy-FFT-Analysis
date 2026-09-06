@@ -1,0 +1,30 @@
+[
+ {
+  "slug": "shangshan",
+  "text": "上善若水",
+  "name": "顏真卿",
+  "real": 4,
+  "ai": 0
+ },
+ {
+  "slug": "ningjing",
+  "text": "寧靜致遠",
+  "name": "趙孟頫",
+  "real": 1,
+  "ai": 3
+ },
+ {
+  "slug": "houde",
+  "text": "厚德載物",
+  "name": "柳公權",
+  "real": 3,
+  "ai": 1
+ },
+ {
+  "slug": "wenguzhixin",
+  "text": "溫故知新",
+  "name": "智永",
+  "real": 4,
+  "ai": 0
+ }
+]

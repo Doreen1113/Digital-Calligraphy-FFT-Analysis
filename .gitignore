@@ -76,3 +76,6 @@ data/paired/
 experiments/cache/
 kaggle_source/data/
 experiments/generated/*.png
+experiments/generated_*/
+data/stats.json
+demo/

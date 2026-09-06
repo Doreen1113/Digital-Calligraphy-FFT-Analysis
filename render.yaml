@@ -8,3 +8,7 @@ services:
     envVars:
       - key: MPLBACKEND
         value: Agg
+      - key: GEN_GENERATE_URL
+        value: https://doreenlqy071--calli-gen-server-generate-endpoint.modal.run
+      - key: GEN_HEALTH_URL
+        value: https://doreenlqy071--calli-gen-server-health.modal.run

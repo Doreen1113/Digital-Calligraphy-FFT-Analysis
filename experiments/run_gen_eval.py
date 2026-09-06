@@ -66,21 +66,30 @@ def main():
     lab2i = {l: i for i, l in enumerate(labels)}
     y_all = manifest["label"].map(lab2i).values
 
-    # ── 訓練 style 分類器（全部真實資料）──
-    torch.manual_seed(0)
-    dl = DataLoader(CalliDataset(manifest, y_all, train=True), batch_size=64,
-                    shuffle=True, num_workers=8, pin_memory=True)
+    # ── 風格評估分類器：只訓練一次並凍結存檔，所有方法共用同一顆，
+    #    否則每次重訓的 ±數個百分點浮動會污染方法間比較 ──
+    eval_ckpt = EXP / "cache" / "eval_classifier.pth"
     m = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
     m.fc = nn.Linear(m.fc.in_features, 7)
     m = m.to(DEV)
-    opt = torch.optim.AdamW(m.parameters(), lr=3e-4, weight_decay=1e-4)
-    lossf = nn.CrossEntropyLoss()
-    for ep in range(10):
-        m.train()
-        for xb, yb in dl:
-            opt.zero_grad()
-            lossf(m(xb.to(DEV)), yb.to(DEV)).backward()
-            opt.step()
+    if eval_ckpt.exists():
+        m.load_state_dict(torch.load(eval_ckpt, map_location=DEV))
+        print("載入凍結評估器:", eval_ckpt)
+    else:
+        torch.manual_seed(0)
+        dl = DataLoader(CalliDataset(manifest, y_all, train=True), batch_size=64,
+                        shuffle=True, num_workers=8, pin_memory=True)
+        opt = torch.optim.AdamW(m.parameters(), lr=3e-4, weight_decay=1e-4)
+        lossf = nn.CrossEntropyLoss()
+        for ep in range(10):
+            m.train()
+            for xb, yb in dl:
+                opt.zero_grad()
+                lossf(m(xb.to(DEV)), yb.to(DEV)).backward()
+                opt.step()
+        eval_ckpt.parent.mkdir(exist_ok=True)
+        torch.save(m.state_dict(), eval_ckpt)
+        print("評估器已訓練並凍結:", eval_ckpt)
     m.eval()
     tf = transforms.Compose([transforms.ToTensor(),
                              transforms.Normalize([0.5] * 3, [0.5] * 3)])
