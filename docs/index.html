@@ -32,7 +32,6 @@
   header .sub { font-family: var(--serif); color: var(--muted); font-size: 1rem; margin-top: .7rem;
     font-style: italic; font-weight: 400; }
   header .authors { margin-top: 2rem; font-size: 1.02rem; }
-  header .affil { color: var(--muted); font-size: .88rem; margin-top: .3rem; }
   header .links { margin-top: 1.8rem; display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
   header .links a { border: 1px solid var(--text); border-radius: 3px; padding: .42rem 1.1rem;
     color: var(--text); font-size: .86rem; letter-spacing: .02em; transition: background .15s, color .15s; }
@@ -50,14 +49,21 @@
   /* Figures */
   figure { margin: 1.6rem 0; }
   figure img { width: 100%; display: block; border: 1px solid var(--line); background: #fff; }
+  .hero-fig img { border: none; box-shadow: 0 8px 26px rgba(0,0,0,.07); border-radius: 4px; }
+  .hero-fig figcaption { text-align: center; }
   figcaption { font-size: .85rem; color: var(--muted); margin-top: .7rem; line-height: 1.8; }
   figcaption b { color: var(--text); font-weight: 500; }
   .fig-half { max-width: 560px; margin-left: auto; margin-right: auto; }
+  .fig-mid { max-width: 660px; margin-left: auto; margin-right: auto; }
   .fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   @media (max-width: 700px) { .fig-pair { grid-template-columns: 1fr; } }
 
   /* Tables */
   table { width: 100%; border-collapse: collapse; font-size: .88rem; margin: .4rem 0 .7rem; }
+  /* 窄螢幕才讓表格自己橫向捲動；桌機維持正常滿版表格 */
+  @media (max-width: 700px) {
+    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  }
   caption { font-size: .85rem; color: var(--muted); text-align: left; padding-bottom: .6rem; line-height: 1.8; }
   caption b { color: var(--text); font-weight: 500; }
   th, td { padding: .5rem .7rem; text-align: left; border-bottom: 1px solid var(--line); font-weight: 300; }
@@ -82,10 +88,6 @@
     border: 1px solid var(--line); background: #fff; cursor: pointer; color: var(--muted); }
   .demo-chars button.on { border-color: var(--text); color: var(--text); }
 
-  /* Pipeline */
-  .pipeline { border: 1px solid var(--line); padding: 1.3rem; overflow-x: auto; background: #fff; }
-  .pipeline svg { min-width: 800px; width: 100%; height: auto; display: block; }
-
   /* Stats row */
   .facts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line);
     border: 1px solid var(--line); margin: 1.4rem 0; }
@@ -96,6 +98,14 @@
 
   .callout { border-left: 2px solid var(--text); padding: .2rem 0 .2rem 1.2rem; margin: 1.4rem 0;
     font-size: .95rem; }
+
+  /* 重點數字（頁首一眼可讀） */
+  .tldr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin: 2.6rem 0 2rem;
+    text-align: center; }
+  .tldr b { display: block; font-family: var(--serif); font-size: 2.1rem; font-weight: 600;
+    color: var(--link); line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .tldr span { display: block; margin-top: .5rem; font-size: .84rem; color: var(--muted); line-height: 1.7; }
+  @media (max-width: 640px) { .tldr { grid-template-columns: 1fr; gap: 1.4rem; } }
   .limits { background: var(--panel); border: 1px solid var(--line); padding: 1.3rem 1.5rem; font-size: .9rem; }
   .limits ul { margin: .5rem 0 0; padding-left: 1.2rem; }
   .limits li { margin-bottom: .5rem; }
@@ -110,7 +120,6 @@
   <h1>書法風格住在哪個頻段？<br>頻域視角下的書法家辨識與風格生成</h1>
   <div class="sub">Where Does Calligraphic Style Live in the Frequency Domain?</div>
   <div class="authors">林沁瑩　Doreen Lin</div>
-  <div class="affil">國立清華大學 資訊工程學系　|　輔系 科技藝術</div>
   <div class="links">
     <a href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis/blob/main/report/report.md">技術報告</a>
     <a href="https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis">程式碼與實驗</a>
@@ -120,42 +129,41 @@
 </header>
 
 <div class="wrap">
-  <figure>
-    <img src="img/fig0_reconstruction.png" alt="以 1 至 64 個傅立葉諧波逐步重建柳公權的「敬」字">
-    <figcaption class="col"><b>圖 1：輪廓傅立葉漸進重建。</b>
-      取柳公權《玄秘塔碑》「敬」字的輪廓做傅立葉分解，僅保留前 n 個諧波後重建。
+  <figure class="hero-fig">
+    <img src="img/hero_jizi.gif" alt="以趙孟頫風格集字「寧靜致遠」：真跡與 AI 補字逐字組成">
+    <figcaption class="col"><b>成果先看。</b>
+      輸入一句話，字帖裡寫過的字用真跡、沒寫過的由模型補上——每個字都標明來源。</figcaption>
+  </figure>
+  <figure class="fig-half">
+    <img src="img/fig0_reconstruction.gif" alt="以 1 至 64 個傅立葉諧波逐步重建柳公權的「敬」字，動畫展示">
+    <figcaption><b>圖 1：輪廓傅立葉漸進重建。</b>
       n = 1 時僅存墨團輪廓，n = 4 時字已可辨識，n = 16 之後補回的主要是筆鋒細節。
-      本研究即從這個觀察出發，量化書法家身份訊號在空間頻率上的分布。</figcaption>
+      本研究即從這個觀察出發：書法家的身份訊號，究竟住在哪個頻段？</figcaption>
   </figure>
 </div>
 
-<section class="wrap col">
-  <h2>摘要</h2>
-  <p class="abstract">
-    中文書法教學長期存在一項共識：書法家的個人風格主要體現於字的間架結構，筆鋒細節次之。
-    本研究以量化方法檢驗此一命題。我們整理了一組涵蓋七位書法家、十本字帖、
-    1,057 個獨特字、共 7,449 張單字影像的資料集，其結構特點是包含 3,600 組以上
-    「同一個字、不同書法家」的配對樣本——此一設計可控制字形內容變因，
-    是公開書法資料集所不具備的。在測試字與訓練字完全不重疊的評估協定下，我們得到三項結果：
-    其一，對字圖施加徑向低通濾波後重新訓練，<b>僅保留最低 10% 的空間頻率即可達到 94.7% 的辨識準確率</b>，
-    量化支持了「結構為本」的傳統論述；其二，深度風格表徵在未見過的字上的同字配對驗證達到
-    ROC-AUC 0.998，限制為跨字帖配對時仍有 0.989；其三，在跨資料集情境下準確率降至 32.0%，
-    我們據此指出筆畫寬度等再製特徵的影響。最後，我們將同一頻域框架用於診斷擴散模型的書法風格生成，
-    發現生成結果傾向保留標準字骨架而僅轉移筆觸紋理——我們稱之為<b>結構鴻溝</b>——
-    此一失效模式與第一項發現互相印證，並構成一個明確的開放問題。
+<section class="wrap">
+  <div class="tldr col">
+    <div><b>94.7%</b><span>只留最低 10% 空間頻率<br>仍能認出是誰寫的</span></div>
+    <div><b>0.998</b><span>同字配對驗證 ROC-AUC<br>（測試字未參與訓練）</span></div>
+    <div><b>34.3%</b><span>風格生成辨識率<br>官方權重 20.0% → 本流程</span></div>
+  </div>
+  <p class="col abstract">
+    書法教學長期認為，風格主要體現在<b>間架結構</b>、筆鋒細節次之。本研究以頻域方法量化檢驗此命題，
+    並將同一框架用於診斷擴散模型的書法生成——發現生成結果傾向保留標準字骨架、僅轉移筆觸紋理，
+    我們稱為<b>結構鴻溝</b>。此失效模式恰與第一項發現互相印證。
   </p>
 </section>
 
 <section class="wrap col">
   <h2>一、研究動機</h2>
   <p>
-    本研究的問題意識來自筆者十年書法臨習的經驗。臨帖時反覆遇到兩個缺乏客觀答案的問題：
-    其一，教師評語常指「缺乏顏體的厚重」，然而「厚重」究竟對應哪些可量測的字形性質？
-    其二，欲臨習的字，該書法家的傳世字帖中未必寫過，缺字時難以取得參照。
+    問題意識來自十年臨帖經驗中的兩個沒有客觀答案的問題：教師說「缺乏顏體的厚重」，
+    <em>厚重</em>對應哪些可量測的性質？想練的字，該書法家沒寫過，去哪裡找參照？
   </p>
   <p>
-    這兩個問題分別指向風格的<em>分析</em>與<em>生成</em>。本研究的策略是先以可解釋的頻域方法
-    釐清風格訊號的所在，再將此一理解用於生成任務——並在生成失敗時，反過來以同一框架解釋失敗的成因。
+    兩個問題分別指向風格的<em>分析</em>與<em>生成</em>——本研究先用可解釋的頻域方法找出風格訊號的所在，
+    再把這個理解用到生成上。
   </p>
 </section>
 
@@ -163,14 +171,13 @@
   <h2 class="col">二、資料集</h2>
   <div class="col">
     <p>
-      影像蒐集自網路公開之碑帖翻攝資料，經自行清理、逐字標注與索引建立。
-      所有影像統一前處理為 512×512 二值化字形（白底黑字），去除紙張紋理、拓本底色與墨色差異，
-      僅保留字形幾何。
+      影像取自公開碑帖翻攝資料，經自行清理與逐字標注，統一前處理為 512×512 二值化字形，
+      去除紙張紋理與墨色差異、僅保留字形幾何。
     </p>
     <p>
-      公開書法資料集通常以「一張影像對應一個標籤」的形式組織。
-      本資料集額外建立了字元層級索引，將每個字連結到所有寫過該字的書法家，
-      因而支援 text-dependent 的比較設計：在比較風格時，字形內容變因得以被控制。
+      關鍵差異在於：公開書法資料集多是「一張影像對應一個標籤」，
+      本資料集額外建立<b>字元層級索引</b>——每個字連結到所有寫過它的書法家，
+      因而能做 text-dependent 比較：比較風格時，字形內容這個變因是被控制住的。
     </p>
   </div>
 
@@ -218,66 +225,12 @@
 
 <section class="wrap">
   <h2 class="col">三、方法概覽</h2>
-  <div class="pipeline">
-    <svg viewBox="0 0 940 300" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC',sans-serif">
-      <defs>
-        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
-        </marker>
-      </defs>
-      <rect x="10" y="86" width="150" height="118" fill="#fafafa" stroke="#1a1a1a" stroke-width="1"/>
-      <text x="85" y="114" text-anchor="middle" font-size="13.5" font-weight="500" fill="#1a1a1a">策展資料集</text>
-      <text x="85" y="138" text-anchor="middle" font-size="11" fill="#6a6a6a">7 書法家・10 字帖</text>
-      <text x="85" y="157" text-anchor="middle" font-size="11" fill="#6a6a6a">7,449 影像・1,057 字</text>
-      <text x="85" y="182" text-anchor="middle" font-size="11" fill="#8c2f22">3,600+ 同字配對</text>
-      <line x1="160" y1="145" x2="205" y2="145" stroke="#8a8a8a" marker-end="url(#a)"/>
-
-      <rect x="207" y="104" width="120" height="82" fill="#fafafa" stroke="#1a1a1a" stroke-width="1"/>
-      <text x="267" y="134" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">統一前處理</text>
-      <text x="267" y="156" text-anchor="middle" font-size="10.5" fill="#6a6a6a">二值化・裁切置中</text>
-      <text x="267" y="173" text-anchor="middle" font-size="10.5" fill="#6a6a6a">去除載體訊號</text>
-      <line x1="327" y1="128" x2="378" y2="92" stroke="#8a8a8a" marker-end="url(#a)"/>
-      <line x1="327" y1="162" x2="378" y2="200" stroke="#8a8a8a" marker-end="url(#a)"/>
-
-      <rect x="380" y="44" width="168" height="94" fill="#fff" stroke="#8c2f22" stroke-width="1"/>
-      <text x="464" y="72" text-anchor="middle" font-size="13" font-weight="500" fill="#8c2f22">可解釋頻域特徵</text>
-      <text x="464" y="94" text-anchor="middle" font-size="10.5" fill="#6a6a6a">正規化輪廓傅立葉描述子</text>
-      <text x="464" y="111" text-anchor="middle" font-size="10.5" fill="#6a6a6a">頻譜統計量・Hu 矩</text>
-      <text x="464" y="128" text-anchor="middle" font-size="10.5" fill="#6a6a6a">＋ SVM / 邏輯迴歸</text>
-
-      <rect x="380" y="168" width="168" height="86" fill="#fafafa" stroke="#1a1a1a" stroke-width="1"/>
-      <text x="464" y="196" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">深度風格表徵</text>
-      <text x="464" y="218" text-anchor="middle" font-size="10.5" fill="#6a6a6a">ResNet-18 分類器</text>
-      <text x="464" y="236" text-anchor="middle" font-size="10.5" fill="#6a6a6a">512 維 style embedding</text>
-
-      <line x1="548" y1="92" x2="600" y2="126" stroke="#8a8a8a" marker-end="url(#a)"/>
-      <line x1="548" y1="204" x2="600" y2="176" stroke="#8a8a8a" marker-end="url(#a)"/>
-
-      <rect x="602" y="96" width="152" height="106" fill="#fafafa" stroke="#1a1a1a" stroke-width="1"/>
-      <text x="678" y="122" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">泛化實驗</text>
-      <text x="678" y="144" text-anchor="middle" font-size="10.2" fill="#6a6a6a">頻帶消融・同字配對驗證</text>
-      <text x="678" y="161" text-anchor="middle" font-size="10.2" fill="#6a6a6a">留一字帖・字帖簽名檢查</text>
-      <text x="678" y="178" text-anchor="middle" font-size="10.2" fill="#6a6a6a">跨資料集（40,152 影像）</text>
-
-      <line x1="754" y1="124" x2="806" y2="92" stroke="#8a8a8a" marker-end="url(#a)"/>
-      <line x1="754" y1="174" x2="806" y2="204" stroke="#8a8a8a" marker-end="url(#a)"/>
-
-      <rect x="808" y="46" width="122" height="90" fill="#fff" stroke="#8c2f22" stroke-width="1"/>
-      <text x="869" y="76" text-anchor="middle" font-size="12.5" font-weight="500" fill="#8c2f22">風格生成</text>
-      <text x="869" y="98" text-anchor="middle" font-size="10.2" fill="#6a6a6a">擴散模型微調</text>
-      <text x="869" y="115" text-anchor="middle" font-size="10.2" fill="#6a6a6a">＋ 結構鴻溝診斷</text>
-
-      <rect x="808" y="166" width="122" height="86" fill="#fafafa" stroke="#1a1a1a" stroke-width="1"/>
-      <text x="869" y="196" text-anchor="middle" font-size="12.5" font-weight="500" fill="#1a1a1a">墨跡習字</text>
-      <text x="869" y="217" text-anchor="middle" font-size="10.2" fill="#6a6a6a">臨帖診斷平台</text>
-      <text x="869" y="234" text-anchor="middle" font-size="10.2" fill="#6a6a6a">（已部署）</text>
-
-      <text x="470" y="288" text-anchor="middle" font-size="11" fill="#6a6a6a">核心發現「風格訊號集中於低頻」貫穿兩端：決定平台診斷回饋的優先順序，亦定義生成任務的損失設計</text>
-    </svg>
-  </div>
+  <figure>
+    <img src="img/fig_pipeline.png" alt="方法流程圖：上排為低通濾波分析、下排為風格生成，皆附真實書法影像">
+  </figure>
   <p class="col lead-note" style="margin-top:1rem">
-    <b>圖 3：方法流程。</b>可解釋的頻域特徵與深度表徵在同一評估協定下並行比較，
-    分析結果再回饋至生成與應用兩端。
+    <b>圖 3：方法流程。</b>上排為頻域分析（低通濾波後重新訓練，準確率標於各圖下方）；
+    下排為風格生成（標準字＋風格參考 → 生成 → 與真跡比對）。同一份頻域理解貫穿兩端。
   </p>
 </section>
 
@@ -287,9 +240,7 @@
   <div class="col">
     <h3>4.1　書法家辨識：可解釋特徵與深度特徵</h3>
     <p>
-      我們比較三組手工特徵與一組深度特徵。手工特徵包含：正規化輪廓傅立葉描述子
-      （等弧長重取樣後取振幅譜，具平移、縮放、旋轉與起點不變性）、
-      平台早期使用的七維頻譜統計量，以及 Hu 不變矩。
+      三組手工特徵（輪廓傅立葉描述子、七維頻譜統計量、Hu 不變矩）對上一組深度特徵。
     </p>
     <table>
       <caption><b>表 2：七類書法家辨識準確率</b>（character-disjoint 切分，五組切分平均）。</caption>
@@ -303,17 +254,22 @@
         <tr><td>多數類基準 / 隨機</td><td>—</td><td class="n">25.7% / 14.3%</td><td class="n">—</td></tr>
       </tbody>
     </table>
-    <p>
-      三組手工特徵具互補性——串接後較最佳單一組別提升 9.5 個百分點——
-      但整體僅涵蓋約一半的可分辨訊號。此一落差本身即為後續分析的對象。
-    </p>
   </div>
+
+  <figure class="fig-half">
+    <img src="img/fig1_classification.png" alt="五種特徵的七類書法家辨識準確率長條圖">
+    <figcaption><b>圖 4：</b>手工特徵與深度特徵的落差。三組手工特徵具互補性
+      （串接後較最佳單一組別提升 9.5 個百分點），但整體僅涵蓋約一半的可分辨訊號——
+      這個落差本身就是後續分析的對象。</figcaption>
+  </figure>
+
+  <div class="col">
 
   <div class="col">
     <h3>4.2　風格訊號的空間頻率分布</h3>
     <p>
-      我們對字圖施加徑向低通濾波，僅保留半徑內的頻率成分，並以濾波後的影像重新訓練分類器。
-      若風格資訊集中於低頻，準確率應在低截止頻率處即飽和。
+      把字圖的高頻成分濾掉、只留下越來越粗略的輪廓，再重新訓練分類器。
+      如果風格真的住在低頻，準確率應該在很低的截止頻率就飽和。
     </p>
   </div>
 
@@ -359,19 +315,19 @@
   <div class="fig-pair col" style="max-width:none">
     <figure>
       <img src="img/fig3_lowpass.png" alt="低通截止頻率與辨識準確率關係曲線">
-      <figcaption><b>圖 4：</b>空間頻率截止與準確率。曲線在 0.1 附近即接近飽和。</figcaption>
+      <figcaption><b>圖 5：</b>空間頻率截止與準確率。曲線在 0.1 附近即接近飽和。</figcaption>
     </figure>
     <figure>
       <img src="img/fig2_fd_sweep.png" alt="輪廓諧波數量與準確率關係曲線">
-      <figcaption><b>圖 5：</b>輪廓諧波數量掃描。準確率自 ±1 諧波的 28.0% 平緩上升至 ±64 的 46.9%，未見飽和，顯示手工描述子所捕捉的訊號分散於整個諧波頻譜。</figcaption>
+      <figcaption><b>圖 6：</b>輪廓諧波數量掃描。準確率自 ±1 諧波的 28.0% 平緩上升至 ±64 的 46.9%，未見飽和，顯示手工描述子所捕捉的訊號分散於整個諧波頻譜。</figcaption>
     </figure>
   </div>
 
   <div class="col">
     <h3>4.3　同字配對驗證</h3>
     <p>
-      利用資料集的配對結構，我們定義一項驗證任務：給定兩張<em>同一個字</em>的影像，
-      判斷其是否出自同一書法家。所有配對均取自測試字，因此字形內容既被控制、亦未曾出現於訓練。
+      給兩張<em>同一個字</em>的影像，判斷是不是同一位書法家寫的。
+      配對全部取自測試字，所以字形內容被控制住，模型也沒看過這些字。
     </p>
     <table>
       <caption><b>表 4：同字配對驗證</b>（ROC-AUC，三組切分平均）。三種表徵在同一協定下比較。</caption>
@@ -383,16 +339,15 @@
       </tbody>
     </table>
     <p>
-      通用視覺基礎模型在零訓練條件下即捕捉到相當程度的風格訊號，
-      但領域訓練仍帶來決定性差距——書法風格驗證並非通用視覺特徵可直接解決的任務。
+      通用視覺模型不必訓練就抓到部分風格訊號，但和領域訓練仍有決定性差距。
     </p>
   </div>
 
   <div class="col">
     <h3>4.4　來源混淆與跨資料集泛化</h3>
     <p>
-      由於每位書法家對應特定字帖，模型可能利用再製特徵（特定版本的筆畫粗細、二值化邊緣性質）
-      而非風格本身。我們設計三項檢查加以量化。
+      每位書法家對應特定字帖，模型可能是在認「字帖的再製特徵」（筆畫粗細、二值化邊緣）而不是風格。
+      以下三項檢查用來量化這個疑慮。
     </p>
     <table>
       <caption><b>表 5：來源混淆檢查與跨資料集驗證。</b></caption>
@@ -407,22 +362,36 @@
     </table>
     <p>
       跨字帖驗證僅較同字帖下降 0.010，且保留的字帖多能被正確辨識，
-      顯示風格表徵確實跨越了來源。然而跨資料集情境下準確率大幅下降：
-      未經正規化時，外部的細筆畫影像集中被判為本資料集中筆畫較細的類別，
-      柳公權與虞世南甚至完全未被預測。經骨架化與固定寬度重繪後，
-      顏真卿的辨識率自 16% 回升至 75%，說明筆畫寬度為主要的跨源干擾因素之一。
-      同源辨識容易、跨源泛化困難——後者才是此任務的實際難點。
+      顯示風格表徵確實跨越了來源。
     </p>
+    <p>
+      然而跨資料集情境下準確率大幅下降：未經正規化時，外部的細筆畫影像集中被判為
+      本資料集中筆畫較細的類別，柳公權與虞世南甚至完全未被預測。
+    </p>
+    <div class="callout">
+      經骨架化與固定寬度重繪後，顏真卿的辨識率自 16% 回升至 75%，
+      說明筆畫寬度為主要的跨源干擾因素之一——同源辨識容易、跨源泛化困難，
+      後者才是此任務的實際難點。
+    </div>
   </div>
 
   <div class="col">
     <h3>4.5　風格生成與結構鴻溝</h3>
     <p>
-      我們進一步檢驗頻域理解能否改進生成。任務設定為：給定標準字形（內容）與該書法家的一張參考字（風格），
-      生成該書法家風格的目標字。評估利用本資料集的獨有條件——
-      保留 450 個該書法家<em>確實寫過</em>但未參與訓練的字作為 ground truth，
-      以獨立訓練並凍結的風格分類器判定生成結果是否被辨識為目標書法家。
+      給一個標準字形（內容）和該書法家的一張參考字（風格），生成這位書法家風格的目標字。
+      評估用得上本資料集的獨有條件：留下 450 個該書法家<em>確實寫過</em>、但沒參與訓練的字當 ground truth，
+      再用一個獨立訓練並凍結的分類器判定生成結果認不認得出是誰。
     </p>
+  </div>
+
+  <figure class="fig-mid">
+    <img src="img/gen_qualitative.png" alt="五位書法家的生成結果：標準字、風格參考、生成結果、真跡並排比較">
+    <figcaption class="col"><b>圖 7：生成結果。</b>
+      每列自左至右：標準字（內容輸入）、風格參考字、生成結果、該書法家真跡。
+      筆觸質感明顯轉移，但間架結構仍偏向標準字——這就是下面要量化的<b>結構鴻溝</b>。</figcaption>
+  </figure>
+
+  <div class="col">
     <table>
       <caption><b>表 6：與已發表方法的比較</b>（同一資料、同一 held-out 集合、同一凍結評估器）。
         FontDiffuser 為 AAAI 2024 發表並公開釋出權重的字體生成方法；
@@ -436,9 +405,8 @@
       </tbody>
     </table>
     <p>
-      相對於官方釋出的模型，本流程將風格辨識率自 20.0% 提升至 34.3%（相對提升 71%）。
-      需說明的是：此一提升來自資料調適與推論策略，而非新的網路架構；
-      下表的消融顯示，我們嘗試的結構性損失並未帶來額外增益，其原因見後段分析。
+      相對官方權重，本流程把辨識率從 20.0% 拉到 34.3%（相對提升 71%）。
+      這個提升來自資料調適與推論策略，不是新架構；而我們嘗試的結構性損失並沒有帶來額外增益——原因見下。
     </p>
 
     <table>
@@ -487,8 +455,12 @@
     <p>
       六項介入的風格辨識率均在 34% 附近趨於飽和。定量分析顯示其成因：
       生成結果保留了標準字的骨架，僅轉移筆觸外觀。
-      以柳公權為例，生成字與標準字的 SSIM（0.552）高於其與該書法家真跡的 SSIM（0.540）；
-      全體生成結果中有 39% 更接近標準字而非目標真跡。
+    </p>
+    <div class="callout">
+      以柳公權為例，生成字與標準字的 SSIM（0.552）高於其與該書法家真跡的 SSIM（0.540）——
+      全體生成結果中有 <b>39%</b> 更接近標準字而非目標真跡。
+    </div>
+    <p>
       相對地，筆畫寬度的重現相當精確（如趙孟頫 13.7 px 對真跡 13.5 px）。
       維持高辨識率的類別（虞世南、沈尹默）恰是其結構最接近現代標準字者。
     </p>
@@ -496,7 +468,7 @@
 
   <figure>
     <img src="img/diagnose_dead_classes.png" alt="生成結果與標準字、真跡的比較">
-    <figcaption class="col"><b>圖 6：結構鴻溝。</b>
+    <figcaption class="col"><b>圖 8：結構鴻溝。</b>
       每列自左至右為：標準字（內容輸入）、風格參考字、生成結果、該書法家真跡。
       生成結果的筆觸質感接近參考字，但間架結構仍循標準字，
       未能轉移至真跡所呈現的結構特徵。此一失效模式與 4.2 節的發現一致：
@@ -522,18 +494,12 @@
 <section class="wrap col">
   <h2>六、應用：墨跡習字平台</h2>
   <p>
-    研究結果已落實於一個部署上線的學習平台。<b>臨帖診斷</b>接受使用者上傳的習字照片，
-    輸出與名家版本的逐像素差異疊合圖與結構均衡量測；其回饋順序（結構優先、筆觸細節次之）
-    即依據 4.2 節的發現設計。
+    研究結果已落實為部署上線的學習平台。<b>臨帖診斷</b>接受習字照片，輸出與名家版本的逐像素差異疊合圖；
+    回饋順序（結構優先、筆觸次之）即依 4.2 節的發現設計。<b>集字</b>承接 4.5 節的生成研究，
+    沿用唐代懷仁《集王聖教序》的集字傳統：有真跡者取真跡、其餘由模型補足，
+    每字標明來源並標示該書法家的生成可靠度——讓系統的能力邊界對使用者透明。
   </p>
-  <p>
-    <b>集字</b>功能則承接 4.5 節的生成研究，並沿用書法史上的集字傳統
-    （如唐代懷仁《集王聖教序》自王羲之真跡中逐字輯錄）：
-    輸入一句話後，字庫中有真跡者直接取用真跡，其餘由模型補足，
-    每字標明來源，並依 4.5 節的評估結果標示各書法家的生成可靠度。
-    此一設計使系統的能力邊界對使用者透明。
-  </p>
-  <p><a href="https://calligraphy-analyzer.onrender.com">前往墨跡習字平台</a></p>
+  <p><a href="https://calligraphy-analyzer.onrender.com">前往墨跡習字平台 →</a></p>
 </section>
 
 <footer class="wrap">

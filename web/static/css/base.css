@@ -281,18 +281,6 @@ h1, h2, h3, h4,
     font-weight: 600;
 }
 
-/* 使用中頁面下方的印章式小圓點，取代單純底色標示 */
-.nav-links a.active::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--accent-light);
-}
 
 /* --- 主要內容 --- */
 .content {

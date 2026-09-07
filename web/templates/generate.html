@@ -12,6 +12,12 @@
   .gq-form select, .gq-form label.tog { font-size: .95rem; padding: .5rem .7rem; border: 1.5px solid var(--border);
     border-radius: 10px; background: var(--bg-card); }
   .gq-form label.tog { display: inline-flex; gap: .35rem; align-items: center; cursor: pointer; }
+  /* 兩種取字模式：比勾選框清楚，取消勾選代表什麼原本看不出來 */
+  .gq-form .mode { display: inline-flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .gq-form .mode button { font-size: .9rem; padding: .5rem .9rem; border: none; border-radius: 0;
+    background: var(--bg-card); color: var(--text-light); cursor: pointer; font-family: inherit; }
+  .gq-form .mode button + button { border-left: 1.5px solid var(--border); }
+  .gq-form .mode button.on { background: var(--primary-dark); color: var(--bg-card); font-weight: 500; }
   .gq-form button { padding: .6rem 1.5rem; border-radius: 999px; border: 1.5px solid var(--primary-dark);
     background: var(--primary-dark); color: var(--bg-card); font-size: .95rem; cursor: pointer; }
   .gq-form button:disabled { opacity: .5; cursor: wait; }
@@ -19,12 +25,13 @@
   .gq-off { text-align: center; color: var(--accent); font-size: .9rem; padding: .6rem; display: none; }
 
   .gq-stage { display: grid; grid-template-columns: 1fr 300px; gap: 1.2rem; align-items: start; }
+  .gq-stage > * { min-width: 0; }
   @media (max-width: 760px) { .gq-stage { grid-template-columns: 1fr; } }
   .paper { background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
     padding: 1.5rem 1.8rem 2.4rem; box-shadow: inset 0 0 60px rgba(120,90,40,.06), 0 8px 24px rgba(0,0,0,.06);
     display: inline-flex; justify-content: center; align-items: flex-start; position: relative;
-    width: fit-content; max-width: 100%; margin: 0 auto; }
-  .paper-wrap { display: flex; justify-content: center; }
+    width: fit-content; margin: 0 auto; }
+  .paper-wrap { display: flex; justify-content: center; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .cols { display: flex; flex-direction: row-reverse; gap: .6rem; }
   .cols.horiz { flex-direction: column; }
   .col { display: flex; flex-direction: column; gap: .35rem; }
@@ -52,6 +59,13 @@
   .side .acts { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .7rem; }
   .side .acts button { font-size: .78rem; padding: .35rem .7rem; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); cursor: pointer; }
   .side .acts button:hover { border-color: var(--accent); color: var(--accent); }
+  .side .cands { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+  .side .cand { width: 74px; cursor: pointer; text-align: center; border: 1.5px solid var(--border);
+    border-radius: 6px; overflow: hidden; transition: border-color .15s, transform .1s; }
+  .side .cand:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .side .cand.on { border-color: var(--primary-dark); box-shadow: 0 0 0 1px var(--primary-dark); }
+  .side .cand img { width: 100%; height: 74px; object-fit: contain; display: block; background: #fff; }
+  .side .cand-score { font-size: .6rem; padding: .15rem 0; color: var(--text-light); background: var(--bg-dark); }
   .gq-bar { display: flex; gap: .6rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
   .gq-bar button { padding: .5rem 1.2rem; border-radius: 999px; border: 1.5px solid var(--primary-dark); background: var(--bg-card); cursor: pointer; font-size: .88rem; }
   .gq-bar button.fill { background: var(--primary-dark); color: var(--bg-card); }
@@ -86,6 +100,18 @@
   .gq-cred a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
 
   .gq-note { background: var(--bg-dark); border-radius: 10px; padding: .9rem 1.1rem; font-size: .8rem; color: var(--text-light); line-height: 1.7; margin-top: 1.1rem; }
+
+  /* 手機：縮小字格，讓一整排能盡量塞進螢幕，減少橫向捲動 */
+  @media (max-width: 480px) {
+    .paper { padding: 1.1rem 1rem 1.6rem; }
+    .cell, .cell .imgbox { width: 66px; }
+    .cell .imgbox { height: 66px; }
+    .cell .ch { font-size: 1.4rem; }
+  }
+  @media (max-width: 360px) {
+    .cell, .cell .imgbox { width: 54px; }
+    .cell .imgbox { height: 54px; }
+  }
 </style>
 
 <div class="gq">
@@ -96,12 +122,15 @@
   </div>
 
   <form class="gq-form" onsubmit="return false">
-    <input type="text" id="txt" maxlength="24" placeholder="上善若水" autocomplete="off">
+    <input type="text" id="txt" maxlength="56" placeholder="上善若水" autocomplete="off">
     <select id="cal">
       <option>顏真卿</option><option>柳公權</option><option>歐陽詢</option>
       <option>虞世南</option><option>智永</option><option>趙孟頫</option><option>沈尹默</option>
     </select>
-    <label class="tog"><input type="checkbox" id="real" checked> 集字（真跡優先）</label>
+    <div class="mode" id="mode">
+      <button type="button" data-real="1" class="on">真跡優先</button>
+      <button type="button" data-real="0">全部 AI 生成</button>
+    </div>
     <label class="tog"><input type="checkbox" id="vert" checked> 直書</label>
     <button id="go">集字</button>
   </form>
@@ -113,8 +142,8 @@
     <button data-t="溫故知新" data-c="智永">溫故知新</button>
     <button data-t="筆墨春秋" data-c="歐陽詢">筆墨春秋</button>
   </div>
-  <div class="gq-hint" id="hint">最多 24 字・逐字顯示，未收錄的字約需 4 秒生成</div>
-  <div class="gq-off" id="off">即時生成服務目前離線。常用字已預先生成、可正常使用；字庫外的罕用字需具 GPU 的環境才能即時補字。</div>
+  <div class="gq-hint" id="hint">最多 56 字（七言律詩全首）・常用字秒開，字庫外的罕用字約需 4 秒生成</div>
+  <div class="gq-off" id="off">即時生成服務暫時無法連線。常用字都已預先生成，集字功能可正常使用；只有字庫外的罕用字要等服務恢復。</div>
 
   <div class="gq-hero" id="hero">
     <h2>點一幅看看——真跡與 AI 補字如何合為一幅</h2>
@@ -133,7 +162,6 @@
       </div>
       <div class="gq-bar">
         <button class="fill" id="dl">下載作品 PNG</button>
-        <button id="reroll">全部換一批（新種子）</button>
       </div>
       <div class="gq-note" id="note"></div>
     </div>
@@ -144,7 +172,8 @@
 <script>
 (function () {
   const $ = id => document.getElementById(id);
-  const txt = $('txt'), cal = $('cal'), realTog = $('real'), vertTog = $('vert'), go = $('go');
+  const txt = $('txt'), cal = $('cal'), vertTog = $('vert'), go = $('go');
+  let preferReal = true;      // 真跡優先 ↔ 全部 AI 生成
   const hint = $('hint'), stage = $('stage'), cols = $('cols'), side = $('side'), note = $('note');
   let online = true, cells = [], seed = 0, selected = -1;
   const EXPL = { '高': '結構最接近標準字，AI 補字可靠度高（held-out 評估 style match ≥ 85%）',
@@ -180,10 +209,19 @@
   }
   function cjk(s) { return [...s].filter(c => /\p{Script=Han}/u.test(c)); }
 
+  // 每欄（列）幾個字。長句子若維持固定值，作品會愈來愈寬而必須橫向捲動；
+  // 這裡讓直書改為往下長、橫書則依實際可用寬度決定，避免超出畫面。
+  function perLine() {
+    const n = cells.length;
+    if (vertTog.checked) return n <= 20 ? 5 : Math.min(14, Math.ceil(n / 4));
+    const cw = window.innerWidth <= 480 ? 66 : 96;      // 與 CSS 的字格寬度一致
+    const avail = Math.min(cols.parentElement.clientWidth || 640, window.innerWidth - 32) - 60;
+    return Math.max(4, Math.min(8, Math.floor(avail / (cw + 6))));
+  }
   function layout() {
     cols.className = 'cols' + (vertTog.checked ? '' : ' horiz');
     cols.innerHTML = '';
-    const per = vertTog.checked ? 5 : 6;
+    const per = perLine();
     for (let i = 0; i < cells.length; i += per) {
       const col = document.createElement('div'); col.className = 'col';
       cells.slice(i, i + per).forEach(c => col.appendChild(c.el));
@@ -232,7 +270,7 @@
     catch (e) { c.el.classList.remove('loading'); c.el.innerHTML = `<div class="ch" style="color:var(--accent);font-size:.8rem">${e.message}</div>`; }
   }
   async function run() {
-    const chars = cjk(txt.value).slice(0, 24);
+    const chars = cjk(txt.value).slice(0, 56);
     if (!chars.length) { txt.focus(); return; }
     seed = hashSeed(chars.join('') + cal.value);
     cells = chars.map(ch => { const el = document.createElement('div'); el.className = 'cell';
@@ -241,7 +279,7 @@
     const hero = $('hero'); if (hero) hero.style.display = 'none';
     side.innerHTML = '<h3>點選作品中的字</h3><div class="meta">點字下方的色塊標籤可查看說明、重新生成或改用真跡；點圖片本身則會放大顯示。</div>';
     go.disabled = true; hint.textContent = '集字中…';
-    await runThrottled(cells, c => loadCell(c, realTog.checked));
+    await runThrottled(cells, c => loadCell(c, preferReal));
     go.disabled = false;
     const nReal = cells.filter(c => c.src === 'real').length;
     const nCache = cells.filter(c => c.src === 'cache').length;
@@ -255,27 +293,65 @@
     const j = c.data; if (!j) return;
     let html = `<h3>「${c.char}」・${cal.value}</h3>`;
     if (c.src === 'real') {
-      html += `<div class="meta">真跡${j.real_glyphs.length > 1 ? `・字庫共有 ${j.real_glyphs.length} 種寫法（顯示其中一種）` : ''}</div>`;
+      const n = j.real_glyphs.length;
+      html += `<div class="meta">真跡${n > 1 ? `・字庫共有 ${n} 種寫法，點選要用哪一種` : ''}</div>`;
+      if (n > 1) html += '<div class="cands" id="realpick"></div>';
     } else if (c.src === 'cache') {
       html += `<div class="meta">${srcLabel('cache')}・可靠度 ${c.rel}<br>` +
-        `此字為常用字，已於具 GPU 的機器預先生成並存為靜態圖，因此無需即時運算。</div>`;
-      html += `<div class="acts">${online ? '<button data-act="re">即時重新生成一次</button>' : ''}` +
+        `此字為常用字，已事先生成好並存成靜態圖，所以能秒開；按下方按鈕可重新即時生成。</div>`;
+      html += `<div class="acts">${online ? '<button data-act="re">重新生成（5 候選）</button>' : ''}` +
         `${j.real_glyphs.length ? '<button data-act="real">改用真跡</button>' : ''}</div>`;
     } else {
       html += `<div class="meta">${srcLabel('ai')}・可靠度 ${c.rel}${j.real_glyphs.length ? '（其實有真跡）' : '（無真跡，這正是集字要補的）'}<br>` +
         `標準字來源：${j.content_source === 'edukai' ? '教育部標準楷書' : '訓練字庫'}</div>`;
-      html += `<div class="acts"><button data-act="re">重新生成一次</button>${j.real_glyphs.length ? '<button data-act="real">改用真跡</button>' : ''}</div>`;
+      html += `<div class="acts"><button data-act="re">重新生成（5 候選）</button>${j.real_glyphs.length ? '<button data-act="real">改用真跡</button>' : ''}</div>`;
     }
     side.innerHTML = html;
+
+    // 同一個字在不同字帖/位置常有多種寫法，全部列出來讓使用者挑
+    const pick = side.querySelector('#realpick');
+    if (pick) j.real_glyphs.forEach((url, i) => {
+      const box = document.createElement('div');
+      box.className = 'cand' + (url === c.img ? ' on' : '');
+      box.innerHTML = `<img src="${url}"><div class="cand-score">第 ${i + 1} 種</div>`;
+      box.onclick = () => { c.img = url; render(c); select(c); };
+      pick.appendChild(box);
+    });
+
     side.querySelectorAll('[data-act]').forEach(b => b.onclick = async () => {
       const act = b.dataset.act;
-      if (act === 'real') { await loadCell(c, true); }
-      else if (act === 're') { seed += 1; await loadCell(c, false); }
-      select(c);
+      if (act === 'real') { await loadCell(c, true); select(c); }
+      else if (act === 're') { await regenerate(c); }
+    });
+  }
+  async function regenerate(c) {
+    side.innerHTML = `<h3>「${c.char}」・${cal.value}</h3><div class="meta">生成 5 個候選中…約需數秒</div>`;
+    seed += 1;
+    const q = new URLSearchParams({ char: c.char, name: cal.value, k: 5, seed, prefer_real: false, force_live: true });
+    try {
+      const r = await fetch('/api/generate/char?' + q);
+      if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.detail || r.status); }
+      renderCandidates(c, await r.json());
+    } catch (e) {
+      side.innerHTML = `<h3>「${c.char}」・${cal.value}</h3><div class="meta" style="color:var(--accent)">${e.message}</div>`;
+    }
+  }
+  function renderCandidates(c, j) {
+    side.innerHTML = `<h3>「${c.char}」・${cal.value}</h3><div class="meta">選一個候選套用：</div><div class="cands"></div>`;
+    const grid = side.querySelector('.cands');
+    j.candidates.forEach(cand => {
+      const box = document.createElement('div'); box.className = 'cand';
+      box.innerHTML = `<img src="data:image/png;base64,${cand.png}"><div class="cand-score">${cand.pred}・${(cand.score * 100).toFixed(0)}%</div>`;
+      box.onclick = () => {
+        c.data = { ...j, best: cand }; c.rel = j.reliability; c.src = j.source;
+        c.img = 'data:image/png;base64,' + cand.png;
+        render(c); select(c);
+      };
+      grid.appendChild(box);
     });
   }
   function download() {
-    const vert = vertTog.checked, per = vert ? 5 : 6, S = 200, P = 14, M = 60;
+    const vert = vertTog.checked, per = perLine(), S = 200, P = 14, M = 60;   // 與畫面上的排版一致
     const n = cells.length, groups = Math.ceil(n / per), inner = Math.min(n, per);
     const W = vert ? groups * (S + P) + 2 * M : inner * (S + P) + 2 * M;
     const H = vert ? inner * (S + P) + 2 * M : groups * (S + P) + 2 * M;
@@ -303,7 +379,7 @@
   (function prefillFromQuery() {
     const qs = new URLSearchParams(location.search);
     const qText = qs.get('text'), qName = qs.get('name');
-    if (qText) txt.value = qText.slice(0, 24);
+    if (qText) txt.value = qText.slice(0, 56);
     if (qName && [...cal.options].some(o => o.value === qName)) cal.value = qName;
     if (qText) setTimeout(run, 300);
   })();
@@ -311,8 +387,13 @@
   go.onclick = run;
   txt.addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
   vertTog.onchange = () => cells.length && layout();
+  document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#mode button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    preferReal = b.dataset.real === '1';
+    if (cells.length) run();          // 換模式就重新集字，不用再按一次
+  });
   $('dl').onclick = download;
-  $('reroll').onclick = async () => { seed += 1; go.disabled = true; await runThrottled(cells.filter(c => c.src !== 'real'), c => loadCell(c, false)); go.disabled = false; };
 })();
 </script>
 {% endblock %}

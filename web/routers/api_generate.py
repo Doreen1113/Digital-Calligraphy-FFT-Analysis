@@ -84,7 +84,8 @@ async def generate_char(char: str = Query(..., min_length=1, max_length=1),
                         name: str = Query(...),
                         k: int = Query(1, ge=1, le=8),
                         seed: int = Query(0),
-                        prefer_real: bool = Query(True)):
+                        prefer_real: bool = Query(True),
+                        force_live: bool = Query(False)):
     if name not in NAME2LABEL:
         raise HTTPException(400, "未知的書法家")
     real = _real_glyphs(char, name)
@@ -92,13 +93,14 @@ async def generate_char(char: str = Query(..., min_length=1, max_length=1),
             "real_glyphs": real}
 
     # 1) 集字模式：有真跡就直接用，不進生成（秒回）
-    if prefer_real and real:
+    if prefer_real and real and not force_live:
         return {**base, "source": "real", "best": None, "candidates": []}
 
     # 2) 預先生成的快取：無 GPU 環境亦可服務常用字
+    #    force_live 用於「重新生成」時跳過快取（快取只存一張最佳結果，不會因 seed 改變）
     hexname = f"{ord(char):05X}"
     entry = _prebuilt().get(name, {}).get(hexname)
-    if entry and (PREBUILT_DIR / NAME2LABEL[name] / f"{hexname}.png").exists():
+    if not force_live and entry and (PREBUILT_DIR / NAME2LABEL[name] / f"{hexname}.png").exists():
         return {**base, "source": "cache",
                 "content_source": entry.get("content_source", "kaiu"),
                 "best": {"url": f"/static/generated/{NAME2LABEL[name]}/{hexname}.png",
@@ -126,7 +128,7 @@ async def generate_char(char: str = Query(..., min_length=1, max_length=1),
             msg = f"生成失敗（{e.code}）"
         raise HTTPException(e.code, msg)
     except urllib.error.URLError:
-        raise HTTPException(503, "生成服務目前離線（此功能需要 GPU，僅在研究工作站上提供）")
+        raise HTTPException(503, "即時生成服務暫時無法連線，請稍後再試")
     return {**base, "source": "ai", "content_source": data["content_source"],
             "best": data["best"], "candidates": data["candidates"],
             "content_png": data["content_png"]}
@@ -138,7 +140,9 @@ async def generate_status():
     info = {"prebuilt_chars": sum(len(v) for v in prebuilt.values()),
             "prebuilt_calligraphers": len(prebuilt)}
     try:
-        with urllib.request.urlopen(GEN_HEALTH_URL, timeout=3) as r:
+        # 後端可能在別的雲上（Modal），跨區來回加上容器喚醒會超過數秒；
+        # timeout 太短會讓前端誤報「服務離線」，實際上生成請求是正常的。
+        with urllib.request.urlopen(GEN_HEALTH_URL, timeout=12) as r:
             return {"online": True, **info, **json.loads(r.read().decode())}
     except Exception:
         return {"online": False, **info}
