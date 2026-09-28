@@ -79,3 +79,6 @@ experiments/generated/*.png
 experiments/generated_*/
 data/stats.json
 demo/
+
+# 示範影片錄製素材（影片放 GitHub Release）
+demo2/
