@@ -7,8 +7,10 @@
 - **資料**：7 位書法家、10 本字帖、7,449 張單字圖、1,057 個獨特字
 - **集字字庫**：每位書法家的真跡只有 228 到 720 個字，由生成模型補齊 4,808 個常用字，共 30,000 多張 AI 補字
 - **平台**：[calligraphy-analyzer.onrender.com](https://calligraphy-analyzer.onrender.com)
-- **示範影片（58 秒）**：[calligraphy_demo.mp4](https://github.com/Doreen1113/Digital-Calligraphy-FFT-Analysis/releases/download/v1.0-demo/calligraphy_demo.mp4)
 - **技術報告**：[`report/report.md`](report/report.md)
+
+https://github.com/user-attachments/assets/75bf3917-1cdf-4dc6-8331-f9dd5421932a
+
 
 ## 主要發現
 
